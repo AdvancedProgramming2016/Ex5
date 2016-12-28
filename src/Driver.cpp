@@ -43,3 +43,7 @@ unsigned int Driver::getVehicleId() const {
 void Driver::setAvgSatisfaction(unsigned int newAvg) {
     avgSatisfaction = newAvg;
 }
+
+Driver::Driver() {
+
+}

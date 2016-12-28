@@ -36,6 +36,41 @@ TaxiCenter::~TaxiCenter() {
 
 }
 
+void TaxiCenter::moveOneStep() {
+
+    std::vector<Taxi *> taxiVec = this->getTaxis();
+    int i = 0;
+
+    // Update location of all taxis
+    for (i = 0; i < taxiVec.size(); i++) {
+
+        // Gets current taxi
+        Taxi *currTaxi = taxiVec[i];
+        Point *currPoint;
+
+        int j = 0;
+        for (j = 0; j < currTaxi->getVehicle()->getSpeed(); j++) {
+
+            // If the driver already reached his destination
+            if (currTaxi->getTrip()->getTripRoute().size() == 0) {
+                break;
+            }
+
+            // Get next point to advance to
+             *currPoint = currTaxi->getTrip()->getTripRoute()[0];
+
+            // Remove point from trip route
+            currTaxi->getTrip()->getTripRoute().erase
+                    (currTaxi->getTrip()->getTripRoute().begin());
+
+        }
+
+        // Set new position
+        currTaxi->setCurrentPosition(*currPoint);
+    }
+
+}
+
 std::vector<Driver *> &TaxiCenter::getDrivers() {
     return drivers;
 }
@@ -91,7 +126,6 @@ void TaxiCenter::addTrip(Trip *trip) {
 
 void TaxiCenter::requestDriverLocation(int driverId) {
 
-
     for (int i = 0; i < taxis.size(); ++i) {
 
         if (taxis[i]->getDriver()->getDriverId() == driverId) {
@@ -110,9 +144,3 @@ void TaxiCenter::update(Taxi *taxi) {
             taxis[i] = taxi;
     }
 }
-
-
-
-
-
-

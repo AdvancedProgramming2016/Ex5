@@ -10,6 +10,14 @@ Bfs::Bfs(Graph *graph, Point source, Point dest) : m_source(source),
     this->m_dest   = dest;
 }
 
+std::vector<Point> &Bfs::getShortestPath() {
+
+    // Check if there is a path.
+    if (this->shortest_path.size() >= 1) {
+        return this->shortest_path;
+    }
+
+}
 
 void Bfs::get_route() {
 

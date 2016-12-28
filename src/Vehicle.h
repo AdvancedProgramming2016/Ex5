@@ -2,6 +2,8 @@
 #ifndef EX2_VEHICLE_H
 #define EX2_VEHICLE_H
 
+#include <boost/serialization/access.hpp>
+
 /**
  * The class represents an abstract vehicle.
  */
@@ -16,9 +18,25 @@ private:
 protected:
     unsigned maxCapacity;
     double   coefficient;
+    unsigned int speed;
+
+private:
+    friend class boost::serialization::access;
+
+    template<class Archive>
+    void serialize(Archive &archive, const unsigned int version) {
+        archive & vehicleId;
+        archive & kmPassed;
+        archive & carManufacturer;
+        archive & color;
+        archive & maxCapacity;
+        archive & coefficient;
+        archive & speed;
+    }
 
 public:
 
+    Vehicle(); //TODO delete if not necessary for serialization
     /*
      * Constructor
      */
@@ -28,6 +46,11 @@ public:
      * Returns the vehicle id.
      */
     unsigned int getVehicleId() const;
+
+    /*
+     * Returns the speed of the car.
+     */
+    unsigned int getSpeed() const;
 
     /*
      * Returns the number of kilometers a vehicle has passed

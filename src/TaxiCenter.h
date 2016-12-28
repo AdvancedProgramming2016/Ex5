@@ -54,6 +54,11 @@ public:
     void createTaxi(Driver *driver);
 
     /*
+     * Move the taxis one step
+     */
+    void moveOneStep();
+
+    /*
      * Add a driver to the drivers the taxi center has.
      */
     void addDriver(Driver *driver);

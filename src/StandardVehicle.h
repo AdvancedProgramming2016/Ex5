@@ -3,6 +3,7 @@
 #define EX2_STANDARDVEHICLE_H
 
 
+#include <boost/serialization/base_object.hpp>
 #include "Vehicle.h"
 
 /**
@@ -13,10 +14,18 @@ class StandardVehicle : public Vehicle {
 
 public:
 
+    StandardVehicle(); // TODO delete if not necessary
     /*
      * Constructor
      */
     StandardVehicle(unsigned int vehicleId, char carManufacturer, char color);
+
+private:
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version) {
+        ar & boost::serialization::base_object<Vehicle>(*this);
+    }
 
 };
 
