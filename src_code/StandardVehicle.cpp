@@ -4,5 +4,6 @@
 StandardVehicle::StandardVehicle(unsigned int vehicleId,
                                  char carManufacturer, char color)
         : Vehicle(vehicleId, carManufacturer, color) {
-    coefficient = 1;
+    this->coefficient = 1;
+    this->speed = 1;
 }

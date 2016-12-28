@@ -36,7 +36,6 @@ TaxiCenter::~TaxiCenter() {
 
 }
 
-// TODO: Need to take care of luxury car vs. standard car and check that point isnt empty
 void TaxiCenter::moveOneStep() {
 
     std::vector<Taxi *> taxiVec = this->getTaxis();
@@ -48,12 +47,22 @@ void TaxiCenter::moveOneStep() {
         // Gets current taxi
         Taxi *currTaxi = taxiVec[i];
 
-        // Get next point to advance to
-        Point currPoint = currTaxi->getTrip()->getTripRoute()[0];
+        int j = 0;
+        for (j = 0; j < currTaxi->getVehicle()->getSpeed(); j++) {
 
-        // Remove point from trip route
-        currTaxi->getTrip()->getTripRoute().erase
-                (currTaxi->getTrip()->getTripRoute().begin());
+            // If the driver already reached his destination
+            if (currTaxi->getTrip()->getTripRoute().size() == 0) {
+                break;
+            }
+
+            // Get next point to advance to
+            Point currPoint = currTaxi->getTrip()->getTripRoute()[0];
+
+            // Remove point from trip route
+            currTaxi->getTrip()->getTripRoute().erase
+                    (currTaxi->getTrip()->getTripRoute().begin());
+
+        }
 
         // Set new position
         currTaxi->setCurrentPosition(currPoint);
@@ -116,7 +125,6 @@ void TaxiCenter::addTrip(Trip *trip) {
 
 void TaxiCenter::requestDriverLocation(int driverId) {
 
-
     for (int i = 0; i < taxis.size(); ++i) {
 
         if (taxis[i]->getDriver()->getDriverId() == driverId) {
@@ -135,9 +143,3 @@ void TaxiCenter::update(Taxi *taxi) {
             taxis[i] = taxi;
     }
 }
-
-
-
-
-
-

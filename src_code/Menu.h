@@ -15,19 +15,29 @@ class Menu {
 private:
     StringParser stringParser;
     MainFlow     *mainFlow;
-    Udp udp;
+    Socket socket;
 
 public:
 
     /*
      * Ctor
      */
-    Menu();
+    Menu(Socket &socket);
+
+    /*
+     * Listen to socket and receive driver.
+     */
+    Driver listenToSocket();
+
+    /*
+     * Send vehicle to socket.
+     */
+    void sendToSocket(Vehicle);
 
     /*
      * Gets the udp object
      */
-    Udp getUdp();
+    Socket getSocket();
 
     /*
      * Initialize the grid with user input.

@@ -16,6 +16,7 @@ private:
 protected:
     unsigned maxCapacity;
     double   coefficient;
+    unsigned int speed;
 
 public:
 
@@ -28,6 +29,11 @@ public:
      * Returns the vehicle id.
      */
     unsigned int getVehicleId() const;
+
+    /*
+     * Returns the speed of the car.
+     */
+    unsigned int getSpeed() const;
 
     /*
      * Returns the number of kilometers a vehicle has passed

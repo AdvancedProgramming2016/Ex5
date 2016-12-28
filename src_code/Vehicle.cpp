@@ -15,6 +15,10 @@ unsigned int Vehicle::getKmPassed() const {
     return kmPassed;
 }
 
+unsigned int Vehicle::getSpeed() const {
+    return this->speed;
+}
+
 char Vehicle::getCarManufacturer() const {
     return carManufacturer;
 }
