@@ -1,4 +1,3 @@
-
 #ifndef EX2_TAXICENTER_H
 #define EX2_TAXICENTER_H
 
@@ -51,8 +50,6 @@ public:
     * Creates a new taxi by connecting a driver with a vehicle.
     */
     void createTaxi(Driver *driver);
-
-    void assignTrip();
 
     /*
      * Move the taxis one step

@@ -3,6 +3,7 @@
 #define EX1_TASK2_POINT_H
 
 #include <iostream>
+#include <boost/serialization/access.hpp>
 
 /**
 * The class "Point" is supposed to represent a point in a two dimensional space.
@@ -15,6 +16,15 @@ private:
     int m_x;
     int m_y;
 
+    friend class boost::serialization::access;
+
+    template<class Archive>
+    void serialize(Archive &archive, const unsigned int version) {
+        archive & m_x;
+        archive & m_y;
+
+    }
+
 public:
 
     /*
@@ -22,9 +32,7 @@ public:
      */
     Point(int x, int y);
 
-    int getXCoordinate();
-
-    int getYCoordinate();
+    Point(); //TODO delete if not necessary
 
     /*
      * Overloads the "==" operator in order to evaluate two Points.
@@ -40,6 +48,10 @@ public:
      * Overloads the ostream operator in order to print a Point directly.
      */
     friend std::ostream &operator<<(std::ostream &os, const Point &point);
+
+    int getXCoordinate();
+
+    int getYCoordinate();
 
 };
 
