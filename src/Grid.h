@@ -33,6 +33,8 @@ public:
      */
     const std::vector<Point> &getObstacles() const;
 
+    void insertObstacles();
+
 };
 
 

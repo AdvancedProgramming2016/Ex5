@@ -22,6 +22,10 @@ public:
      */
     Point(int x, int y);
 
+    int getXCoordinate();
+
+    int getYCoordinate();
+
     /*
      * Overloads the "==" operator in order to evaluate two Points.
      */

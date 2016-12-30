@@ -18,6 +18,7 @@ Grid::Grid(unsigned int length, unsigned int width,
     }
 
     build_relations();
+    this->insertObstacles();
 
 }
 
@@ -56,7 +57,16 @@ void Grid::build_relations() {
             counter++;
         }
     }
+}
 
+void Grid::insertObstacles() {
+    int i = 0;
+    std::vector<Point> obstacleVec = this->getObstacles();
+
+    // Mark all obstacles on grid as visited
+    for (i = 0; i < obstacleVec.size(); i++) {
+        this->get_vertex(obstacleVec.at(i))->set_visited();
+    }
 }
 
 const std::vector<Point> &Grid::getObstacles() const {
