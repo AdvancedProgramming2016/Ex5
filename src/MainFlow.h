@@ -7,17 +7,23 @@
 #include "Grid.h"
 #include "VehicleFactory.h"
 #include "StringParser.h"
+#include "Clock.h"
 
 class BaseParser;
+
 class Trip;
+
 class TaxiCenter;
+
+class clock;
 
 class MainFlow {
 
 private:
 
-    TaxiCenter     *taxiCenter;
-    Grid           *map;
+    TaxiCenter *taxiCenter;
+    Grid *map;
+    Clock *clock;
 
 public:
 
@@ -29,7 +35,7 @@ public:
     /*
      * Creates a map with obstacles.
      */
-    void createMap(Grid * grid);
+    void createMap(Grid *grid);
 
     /*
      * Creates a taxi center.
@@ -49,12 +55,17 @@ public:
     /*
      * Create a new trip.
      */
-    void createTrip(Trip * trip);
+    void createTrip(Trip *trip);
 
     /*
      * Returns the taxi center.
      */
     TaxiCenter *getTaxiCenter() const;
+
+    /*
+     * Returns the clock.
+     */
+    Clock *getClock();
 
     /*
      * Returns the map.

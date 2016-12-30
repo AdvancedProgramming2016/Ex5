@@ -1,9 +1,8 @@
 #include "Menu.h"
 
-Menu::Menu(Socket &socket) {
+Menu::Menu(Socket *socket) {
 
-    // Open server side socket on port 5555
-    this->socket = new Udp(1, 5555);
+    this->socket = socket;
     this->socket->initialize();
 
 }
@@ -117,6 +116,11 @@ int Menu::runMenu() {
 
                 // Advance one step
             case 9:
+
+                // Increases the time by 1
+                this->getMainFlow()->getClock()->increaseTime();
+
+                // TODO: Exit system when time is 5??
 
                 // Check that all the trips that need to start are attached
                 // to a driver

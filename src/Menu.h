@@ -24,7 +24,7 @@ public:
     /*
      * Ctor
      */
-    Menu(Socket &socket);
+    Menu(Socket *socket);
 
     /*
      * Listen to socket and receive driver.

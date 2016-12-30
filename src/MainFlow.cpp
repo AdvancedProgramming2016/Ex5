@@ -4,6 +4,7 @@
 
 void MainFlow::createMap(Grid *grid) {
     this->map = grid;
+    this->clock = new Clock();
 }
 
 void MainFlow::createTaxiCenter(Point *location) {
@@ -44,6 +45,10 @@ TaxiCenter *MainFlow::getTaxiCenter() const {
 
 Grid *MainFlow::getMap() const {
     return map;
+}
+
+Clock *MainFlow::getClock() {
+    return this->clock;
 }
 
 void MainFlow::startDriving() {
@@ -92,8 +97,9 @@ void MainFlow::startDriving() {
 
 void MainFlow::exitSystem() {
 
-    delete taxiCenter;
-    delete map;
+    delete this->taxiCenter;
+    delete this->map;
+    delete this->clock;
 
     //exit the system
     exit(0);
