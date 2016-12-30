@@ -53,7 +53,7 @@ public:
      * @param object
      */
     template <class T>
-    void deserialize(char *buffer, int bufferSize, T *object){
+    void deserialize(char *buffer, int bufferSize, T *&object){
         //Deserializing a char array.
         boost::iostreams::basic_array_source<char> device(buffer, bufferSize);
         boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);

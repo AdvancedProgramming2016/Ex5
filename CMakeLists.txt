@@ -12,6 +12,6 @@ set(SOURCE_FILES src/VehicleFactory.cpp src/VehicleFactory.h src/Point.cpp src/P
         src/StandardVehicle.cpp src/StandardVehicle.h src/IObserver.h src/ISubject.h src/MainFlow.cpp
         src/MainFlow.h src/Passenger.cpp src/Passenger.h
         src/Taxi.cpp src/Taxi.h src/TaxiCenter.cpp src/TaxiCenter.h src/Trip.cpp src/Trip.h src/Menu.cpp src/Menu.h
-        src/BaseParser.h src/StringParser.cpp src/StringParser.h sockets/Socket.cpp sockets/Socket.h sockets/Udp.cpp sockets/Udp.h Server.cpp src/Serializer.cpp src/Serializer.h main.cpp)
-add_executable(server ${SOURCE_FILES})
-target_link_libraries(server ${Boost_LIBRARIES})
+        src/BaseParser.h src/StringParser.cpp src/StringParser.h sockets/Socket.cpp sockets/Socket.h sockets/Udp.cpp sockets/Udp.h Client.cpp src/Serializer.cpp src/Serializer.h main.cpp)
+add_executable(client ${SOURCE_FILES})
+target_link_libraries(client ${Boost_LIBRARIES})

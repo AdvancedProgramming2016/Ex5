@@ -43,3 +43,5 @@ void Vehicle::increaseKmPassed() {
     kmPassed++;
 }
 
+
+

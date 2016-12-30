@@ -3,6 +3,9 @@
 #define EX2_VEHICLE_H
 
 #include <boost/serialization/access.hpp>
+#include <boost/serialization/assume_abstract.hpp>
+#include <boost/serialization/base_object.hpp>
+#include <boost/serialization/export.hpp>
 
 /**
  * The class represents an abstract vehicle.
@@ -83,5 +86,7 @@ public:
     void increaseKmPassed();
 
 };
+
+BOOST_SERIALIZATION_ASSUME_ABSTRACT(Vehicle);
 
 #endif //EX2_VEHICLE_H
