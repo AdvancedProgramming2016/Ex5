@@ -10,14 +10,8 @@ TaxiCenter::~TaxiCenter() {
     Trip *tempTrip = 0;
 
     //delete all the trips
-    while (!trips.empty()) {
-
-        //Save trip instance in a temporary pointer.
-        tempTrip = trips.front();
-        trips.pop();
-
-        //Delete the trip and pop the queue.
-        delete tempTrip;
+    for (int tripsIndex = 0; tripsIndex < trips.size(); ++tripsIndex) {
+        delete trips[tripsIndex];
     }
 
     //delete all the taxis.
@@ -120,7 +114,7 @@ std::vector<Vehicle *> &TaxiCenter::getVehicles() {
     return vehicles;
 }
 
-std::queue<Trip *> &TaxiCenter::getTrips() {
+std::vector<Trip *> &TaxiCenter::getTrips() {
     return trips;
 }
 
@@ -162,7 +156,7 @@ void TaxiCenter::addTaxi(Taxi *taxi) {
 }
 
 void TaxiCenter::addTrip(Trip *trip) {
-    this->trips.push(trip);
+    this->trips.push_back(trip);
 }
 
 void TaxiCenter::requestDriverLocation(int driverId) {

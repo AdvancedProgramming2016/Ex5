@@ -112,5 +112,31 @@ const std::vector<IObserver *> &Taxi::getObservers() const {
     return observers;
 }
 
+bool Taxi::hasTrip() {
+    return this->trip != 0;
+}
+
+void Taxi::move() {
+
+    Point * currPoint = 0;
+
+    for (int i = 0; i < this->getVehicle()->getSpeed(); i++) {
+
+        // If the driver already reached his destination
+        if (this->getTrip()->getTripRoute().size() == 0) {
+
+            break;
+        }
+
+        // Get next point to advance to
+        *currPoint = this->getTrip()->getTripRoute()[0];
+
+        // Remove point from trip route
+        this->getTrip()->getTripRoute().erase
+                (this->getTrip()->getTripRoute().begin());
+
+    }
+}
+
 
 

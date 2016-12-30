@@ -3,11 +3,12 @@
 
 Trip::Trip(unsigned int rideId, Point &startPoint,
            Point &endPoint, unsigned int numOfPassengers,
-           double tariff): endPoint(endPoint), startPoint(startPoint){
+           double tariff, unsigned tripStartTime): endPoint(endPoint), startPoint(startPoint){
     this->rideId = rideId;
     this->numOfPassengers = numOfPassengers;
     this->tariff = tariff;
     this->totalMetersPassed = 0;
+    this->tripStartTime = tripStartTime;
 
 }
 
@@ -45,6 +46,10 @@ const Point &Trip::getStartPoint() const {
 
 const Point &Trip::getEndPoint() const {
     return endPoint;
+}
+
+Trip::Trip() {
+
 }
 
 
