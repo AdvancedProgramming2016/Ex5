@@ -11,3 +11,5 @@ StandardVehicle::StandardVehicle(unsigned int vehicleId,
 StandardVehicle::StandardVehicle() {
 
 }
+
+BOOST_CLASS_EXPORT(StandardVehicle);
