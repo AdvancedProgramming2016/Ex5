@@ -8,6 +8,15 @@ Trip::Trip(unsigned int rideId, Point &startPoint,
     this->numOfPassengers = numOfPassengers;
     this->tariff = tariff;
     this->totalMetersPassed = 0;
+
+}
+
+std::vector<Point> Trip::getTripRoute() {
+    return this->tripRoute;
+}
+
+void Trip::setTripRoute(std::vector<Point> &tripRoute) {
+    this->tripRoute = tripRoute;
 }
 
 unsigned int Trip::getRideId() const {

@@ -1,6 +1,10 @@
 
 #include "Vehicle.h"
 
+Vehicle::Vehicle(){
+
+}
+
 Vehicle::Vehicle(unsigned int vehicleId, char carManufacturer,
                  char color) : vehicleId(vehicleId),
                                 carManufacturer(carManufacturer),
@@ -13,6 +17,10 @@ unsigned int Vehicle::getVehicleId() const {
 
 unsigned int Vehicle::getKmPassed() const {
     return kmPassed;
+}
+
+unsigned int Vehicle::getSpeed() const {
+    return this->speed;
 }
 
 char Vehicle::getCarManufacturer() const {

@@ -24,8 +24,18 @@ void MainFlow::createVehicle(Vehicle *vehicle) {
 
 void MainFlow::createTrip(Trip *trip) {
 
+    Bfs *bfs = new Bfs(this->map, trip->getStartPoint(), trip->getEndPoint());
+
+    // Calculate shortest route
+    bfs->get_route();
+
+    // Set trip route
+    trip->setTripRoute(bfs->getShortestPath());
+
     // Push new trip to trip queue
     this->taxiCenter->addTrip(trip);
+
+    delete bfs;
 }
 
 TaxiCenter *MainFlow::getTaxiCenter() const {

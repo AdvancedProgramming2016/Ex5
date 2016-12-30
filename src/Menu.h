@@ -6,16 +6,40 @@
 
 #include "Driver.h"
 #include "StringParser.h"
+#include "../sockets/Udp.h"
 #include "MainFlow.h"
 #include "TaxiCenter.h"
+#include "Serializer.h"
 
 class Menu {
 
 private:
     StringParser stringParser;
     MainFlow     *mainFlow;
+    Socket *socket;
+    Serializer serializer;
 
 public:
+
+    /*
+     * Ctor
+     */
+    Menu(Socket &socket);
+
+    /*
+     * Listen to socket and receive driver.
+     */
+    Driver* listenToSocket();
+
+    /*
+     * Send vehicle to socket.
+     */
+    void sendToSocket(Vehicle);
+
+    /*
+     * Gets the udp object
+     */
+    Socket* getSocket();
 
     /*
      * Initialize the grid with user input.

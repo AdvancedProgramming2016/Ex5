@@ -35,6 +35,11 @@ public:
     void get_route();
 
     /*
+     * Returns the shortest path from source to dest path.
+     */
+    std::vector<Point> &getShortestPath();
+
+    /*
      * Prints the points of the shortest path
      */
     void print_points();

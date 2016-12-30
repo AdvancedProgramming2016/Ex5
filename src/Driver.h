@@ -2,7 +2,7 @@
 #ifndef EX2_DRIVER_H
 #define EX2_DRIVER_H
 
-#include <unwind.h>
+#include <boost/serialization/access.hpp>
 #include "Taxi.h"
 
 /**
@@ -21,6 +21,18 @@ private:
     unsigned counterOfCustomers;
     char     maritalStatus;
 
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive &archive, const unsigned int version) {
+        archive & driverId;
+        archive & age;
+        archive & yearsOfExperience;
+        archive & vehicleId;
+        archive & avgSatisfaction;
+        archive & counterOfCustomers;
+        archive & maritalStatus;
+    }
+
 public:
 
     /*
@@ -29,6 +41,8 @@ public:
     Driver(unsigned int driverId, unsigned int age,
            char maritalStatus, unsigned int yearsOfExperience,
            unsigned int vehicleId);
+
+    Driver(); //TODO delete if not necessary for serialization
 
     /*
     * Returns the driver id.
@@ -69,6 +83,7 @@ public:
      * Returns the driver's vehicle's id number.
      */
     unsigned int getVehicleId() const;
+
 };
 
 
