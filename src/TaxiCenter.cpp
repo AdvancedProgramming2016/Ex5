@@ -1,5 +1,6 @@
 
 #include "TaxiCenter.h"
+#include "../sockets/Socket.h"
 
 TaxiCenter::TaxiCenter(Point *taxiCenterLocation) :
         taxiCenterLocation(taxiCenterLocation) {}
@@ -34,6 +35,46 @@ TaxiCenter::~TaxiCenter() {
         delete vehicles[vehiclesIndex];
     }
 
+}
+
+void TaxiCenter::assignTrip(Socket &socket) {
+
+    unsigned int i = 0;
+    std::vector<Taxi *> taxiVec = this->getTaxis();
+    std::queue<Trip *> &tripQueue = this->getTrips();
+
+    for (i = 0; i < taxiVec.size(); i++) {
+
+        // If trip queue is empty and there are not more trips
+        if (tripQueue.empty()) {
+            break;
+        }
+
+        Trip *currTrip = tripQueue.front();
+        Taxi *currTaxi = taxiVec.at(i);
+
+        // If current taxi already has a trip, or the taxi is not at the
+        // trip start point.
+        if (currTaxi->getTrip() != 0) {
+            continue;
+        } else {
+
+            // Calculate new coefficient according to vehicle type
+            currTrip->setTariff(currTrip->getTariff()
+                                * currTaxi->getVehicle()->getCoefficient());
+
+            // Assign trip to taxi
+            currTaxi->setTrip(currTrip);
+
+            // Set the new taxi's current location to end point
+            currTaxi->notifyObservers();
+
+            delete currTrip;
+            tripQueue.pop();
+
+            this->getSocket
+        }
+    }
 }
 
 void TaxiCenter::moveOneStep() {

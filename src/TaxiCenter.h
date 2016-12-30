@@ -53,6 +53,8 @@ public:
     */
     void createTaxi(Driver *driver);
 
+    void assignTrip();
+
     /*
      * Move the taxis one step
      */
