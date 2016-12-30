@@ -48,5 +48,9 @@ const Point &Trip::getEndPoint() const {
     return endPoint;
 }
 
+Trip::Trip() {
+
+}
+
 
 

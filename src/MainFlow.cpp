@@ -55,15 +55,15 @@ void MainFlow::startDriving() {
 
     unsigned int i = 0;
     std::vector<Taxi *> taxiVec = this->taxiCenter->getTaxis();
-    std::queue<Trip *> &tripQueue = this->taxiCenter->getTrips();
+    std::vector<Trip *> &tripVec = this->taxiCenter->getTrips();
 
     for (i = 0; i < taxiVec.size(); i++) {
 
-        Trip *currTrip = tripQueue.front();
+        Trip *currTrip = tripVec[0];
         Taxi *currTaxi = taxiVec.at(i);
 
         // If trip queue is empty and there are not more trips
-        if (tripQueue.empty()) {
+        if (tripVec.empty()) {
             break;
         }
 
@@ -86,7 +86,7 @@ void MainFlow::startDriving() {
             currTaxi->notifyObservers();
 
             delete currTrip;
-            tripQueue.pop();
+           // tripVec.pop();
 
             //Make the driver available to take another trip.
             currTaxi->setTrip(0);

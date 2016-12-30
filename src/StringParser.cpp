@@ -53,7 +53,8 @@ Grid *StringParser::parseGridInput() {
 
         std::cin >> userInput;
         this->splitByComma(inputArr, numOfParams, userInput);
-        obstacles.push_back(Point(atoi(inputArr[x].c_str()), atoi(inputArr[y].c_str())));
+        obstacles.push_back(
+                Point(atoi(inputArr[x].c_str()), atoi(inputArr[y].c_str())));
     }
 
     return new Grid(height, width, obstacles);
@@ -70,6 +71,7 @@ Trip *StringParser::parseTripInput() {
     int         endY            = 4;
     int         numOfPassengers = 5;
     int         tariff          = 6;
+    int         time            = 7;
     std::string userInput;
     std::string inputArr[numOfParams];
 
@@ -77,12 +79,13 @@ Trip *StringParser::parseTripInput() {
 
     this->splitByComma(inputArr, numOfParams, userInput);
 
-    Point sPoint(atoi(inputArr[startX].c_str()), atoi(inputArr[startY].c_str()));
+    Point sPoint(atoi(inputArr[startX].c_str()),
+                 atoi(inputArr[startY].c_str()));
     Point ePoint(atoi(inputArr[endX].c_str()), atoi(inputArr[endY].c_str()));
 
     return new Trip(atoi(inputArr[id].c_str()), sPoint, ePoint,
                     atoi(inputArr[numOfPassengers].c_str()),
-                    atof(inputArr[tariff].c_str()));
+                    atof(inputArr[tariff].c_str()), atoi(inputArr[time].c_str()));
 
 }
 

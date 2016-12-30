@@ -23,7 +23,7 @@
 #include "src/StringParser.h"
 #include <cstdlib>
 
-void void closeClient(Taxi *taxi, Driver *driver, Vehicle *vehicle, Socket *socket);
+void closeClient(Taxi *taxi, Driver *driver, Vehicle *vehicle, Socket *socket);
 
 int main(int argc, char *argv[]) {
 

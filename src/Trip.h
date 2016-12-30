@@ -5,6 +5,9 @@
 
 #include "Taxi.h"
 #include "Bfs.h"
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/vector.hpp>
+
 
 /**
  * The class represents a trip, which a taxi takes along the map, from one point to another.
@@ -25,6 +28,20 @@ private:
     Point    endPoint;
     std::vector<Point> tripRoute; // Vector with all the points of the trip
 
+    friend class boost::serialization::access;
+
+    template<class Archive>
+    void serialize(Archive &archive, const unsigned int version) {
+        archive & rideId;
+        archive & totalMetersPassed;
+        archive & numOfPassengers;
+        archive & tripStartTime;
+        archive & tariff;
+        archive & startPoint;
+        archive & endPoint;
+        archive & tripRoute;
+    }
+
 public:
 
 
@@ -35,6 +52,7 @@ public:
          Point &endPoint, unsigned int numOfPassengers,
          double tariff, unsigned int tripStartTime);
 
+    Trip(); //TODO delete if not necessary for serialization
     /*
      * Returns the route of the trip
      */
