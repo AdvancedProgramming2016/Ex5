@@ -1,6 +1,6 @@
 #include "Menu.h"
 
-Menu::Menu(Socket &socket) {
+Menu::Menu(Socket *socket) {
 
     // Open server side socket on port 5555
     this->socket = new Udp(1, 5555, "127.0.0.1");

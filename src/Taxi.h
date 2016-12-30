@@ -103,6 +103,16 @@ public:
     void endTrip();
 
     /*
+     * Returns true if the taxi has a trip, false otherwise.
+     */
+    bool hasTrip();
+
+    /*
+     * moves the taxi towards its destination.
+     */
+    void move();
+
+    /*
      * Register a new observer on the taxi.
      */
     virtual int registerObserver(IObserver *observer);

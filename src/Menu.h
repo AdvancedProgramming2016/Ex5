@@ -16,8 +16,8 @@ class Menu {
 private:
     StringParser stringParser;
     MainFlow     *mainFlow;
-    Socket *socket;
-    Serializer serializer;
+    Socket       *socket;
+    Serializer   serializer;
 
 public:
 
@@ -29,7 +29,7 @@ public:
     /*
      * Listen to socket and receive driver.
      */
-    Driver* listenToSocket();
+    Driver *listenToSocket();
 
     /*
      * Send vehicle to socket.
@@ -39,7 +39,7 @@ public:
     /*
      * Gets the udp object
      */
-    Socket* getSocket();
+    Socket *getSocket();
 
     /*
      * Initialize the grid with user input.

@@ -19,6 +19,7 @@ private:
     unsigned rideId;
     unsigned totalMetersPassed;
     unsigned numOfPassengers;
+    unsigned tripStartTime;
     double   tariff;
     Point    startPoint;
     Point    endPoint;
@@ -32,7 +33,7 @@ public:
      */
     Trip(unsigned int rideId, Point &startPoint,
          Point &endPoint, unsigned int numOfPassengers,
-         double tariff);
+         double tariff, unsigned int tripStartTime);
 
     /*
      * Returns the route of the trip
