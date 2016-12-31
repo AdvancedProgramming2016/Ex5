@@ -37,6 +37,11 @@ public:
     void sendToSocket(Vehicle);
 
     /*
+     * Returns serializer
+     */
+    Serializer getSerializer();
+
+    /*
      * Gets the udp object
      */
     Socket *getSocket();

@@ -3,7 +3,7 @@
 Menu::Menu(Socket *socket) {
 
     // Open server side socket on port 5555
-    this->socket = new Udp(1, 5555, "127.0.0.1");
+    this->socket = socket;
     this->socket->initialize();
 
 }
@@ -33,8 +33,8 @@ int Menu::initializeGame() {
 void Menu::sendToSocket(Vehicle) {
 
     // TODO: Didn't understand what kind of vehicle we need to send back
-    Vehicle     *vehicle = new StandardVehicle(0, 'H', 'G');
-    char        buffer2[1024];
+    Vehicle *vehicle = new StandardVehicle(0, 'H', 'G');
+    char buffer2[1024];
     std::string serialVehicle;
     serialVehicle = this->serializer.serialize(vehicle);
 
@@ -54,6 +54,11 @@ Driver *Menu::listenToSocket() {
 
 }
 
+
+Serializer Menu::getSerializer() {
+    return this->serializer;
+}
+
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "OCDFAInspection"
 
@@ -69,7 +74,7 @@ int Menu::runMenu() {
 
             // Create driver
             case 1: {
-                int i            = 0;
+                int i = 0;
                 int numOfDrivers = 0;
 
                 // Receive from user num of drivers to create
@@ -120,19 +125,30 @@ int Menu::runMenu() {
 
                 // Check that all the trips that need to start are attached
                 // to a driver
-                this->getMainFlow()->startDriving();
+                this->getMainFlow()->getTaxiCenter()->assignTrip(
+                        *(this->getSocket()), this->getSerializer(),
+                        this->getMainFlow()->getClock()->getTime());
 
                 // Move all the taxis one step
-                this->getMainFlow()->getTaxiCenter()->moveOneStep();
+                this->getMainFlow()->getTaxiCenter()->moveOneStep(
+                        *(this->getSocket()), this->getSerializer(),
+                        this->getMainFlow()->getClock()->getTime());
 
                 // Invalid input
             default:
+                int i = 0;
+
+                // Notify all taxis to exit program
+                for (i = 0; i <
+                            this->getMainFlow()->getTaxiCenter()->getTaxis().size(); i++) {
+                    std::string exit = "exit";
+                    this->getSocket()->sendData(exit);
+                }
                 exit(1);
 
         }
-
     }
-
 }
+
 
 #pragma clang diagnostic pop

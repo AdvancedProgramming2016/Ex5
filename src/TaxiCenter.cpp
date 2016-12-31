@@ -1,4 +1,6 @@
 #include "TaxiCenter.h"
+#include "../sockets/Socket.h"
+#include "Serializer.h"
 
 TaxiCenter::TaxiCenter(Point *taxiCenterLocation) :
         taxiCenterLocation(taxiCenterLocation) {}
@@ -17,7 +19,7 @@ TaxiCenter::~TaxiCenter() {
         delete taxis[taxisIndex];
     }
 
-    
+
     for (int driversIndex = 0; driversIndex < drivers.size(); ++driversIndex) {
         delete drivers[driversIndex];
     }
@@ -30,39 +32,70 @@ TaxiCenter::~TaxiCenter() {
 
 }
 
-void TaxiCenter::moveOneStep() {
+void TaxiCenter::assignTrip(Socket &socket, Serializer &serializer,
+                            unsigned int currTime) {
+
+    unsigned int i = 0;
+    std::vector<Trip *> &tripVec = this->getTrips();
+    std::vector<Taxi *> &taxiVec = this->getTaxis();
+
+    int j = 0;
+    for (j = 0; j < taxiVec.size(); j++) {
+
+        if (taxiVec.at(j)->getTrip() == 0) {
+            for (i = 0; i < this->getTrips().size(); i++) {
+
+                // If trip vector is empty and there are not more trips
+                if (tripVec.empty()) {
+                    break;
+                }
+
+                // Get current trip
+                Trip *currTrip = tripVec.at(i);
+
+                // Check that start time is valid
+                if (currTrip->getTripStartTime() == currTime) {
+
+                    // Send trip to client
+                    std::string serialTrip;
+                    serialTrip = serializer.serialize(currTrip);
+                    socket.sendData(serialTrip);
+                }
+                continue;
+            }
+        }
+    }
+
+}
+
+
+void TaxiCenter::moveOneStep(Socket &socket, Serializer &serializer,
+                             int currTime) {
 
     std::vector<Taxi *> taxiVec = this->getTaxis();
     int i = 0;
 
-    // Update location of all taxis
+    // Check which driver has trip
     for (i = 0; i < taxiVec.size(); i++) {
 
         // Gets current taxi
-        Taxi *currTaxi = taxiVec[i];
-        Point *currPoint;
+        Taxi *currTaxi = taxiVec.at(i);
+        int tripEndTime = currTaxi->getTrip()->getTripStartTime() +
+                                   currTaxi->getTrip()->getTripRoute().size();
+        // If taxi has trip and hasn't ended yes, send him message to move one step
+        if (currTaxi->getTrip() != 0 && tripEndTime > currTime) {
 
-        int j = 0;
-        for (j = 0; j < currTaxi->getVehicle()->getSpeed(); j++) {
-
-            // If the driver already reached his destination
-            if (currTaxi->getTrip()->getTripRoute().size() == 0) {
-                break;
-            }
-
-            // Get next point to advance to
-            *currPoint = currTaxi->getTrip()->getTripRoute()[0];
-
-            // Remove point from trip route
-            currTaxi->getTrip()->getTripRoute().erase
-                    (currTaxi->getTrip()->getTripRoute().begin());
-
+            std::string go = "go";
+            socket.sendData(go);
         }
+        else if(tripEndTime <= currTime) {
+            std::string exit = "exit";
+            socket.sendData(exit);
 
-        // Set new position
-        currTaxi->setCurrentPosition(*currPoint);
+            // Set trip to be empty
+            currTaxi->setTrip(0);
+        }
     }
-
 }
 
 std::vector<Driver *> &TaxiCenter::getDrivers() {

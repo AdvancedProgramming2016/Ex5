@@ -28,11 +28,6 @@ private:
 public:
 
     /*
-     * Connects all the vacant drivers and trip to taxis and drives.
-     */
-    void startDriving();
-
-    /*
      * Creates a map with obstacles.
      */
     void createMap(Grid *grid);

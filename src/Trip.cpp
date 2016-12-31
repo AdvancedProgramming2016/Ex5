@@ -24,6 +24,10 @@ unsigned int Trip::getRideId() const {
     return rideId;
 }
 
+unsigned int Trip::getTripStartTime() {
+    return this->tripStartTime;
+}
+
 unsigned int Trip::getTotalMetersPassed() const {
     return totalMetersPassed;
 }

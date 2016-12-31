@@ -7,6 +7,8 @@
 #include "Taxi.h"
 #include "ISubject.h"
 #include "StringParser.h"
+#include "../sockets/Socket.h"
+#include "Serializer.h"
 
 class Driver;
 
@@ -54,7 +56,10 @@ public:
     /*
      * Move the taxis one step
      */
-    void moveOneStep();
+    void assignTrip(Socket &socket, Serializer &serializer,
+                                unsigned int currTime);
+
+    void moveOneStep(Socket &socket, Serializer &serializer, int currTime);
 
     /*
      * Add a driver to the drivers the taxi center has.

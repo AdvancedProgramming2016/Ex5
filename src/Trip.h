@@ -63,6 +63,8 @@ public:
      */
     void setTripRoute(std::vector<Point> &tripRoute);
 
+    unsigned int getTripStartTime();
+
     /*
      * Returns the ride id.
      */
