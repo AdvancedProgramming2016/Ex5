@@ -33,7 +33,15 @@ public:
      */
     const std::vector<Point> &getObstacles() const;
 
+    /*
+     * Inserts the obstacles into the grid.
+     */
     void insertObstacles();
+
+    /*
+     * Returns true if the given point is an obstacle.
+     */
+    bool isObstacle(const Point &point);
 
 };
 

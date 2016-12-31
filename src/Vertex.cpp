@@ -42,8 +42,13 @@ Vertex *Vertex::getFather() const {
     return m_father;
 }
 
-void Vertex::setFather(Vertex &father) {
-    Vertex::m_father = &father;
+void Vertex::setFather(Vertex *father) {
+    Vertex::m_father = father;
+}
+
+void Vertex::set_unvisited() {
+
+    this->m_is_visited = false;
 }
 
 

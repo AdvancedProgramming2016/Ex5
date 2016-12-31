@@ -50,7 +50,7 @@ void Bfs::get_route() {
 
             if (!temp->isM_is_visited()) {
                 temp->set_visited();
-                temp->setFather(*v);
+                temp->setFather(v);
                 queue.push(temp);
 
             }
@@ -75,6 +75,8 @@ std::vector<Point> Bfs::search_fathers(std::vector<Vertex> vector) {
 
     retVector.push_back(vector.at(0).getM_point());
 
+    std::reverse(retVector.begin(), retVector.end());
+
     return retVector;
 }
 
@@ -85,3 +87,5 @@ void Bfs::print_points() {
         std::cout << shortest_path.at(i) << std::endl;
     }
 }
+
+

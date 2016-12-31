@@ -29,12 +29,12 @@ public:
     /*
      * Listen to socket and receive driver.
      */
-    Driver *listenToSocket();
+    Driver *listenToSocketForDriver();
 
     /*
      * Send vehicle to socket.
      */
-    void sendToSocket(Vehicle);
+    void sendToSocketVehicle(unsigned int vehicleId);
 
     /*
      * Returns serializer
@@ -60,6 +60,8 @@ public:
      * Return the mainFlow.
      */
     MainFlow *getMainFlow();
+
+    Vehicle* getDriverVehicle(unsigned int vehicleId);
 
 };
 

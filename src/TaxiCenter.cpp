@@ -56,10 +56,15 @@ void TaxiCenter::assignTrip(Socket &socket, Serializer serializer,
                 // Check that start time is valid
                 if (currTrip->getTripStartTime() == currTime) {
 
+                    //Update the current taxi with a trip
+                    taxiVec[j]->setTrip(currTrip);
+
                     // Send trip to client
                     std::string serialTrip;
                     serialTrip = serializer.serialize(currTrip);
                     socket.sendData(serialTrip);
+
+                    tripVec.erase(tripVec.begin() + i);
                 }
             }
         }
@@ -86,12 +91,20 @@ void TaxiCenter::moveOneStep(Socket &socket, Serializer serializer) {
 
             // Wait for drivers answer
             char buffer[1024];
+            Point *currPoint = 0;
             socket.reciveData(buffer, 1024);
+            serializer.deserialize(buffer, sizeof(buffer), currPoint);
+
+            std::cout << *currPoint << std::endl;
+
+            currTaxi->setCurrentPosition(*currPoint);
 
             // If driver didn't move one step and his trip ended
-            if (!strcmp(buffer, "ack")) {
-                Driver *driver;
-                serializer.deserialize(buffer, sizeof(buffer), driver);
+            if (*currPoint == currTaxi->getTrip()->getEndPoint()) {
+                delete currTaxi->getTrip();
+                currTaxi->setTrip(0);
+                // Driver *driver;
+                //serializer.deserialize(buffer, sizeof(buffer), driver);
 
                 // Set trip to finish
                 currTaxi->setTrip(0);
@@ -123,6 +136,7 @@ Point *TaxiCenter::getTaxiCenterLocation() {
 void TaxiCenter::addDriver(Driver *driver) {
 
     drivers.push_back(driver);
+    this->createTaxi(driver);
 }
 
 void TaxiCenter::addVehicle(Vehicle *vehicle) {

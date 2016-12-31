@@ -8,6 +8,7 @@
 #include "src/Driver.h"
 #include "sockets/Udp.h"
 #include "src/StandardVehicle.h"
+#include "src/Menu.h"
 
 void check(){
 
@@ -42,10 +43,11 @@ void check(){
     udp.sendData(serial_vehicle);
 
 }
-int main(){
+int main(int argc, char *argv[]){
 
-
-    check();
-    return  0;
+    Socket *socket = new Udp(1, atoi(argv[1]), "127.0.0.1");
+    Menu menu(socket);
+    menu.initializeGame();
+    menu.runMenu();
 
 }

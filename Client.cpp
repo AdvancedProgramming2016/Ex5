@@ -64,35 +64,51 @@ int main(int argc, char *argv[]) {
     std::cout << vehicle->getCoefficient() << std::endl; //TODO delete
 
     taxi = new Taxi(driver, vehicle, Point(0, 0));
+    serialDriver = "";
 
     //Take input from the server while it's not an exit command.
     while (!exitCalled) {
 
-        socket->reciveData(buffer, sizeof(buffer));
+        char communicationBuffer[1024];
+
+        socket->reciveData(communicationBuffer, sizeof(communicationBuffer));
+        std::cout << communicationBuffer << std::endl;
 
         //If received "exit", close the client.
-        if (strcmp(buffer, "exit")) {
+        if (strcmp(communicationBuffer, "exit") == 0) {
 
             exitCalled = true;
         }
 
         //If received "go", move the taxi towards its destination.
-        else if (strcmp(buffer, "go")) {
+        else if (strcmp(communicationBuffer, "go") == 0) {
 
             taxi->move();
+            std::string serial = serializer.serialize(&taxi->getCurrentPosition());
+            socket->sendData(serial);
 
+            /*
             //If the taxi finished the trip, notify the server.
             if (!taxi->hasTrip()) {
 
                 serialDriver = serializer.serialize(taxi->getDriver());
                 socket->sendData(serialDriver);
             }
+            else{
+
+                //Notify the server that the command was received.
+                std::string serial = serializer.serialize(&taxi->getCurrentPosition());
+                socket->sendData(serial);
+            }
+             */
         }
 
         else {
 
+            trip = 0;
             //Set the received trip from the server in the taxi.
-            serializer.deserialize(buffer, sizeof(buffer), trip);
+            serializer.deserialize(communicationBuffer, sizeof(communicationBuffer), trip);
+            taxi->setTrip(trip);
         }
 
     }

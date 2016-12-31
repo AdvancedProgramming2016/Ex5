@@ -3,7 +3,7 @@
 #include <cstdlib>
 
 void MainFlow::createMap(Grid *grid) {
-    this->map = grid;
+    this->map   = grid;
     this->clock = new Clock();
 }
 
@@ -15,7 +15,6 @@ void MainFlow::createTaxiCenter(Point *location) {
 void MainFlow::createDriver(Driver *driver) {
 
     taxiCenter->addDriver(driver);
-    taxiCenter->createTaxi(driver);
 }
 
 void MainFlow::createVehicle(Vehicle *vehicle) {
@@ -29,6 +28,7 @@ void MainFlow::createTrip(Trip *trip) {
 
     // Calculate shortest route
     bfs->get_route();
+    cleanGrid();
 
     // Set trip route
     trip->setTripRoute(bfs->getShortestPath());
@@ -59,6 +59,23 @@ void MainFlow::exitSystem() {
 
     //exit the system
     exit(0);
+}
+
+void MainFlow::cleanGrid() {
+
+    Vertex *v;
+
+    for (int i = 0; i < this->map->get_edges().size(); ++i) {
+
+        v = this->map->get_vertex(map->get_edges()[i].getM_point());
+
+        if(!this->getMap()->isObstacle(v->getM_point())){
+
+            v->set_unvisited();
+        }
+
+        v->setFather(0);
+    }
 }
 
 

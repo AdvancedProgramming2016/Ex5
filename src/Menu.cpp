@@ -5,6 +5,8 @@ Menu::Menu(Socket *socket) {
     // Open server side socket on port 5555
     this->socket = socket;
     this->socket->initialize();
+    this->mainFlow = new MainFlow;
+
 
 }
 
@@ -30,10 +32,10 @@ int Menu::initializeGame() {
     this->getMainFlow()->createTaxiCenter(&location);
 }
 
-void Menu::sendToSocket(Vehicle) {
+void Menu::sendToSocketVehicle(unsigned int vehicleId) {
 
     // TODO: Didn't understand what kind of vehicle we need to send back
-    Vehicle *vehicle = new StandardVehicle(0, 'H', 'G');
+    Vehicle *vehicle = getDriverVehicle(vehicleId);
     char buffer2[1024];
     std::string serialVehicle;
     serialVehicle = this->serializer.serialize(vehicle);
@@ -42,11 +44,12 @@ void Menu::sendToSocket(Vehicle) {
 
 }
 
-Driver *Menu::listenToSocket() {
+Driver *Menu::listenToSocketForDriver() {
 
     char buffer[1024];
     this->socket->reciveData(buffer, 1024);
 
+    std::cout << buffer << std::endl;
     Driver *driver;
     this->serializer.deserialize(buffer, sizeof(buffer), driver);
 
@@ -73,21 +76,27 @@ int Menu::runMenu() {
         switch (userOption) {
 
             // Create driver
-            case 1:
-
+            case 1:{
                 int numOfDrivers = 0;
 
                 // Receive from user num of drivers to create
                 std::cin >> numOfDrivers;
 
                 Driver *driver;
+                Vehicle *vehicle;
 
                 // Receive driver objects from client
                 for (i = 0; i < numOfDrivers; i++) {
 
-                    driver = this->listenToSocket();
+                    driver = this->listenToSocketForDriver();
+                    vehicle =  getDriverVehicle(driver->getVehicleId());
+                    this->getMainFlow()->getTaxiCenter()->addDriver(driver);
 
+                    sendToSocketVehicle(driver->getVehicleId());
                 }
+            }
+
+
                 break;
 
                 // Create trip
@@ -121,17 +130,18 @@ int Menu::runMenu() {
                 // Advance one step
             case 9:
 
+                // Move all the taxis one step
+                this->getMainFlow()->getTaxiCenter()->moveOneStep(
+                        *(this->getSocket()), this->getSerializer());
+
                 // Check that all the trips that need to start are attached
                 // to a driver
                 this->getMainFlow()->getTaxiCenter()->assignTrip(
                         *(this->getSocket()), this->getSerializer(),
                         this->getMainFlow()->getClock()->getTime());
 
-                this->getMainFlow()->getTaxiCenter()->moveOneStep(
-                        *(this->getSocket()), this->getSerializer());
-                // Move all the taxis one step
-
                 // Invalid input
+                break;
             default:
 
                 // Notify all taxis to exit program
@@ -142,6 +152,18 @@ int Menu::runMenu() {
                     this->getSocket()->sendData(exit);
                 }
                 exit(1);
+        }
+    }
+}
+
+Vehicle *Menu::getDriverVehicle(unsigned int vehicleId) {
+
+    std::vector<Vehicle*> vehicles = this->getMainFlow()->getTaxiCenter()->getVehicles();
+    for (int i = 0; i < vehicles.size(); ++i) {
+
+        if(vehicles[i]->getVehicleId() == vehicleId){
+
+            return vehicles[i];
         }
     }
 }

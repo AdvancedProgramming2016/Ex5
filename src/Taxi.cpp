@@ -118,7 +118,8 @@ bool Taxi::hasTrip() {
 
 void Taxi::move() {
 
-    Point * currPoint = 0;
+    Point              *currPoint = 0;
+    std::vector<Point> route      = this->getTrip()->getTripRoute();
 
     for (int i = 0; i < this->getVehicle()->getSpeed(); i++) {
 
@@ -128,12 +129,14 @@ void Taxi::move() {
             break;
         }
 
-        // Get next point to advance to
-        *currPoint = this->getTrip()->getTripRoute()[0];
-
         // Remove point from trip route
-        this->getTrip()->getTripRoute().erase
-                (this->getTrip()->getTripRoute().begin());
+        this->getTrip()->getTripRoute().erase(
+                this->getTrip()->getTripRoute().begin());
+
+        // Get next point to advance to
+        currPoint = &this->getTrip()->getTripRoute()[0];
+
+        this->setCurrentPosition(*currPoint);
 
     }
 }

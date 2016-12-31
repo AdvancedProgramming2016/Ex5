@@ -72,3 +72,16 @@ void Grid::insertObstacles() {
 const std::vector<Point> &Grid::getObstacles() const {
     return obstacles;
 }
+
+bool Grid::isObstacle(const Point &point) {
+
+    for (int i = 0; i < this->obstacles.size(); ++i) {
+
+        if(obstacles[i] == point){
+            return true;
+        }
+    }
+
+    return false;
+}
+

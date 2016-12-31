@@ -56,7 +56,7 @@ public:
     /*
      * Returns the route of the trip
      */
-    std::vector<Point> getTripRoute();
+    std::vector<Point>& getTripRoute();
 
     /*
      * Set the trip route

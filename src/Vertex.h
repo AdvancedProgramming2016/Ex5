@@ -61,6 +61,8 @@ public:
      */
     void set_visited();
 
+    void set_unvisited();
+
     /*
      * The method returns the father vertex of the given vertex
      */
@@ -69,7 +71,7 @@ public:
     /*
      * The method sets a father for the vertex
      */
-    void setFather(Vertex &father);
+    void setFather(Vertex *father);
 
 };
 

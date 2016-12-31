@@ -22,8 +22,8 @@ class MainFlow {
 private:
 
     TaxiCenter *taxiCenter;
-    Grid *map;
-    Clock *clock;
+    Grid       *map;
+    Clock      *clock;
 
 public:
 
@@ -71,6 +71,8 @@ public:
      * Exits the taxiCenter system by deleting all the instances and exiting.
      */
     void exitSystem();
+
+    void cleanGrid();
 
 };
 

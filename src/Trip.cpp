@@ -12,7 +12,7 @@ Trip::Trip(unsigned int rideId, Point &startPoint,
 
 }
 
-std::vector<Point> Trip::getTripRoute() {
+std::vector<Point>& Trip::getTripRoute() {
     return this->tripRoute;
 }
 
