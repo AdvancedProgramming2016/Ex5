@@ -32,7 +32,7 @@ TaxiCenter::~TaxiCenter() {
 
 }
 
-void TaxiCenter::assignTrip(Socket &socket, Serializer &serializer,
+void TaxiCenter::assignTrip(Socket &socket, Serializer serializer,
                             unsigned int currTime) {
 
     unsigned int i = 0;
@@ -66,7 +66,7 @@ void TaxiCenter::assignTrip(Socket &socket, Serializer &serializer,
     }
 }
 
-void TaxiCenter::moveOneStep(Socket &socket, Serializer &serializer) {
+void TaxiCenter::moveOneStep(Socket &socket, Serializer serializer) {
 
     std::vector<Taxi *> taxiVec = this->getTaxis();
     int i = 0;

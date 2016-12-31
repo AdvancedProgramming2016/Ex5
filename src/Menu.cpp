@@ -64,7 +64,8 @@ Serializer Menu::getSerializer() {
 int Menu::runMenu() {
 
     int userOption = 0;
-
+    int i = 0;
+    
     while (userOption <= 9) {
 
         std::cin >> userOption;
@@ -73,7 +74,7 @@ int Menu::runMenu() {
 
             // Create driver
             case 1:
-                int i = 0;
+
                 int numOfDrivers = 0;
 
                 // Receive from user num of drivers to create
@@ -132,16 +133,15 @@ int Menu::runMenu() {
 
                 // Invalid input
             default:
-                int i = 0;
 
                 // Notify all taxis to exit program
                 for (i = 0; i <
                             this->getMainFlow()->getTaxiCenter()->getTaxis().size(); i++) {
                     std::string exit = "exit";
+                    // Send to eache driver exit command
                     this->getSocket()->sendData(exit);
                 }
                 exit(1);
-
         }
     }
 }
