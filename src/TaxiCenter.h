@@ -59,7 +59,7 @@ public:
     void assignTrip(Socket &socket, Serializer &serializer,
                                 unsigned int currTime);
 
-    void moveOneStep(Socket &socket, Serializer &serializer, int currTime);
+    void moveOneStep(Socket &socket, Serializer &serializer);
 
     /*
      * Add a driver to the drivers the taxi center has.

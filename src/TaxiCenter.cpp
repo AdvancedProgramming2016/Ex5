@@ -47,7 +47,7 @@ void TaxiCenter::assignTrip(Socket &socket, Serializer &serializer,
 
                 // If trip vector is empty and there are not more trips
                 if (tripVec.empty()) {
-                    break;
+                    return;
                 }
 
                 // Get current trip
@@ -61,16 +61,12 @@ void TaxiCenter::assignTrip(Socket &socket, Serializer &serializer,
                     serialTrip = serializer.serialize(currTrip);
                     socket.sendData(serialTrip);
                 }
-                continue;
             }
         }
     }
-
 }
 
-
-void TaxiCenter::moveOneStep(Socket &socket, Serializer &serializer,
-                             int currTime) {
+void TaxiCenter::moveOneStep(Socket &socket, Serializer &serializer) {
 
     std::vector<Taxi *> taxiVec = this->getTaxis();
     int i = 0;
@@ -80,20 +76,26 @@ void TaxiCenter::moveOneStep(Socket &socket, Serializer &serializer,
 
         // Gets current taxi
         Taxi *currTaxi = taxiVec.at(i);
-        int tripEndTime = currTaxi->getTrip()->getTripStartTime() +
-                                   currTaxi->getTrip()->getTripRoute().size();
-        // If taxi has trip and hasn't ended yes, send him message to move one step
-        if (currTaxi->getTrip() != 0 && tripEndTime > currTime) {
 
+        // If taxi has trip and hasn't ended yet, send him message to move one step
+        if (currTaxi->getTrip() != 0) {
+
+            // Tell driver to advance one step
             std::string go = "go";
             socket.sendData(go);
-        }
-        else if(tripEndTime <= currTime) {
-            std::string exit = "exit";
-            socket.sendData(exit);
 
-            // Set trip to be empty
-            currTaxi->setTrip(0);
+            // Wait for drivers answer
+            char buffer[1024];
+            socket.reciveData(buffer, 1024);
+
+            // If driver didn't move one step and his trip ended
+            if (!strcmp(buffer, "ack")) {
+                Driver *driver;
+                serializer.deserialize(buffer, sizeof(buffer), driver);
+
+                // Set trip to finish
+                currTaxi->setTrip(0);
+            }
         }
     }
 }

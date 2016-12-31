@@ -17,10 +17,6 @@ Grid::Grid(unsigned int length, unsigned int width,
         }
     }
 
-    for (int j = 0; j < obstacles.size(); ++j) {
-        get_vertex(obstacles[j])->set_visited();
-    }
-
     build_relations();
     this->insertObstacles();
 

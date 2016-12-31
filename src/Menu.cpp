@@ -54,7 +54,6 @@ Driver *Menu::listenToSocket() {
 
 }
 
-
 Serializer Menu::getSerializer() {
     return this->serializer;
 }
@@ -73,7 +72,7 @@ int Menu::runMenu() {
         switch (userOption) {
 
             // Create driver
-            case 1: {
+            case 1:
                 int i = 0;
                 int numOfDrivers = 0;
 
@@ -88,8 +87,6 @@ int Menu::runMenu() {
                     driver = this->listenToSocket();
 
                 }
-            }
-
                 break;
 
                 // Create trip
@@ -129,10 +126,9 @@ int Menu::runMenu() {
                         *(this->getSocket()), this->getSerializer(),
                         this->getMainFlow()->getClock()->getTime());
 
-                // Move all the taxis one step
                 this->getMainFlow()->getTaxiCenter()->moveOneStep(
-                        *(this->getSocket()), this->getSerializer(),
-                        this->getMainFlow()->getClock()->getTime());
+                        *(this->getSocket()), this->getSerializer());
+                // Move all the taxis one step
 
                 // Invalid input
             default:
