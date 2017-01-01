@@ -3,7 +3,10 @@
 #include "Serializer.h"
 
 TaxiCenter::TaxiCenter(Point *taxiCenterLocation) :
-        taxiCenterLocation(taxiCenterLocation) {}
+        taxiCenterLocation(taxiCenterLocation) {
+
+    clock = new Clock;
+}
 
 TaxiCenter::~TaxiCenter() {
 
@@ -32,8 +35,7 @@ TaxiCenter::~TaxiCenter() {
 
 }
 
-void TaxiCenter::assignTrip(Socket &socket, Serializer serializer,
-                            unsigned int currTime) {
+void TaxiCenter::assignTrip(Socket &socket, Serializer serializer) {
 
     unsigned int i = 0;
     std::vector<Trip *> &tripVec = this->getTrips();
@@ -54,7 +56,7 @@ void TaxiCenter::assignTrip(Socket &socket, Serializer serializer,
                 Trip *currTrip = tripVec.at(i);
 
                 // Check that start time is valid
-                if (currTrip->getTripStartTime() == currTime) {
+                if (currTrip->getTripStartTime() == this->clock->getTime()) {
 
                     //Update the current taxi with a trip
                     taxiVec[j]->setTrip(currTrip);
@@ -69,6 +71,8 @@ void TaxiCenter::assignTrip(Socket &socket, Serializer serializer,
             }
         }
     }
+
+    this->clock->increaseTime();
 }
 
 void TaxiCenter::moveOneStep(Socket &socket, Serializer serializer) {
@@ -187,3 +191,8 @@ void TaxiCenter::update(Taxi *taxi) {
             taxis[i] = taxi;
     }
 }
+
+Clock *TaxiCenter::getClock() const {
+    return clock;
+}
+

@@ -137,8 +137,7 @@ int Menu::runMenu() {
                 // Check that all the trips that need to start are attached
                 // to a driver
                 this->getMainFlow()->getTaxiCenter()->assignTrip(
-                        *(this->getSocket()), this->getSerializer(),
-                        this->getMainFlow()->getClock()->getTime());
+                        *(this->getSocket()), this->getSerializer());
 
                 // Invalid input
                 break;

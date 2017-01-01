@@ -23,7 +23,6 @@ private:
 
     TaxiCenter *taxiCenter;
     Grid       *map;
-    Clock      *clock;
 
 public:
 
@@ -56,11 +55,6 @@ public:
      * Returns the taxi center.
      */
     TaxiCenter *getTaxiCenter() const;
-
-    /*
-     * Returns the clock.
-     */
-    Clock *getClock();
 
     /*
      * Returns the map.

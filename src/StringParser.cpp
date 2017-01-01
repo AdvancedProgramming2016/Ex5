@@ -63,7 +63,7 @@ Grid *StringParser::parseGridInput() {
 
 Trip *StringParser::parseTripInput() {
 
-    int         numOfParams     = 7;
+    int         numOfParams     = 8;
     int         id              = 0;
     int         startX          = 1;
     int         startY          = 2;

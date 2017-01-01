@@ -9,6 +9,7 @@
 #include "StringParser.h"
 #include "../sockets/Socket.h"
 #include "Serializer.h"
+#include "Clock.h"
 
 class Driver;
 
@@ -31,8 +32,11 @@ private:
     std::vector<Driver *>  drivers;
     std::vector<Vehicle *> vehicles;
     std::vector<Taxi *>    taxis;
-    std::vector<Trip *>     trips;
+    std::vector<Trip *>    trips;
     Point                  *taxiCenterLocation;
+    Clock                  *clock;
+
+private:
 
     void addTaxi(Taxi *taxi);
 
@@ -56,8 +60,7 @@ public:
     /*
      * Move the taxis one step
      */
-    void assignTrip(Socket &socket, Serializer serializer,
-                                unsigned int currTime);
+    void assignTrip(Socket &socket, Serializer serializer);
 
     void moveOneStep(Socket &socket, Serializer serializer);
 
@@ -110,6 +113,8 @@ public:
      * Update according to the subject.
      */
     virtual void update(Taxi *taxi);
+
+    Clock *getClock() const;
 };
 
 
