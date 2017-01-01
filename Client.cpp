@@ -105,6 +105,7 @@ int main(int argc, char *argv[]) {
 
         else {
 
+            delete trip;
             trip = 0;
             //Set the received trip from the server in the taxi.
             serializer.deserialize(communicationBuffer, sizeof(communicationBuffer), trip);

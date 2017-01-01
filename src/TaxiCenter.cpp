@@ -10,8 +10,6 @@ TaxiCenter::TaxiCenter(Point *taxiCenterLocation) :
 
 TaxiCenter::~TaxiCenter() {
 
-    Trip *tempTrip = 0;
-
     //delete all the trips
     for (int tripsIndex = 0; tripsIndex < trips.size(); ++tripsIndex) {
         delete trips[tripsIndex];
@@ -32,6 +30,8 @@ TaxiCenter::~TaxiCenter() {
          vehiclesIndex < vehicles.size(); ++vehiclesIndex) {
         delete vehicles[vehiclesIndex];
     }
+
+    delete this->clock;
 
 }
 
@@ -66,6 +66,7 @@ void TaxiCenter::assignTrip(Socket &socket, Serializer serializer) {
                     serialTrip = serializer.serialize(currTrip);
                     socket.sendData(serialTrip);
 
+                    delete tripVec[i];
                     tripVec.erase(tripVec.begin() + i);
                 }
             }
@@ -113,6 +114,8 @@ void TaxiCenter::moveOneStep(Socket &socket, Serializer serializer) {
                 // Set trip to finish
                 currTaxi->setTrip(0);
             }
+
+            delete currPoint;
         }
     }
 }

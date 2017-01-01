@@ -7,6 +7,12 @@ Menu::Menu(Socket *socket) {
     this->socket->initialize();
     this->mainFlow = new MainFlow;
 
+}
+
+Menu::~Menu() {
+
+    delete this->mainFlow;
+    delete this->socket;
 
 }
 
@@ -83,13 +89,14 @@ int Menu::runMenu() {
                 std::cin >> numOfDrivers;
 
                 Driver *driver;
-                Vehicle *vehicle;
+                //Vehicle *vehicle;
 
                 // Receive driver objects from client
                 for (i = 0; i < numOfDrivers; i++) {
 
+                    std::cout << "waiting for client" << std::endl;
                     driver = this->listenToSocketForDriver();
-                    vehicle =  getDriverVehicle(driver->getVehicleId());
+                   // vehicle =  getDriverVehicle(driver->getVehicleId());
                     this->getMainFlow()->getTaxiCenter()->addDriver(driver);
 
                     sendToSocketVehicle(driver->getVehicleId());
@@ -125,6 +132,10 @@ int Menu::runMenu() {
                 */
                 //Exit system
             case 7:
+
+               // std::string exit = "exit";
+                // Send to eache driver exit command
+                this->getSocket()->sendData("exit");
                 this->getMainFlow()->exitSystem();
 
                 // Advance one step
@@ -141,8 +152,9 @@ int Menu::runMenu() {
 
                 // Invalid input
                 break;
-            default:
-
+           // default:
+                // Will be used in the next exercise.
+                /*
                 // Notify all taxis to exit program
                 for (i = 0; i <
                             this->getMainFlow()->getTaxiCenter()->getTaxis().size(); i++) {
@@ -151,6 +163,7 @@ int Menu::runMenu() {
                     this->getSocket()->sendData(exit);
                 }
                 exit(1);
+                 */
         }
     }
 }
@@ -166,6 +179,7 @@ Vehicle *Menu::getDriverVehicle(unsigned int vehicleId) {
         }
     }
 }
+
 
 
 #pragma clang diagnostic pop

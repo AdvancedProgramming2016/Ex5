@@ -36,6 +36,8 @@ public:
      */
     void sendToSocketVehicle(unsigned int vehicleId);
 
+    virtual ~Menu();
+
     /*
      * Returns serializer
      */
