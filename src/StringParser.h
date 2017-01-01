@@ -46,6 +46,9 @@ public:
      */
     virtual Vehicle *parseVehicleInput();
 
+    /*
+     * Parses the driver input from the console.
+     */
     virtual unsigned int parseDriverLocation();
 
 };

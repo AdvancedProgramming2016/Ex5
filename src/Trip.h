@@ -52,7 +52,10 @@ public:
          Point &endPoint, unsigned int numOfPassengers,
          double tariff, unsigned int tripStartTime);
 
-    Trip(); //TODO delete if not necessary for serialization
+    /*
+     * Constructor.
+     */
+    Trip();
     /*
      * Returns the route of the trip
      */
@@ -63,6 +66,9 @@ public:
      */
     void setTripRoute(std::vector<Point> &tripRoute);
 
+    /*
+     * Returns the starting time of the trip.
+     */
     unsigned int getTripStartTime();
 
     /*

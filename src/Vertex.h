@@ -61,6 +61,9 @@ public:
      */
     void set_visited();
 
+    /*
+     * Sets the visited mode to false.
+     */
     void set_unvisited();
 
     /*

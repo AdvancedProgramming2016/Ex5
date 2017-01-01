@@ -14,7 +14,11 @@ class StandardVehicle : public Vehicle {
 
 public:
 
-    StandardVehicle(); // TODO delete if not necessary
+    /*
+     * Constructor
+     */
+    StandardVehicle();
+
     /*
      * Constructor
      */

@@ -39,7 +39,10 @@ private:
 
 public:
 
-    Vehicle(); //TODO delete if not necessary for serialization
+    /*
+     * Constructor.
+     */
+    Vehicle();
     /*
      * Constructor
      */

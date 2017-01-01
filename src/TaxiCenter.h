@@ -38,6 +38,9 @@ private:
 
 private:
 
+    /*
+     * Adds a taxi to the taxis list.
+     */
     void addTaxi(Taxi *taxi);
 
 public:
@@ -58,10 +61,13 @@ public:
     void createTaxi(Driver *driver);
 
     /*
-     * Move the taxis one step
+     * Assigns the free taxis with trips.
      */
     void assignTrip(Socket &socket, Serializer serializer);
 
+    /*
+     * Moves all the taxis with trips to their next point on the map.
+     */
     void moveOneStep(Socket &socket, Serializer serializer);
 
     /*
@@ -114,6 +120,9 @@ public:
      */
     virtual void update(Taxi *taxi);
 
+    /*
+     * Returns the clock.
+     */
     Clock *getClock() const;
 };
 

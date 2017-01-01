@@ -2,7 +2,6 @@
 
 Menu::Menu(Socket *socket) {
 
-    // Open server side socket on port 5555
     this->socket = socket;
     this->socket->initialize();
     this->mainFlow = new MainFlow;
@@ -40,9 +39,8 @@ int Menu::initializeGame() {
 
 void Menu::sendToSocketVehicle(unsigned int vehicleId) {
 
-    // TODO: Didn't understand what kind of vehicle we need to send back
-    Vehicle *vehicle = getDriverVehicle(vehicleId);
-    char buffer2[1024];
+    Vehicle     *vehicle = getDriverVehicle(vehicleId);
+    char        buffer2[1024];
     std::string serialVehicle;
     serialVehicle = this->serializer.serialize(vehicle);
 
@@ -67,14 +65,11 @@ Serializer Menu::getSerializer() {
     return this->serializer;
 }
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCDFAInspection"
-
 int Menu::runMenu() {
 
     int userOption = 0;
-    int i = 0;
-    
+    int i          = 0;
+
     while (userOption <= 9) {
 
         std::cin >> userOption;
@@ -82,7 +77,7 @@ int Menu::runMenu() {
         switch (userOption) {
 
             // Create driver
-            case 1:{
+            case 1: {
                 int numOfDrivers = 0;
 
                 // Receive from user num of drivers to create
@@ -96,7 +91,7 @@ int Menu::runMenu() {
 
                     std::cout << "waiting for client" << std::endl;
                     driver = this->listenToSocketForDriver();
-                   // vehicle =  getDriverVehicle(driver->getVehicleId());
+                    // vehicle =  getDriverVehicle(driver->getVehicleId());
                     this->getMainFlow()->getTaxiCenter()->addDriver(driver);
 
                     sendToSocketVehicle(driver->getVehicleId());
@@ -133,7 +128,7 @@ int Menu::runMenu() {
                 //Exit system
             case 7:
 
-               // std::string exit = "exit";
+                // std::string exit = "exit";
                 // Send to eache driver exit command
                 this->getSocket()->sendData("exit");
                 this->getMainFlow()->exitSystem();
@@ -152,34 +147,20 @@ int Menu::runMenu() {
 
                 // Invalid input
                 break;
-           // default:
-                // Will be used in the next exercise.
-                /*
-                // Notify all taxis to exit program
-                for (i = 0; i <
-                            this->getMainFlow()->getTaxiCenter()->getTaxis().size(); i++) {
-                    std::string exit = "exit";
-                    // Send to eache driver exit command
-                    this->getSocket()->sendData(exit);
-                }
-                exit(1);
-                 */
         }
     }
 }
 
 Vehicle *Menu::getDriverVehicle(unsigned int vehicleId) {
 
-    std::vector<Vehicle*> vehicles = this->getMainFlow()->getTaxiCenter()->getVehicles();
-    for (int i = 0; i < vehicles.size(); ++i) {
+    std::vector<Vehicle *> vehicles = this->getMainFlow()->getTaxiCenter()->
+            getVehicles();
+    for (int               i        = 0; i < vehicles.size(); ++i) {
 
-        if(vehicles[i]->getVehicleId() == vehicleId){
+        if (vehicles[i]->getVehicleId() == vehicleId) {
 
             return vehicles[i];
         }
     }
 }
 
-
-
-#pragma clang diagnostic pop

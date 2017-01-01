@@ -87,7 +87,8 @@ void TaxiCenter::moveOneStep(Socket &socket, Serializer serializer) {
         // Gets current taxi
         Taxi *currTaxi = taxiVec.at(i);
 
-        // If taxi has trip and hasn't ended yet, send him message to move one step
+        // If taxi has trip and hasn't ended yet, send him message
+        // to move one step
         if (currTaxi->getTrip() != 0) {
 
             // Tell driver to advance one step
@@ -108,8 +109,6 @@ void TaxiCenter::moveOneStep(Socket &socket, Serializer serializer) {
             if (*currPoint == currTaxi->getTrip()->getEndPoint()) {
                 delete currTaxi->getTrip();
                 currTaxi->setTrip(0);
-                // Driver *driver;
-                //serializer.deserialize(buffer, sizeof(buffer), driver);
 
                 // Set trip to finish
                 currTaxi->setTrip(0);

@@ -13,6 +13,9 @@ class LuxuryVehicle : public Vehicle {
 
 public:
 
+    /*
+     * Constructor.
+     */
     LuxuryVehicle();
     /*
      * Constructor.

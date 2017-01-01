@@ -27,6 +27,11 @@ public:
     Menu(Socket *socket);
 
     /*
+     * Destructor
+     */
+    virtual ~Menu();
+
+    /*
      * Listen to socket and receive driver.
      */
     Driver *listenToSocketForDriver();
@@ -35,8 +40,6 @@ public:
      * Send vehicle to socket.
      */
     void sendToSocketVehicle(unsigned int vehicleId);
-
-    virtual ~Menu();
 
     /*
      * Returns serializer

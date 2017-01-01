@@ -42,7 +42,10 @@ public:
            char maritalStatus, unsigned int yearsOfExperience,
            unsigned int vehicleId);
 
-    Driver(); //TODO delete if not necessary for serialization
+    /*
+     * Constructor
+     */
+    Driver();
 
     /*
     * Returns the driver id.
@@ -77,6 +80,9 @@ public:
      */
     unsigned int getAvgSatisfaction() const;
 
+    /*
+     * Sets the average satisfaction.
+     */
     void setAvgSatisfaction(unsigned int newAvg);
 
     /*

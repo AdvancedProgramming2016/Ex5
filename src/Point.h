@@ -32,7 +32,10 @@ public:
      */
     Point(int x, int y);
 
-    Point(); //TODO delete if not necessary
+    /*
+     * Construtor.
+     */
+    Point();
 
     /*
      * Overloads the "==" operator in order to evaluate two Points.

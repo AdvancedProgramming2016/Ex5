@@ -2,6 +2,11 @@
 
 #include "Serializer.h"
 /*
+ *
+ *
+ * Will be used in the next exercise.
+ *
+ *
 template<class T>
 std::string Serializer::serialize(T *object) {
 

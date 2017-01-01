@@ -2,16 +2,33 @@
 #ifndef EX4_CLOCK_H
 #define EX4_CLOCK_H
 
+/**
+ * The class represents the Clock of the taxi center.
+ * Used to determine the time of the trips.
+ */
 class Clock {
 
 private:
-    unsigned int time; // The time of the clock
+    // The time of the clock
+    unsigned int time;
 
 public:
-    Clock();
-    void increaseTime(); // Increases the clock time by 1
-    unsigned int getTime(); // Returns the time of the clock
 
+    /**
+     * Constructor
+     */
+    Clock();
+
+    /**
+     * @brief increases the clock time by one.
+     */
+    void increaseTime();
+
+    /**
+     * @brief returns the time.
+     * @return unsigned int
+     */
+    unsigned int getTime();
 };
 
 #endif //EX4_CLOCK_H

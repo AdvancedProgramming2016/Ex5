@@ -66,6 +66,9 @@ public:
      */
     void exitSystem();
 
+    /*
+     * Cleans the map for the next iteration.
+     */
     void cleanGrid();
 
 };

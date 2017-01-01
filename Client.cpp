@@ -23,6 +23,9 @@
 #include "src/StringParser.h"
 #include <cstdlib>
 
+/*
+ * Closes the client.
+ */
 void closeClient(Taxi *taxi, Driver *driver, Vehicle *vehicle, Socket *socket);
 
 int main(int argc, char *argv[]) {
@@ -47,8 +50,6 @@ int main(int argc, char *argv[]) {
     //Serializes the driver into a string.
     std::string serialDriver = serializer.serialize(driver);
 
-    std::cout << serialDriver << std::endl; //TODO delete
-
     //Sends the string to the server
     socket->sendData(serialDriver);
 
@@ -61,9 +62,7 @@ int main(int argc, char *argv[]) {
     //Deserializes the data received from the server into a vehicle object.
     serializer.deserialize(buffer, sizeof(buffer), vehicle);
 
-    std::cout << vehicle->getCoefficient() << std::endl; //TODO delete
-
-    taxi = new Taxi(driver, vehicle, Point(0, 0));
+    taxi         = new Taxi(driver, vehicle, Point(0, 0));
     serialDriver = "";
 
     //Take input from the server while it's not an exit command.
@@ -80,35 +79,20 @@ int main(int argc, char *argv[]) {
             exitCalled = true;
         }
 
-        //If received "go", move the taxi towards its destination.
+            //If received "go", move the taxi towards its destination.
         else if (strcmp(communicationBuffer, "go") == 0) {
 
             taxi->move();
-            std::string serial = serializer.serialize(&taxi->getCurrentPosition());
+            std::string serial = serializer.serialize(
+                    &taxi->getCurrentPosition());
             socket->sendData(serial);
-
-            /*
-            //If the taxi finished the trip, notify the server.
-            if (!taxi->hasTrip()) {
-
-                serialDriver = serializer.serialize(taxi->getDriver());
-                socket->sendData(serialDriver);
-            }
-            else{
-
-                //Notify the server that the command was received.
-                std::string serial = serializer.serialize(&taxi->getCurrentPosition());
-                socket->sendData(serial);
-            }
-             */
-        }
-
-        else {
+        } else {
 
             delete trip;
             trip = 0;
             //Set the received trip from the server in the taxi.
-            serializer.deserialize(communicationBuffer, sizeof(communicationBuffer), trip);
+            serializer.deserialize(communicationBuffer,
+                                   sizeof(communicationBuffer), trip);
             taxi->setTrip(trip);
         }
 
@@ -118,7 +102,7 @@ int main(int argc, char *argv[]) {
     closeClient(taxi, driver, vehicle, socket);
 }
 
-void closeClient(Taxi *taxi, Driver *driver, Vehicle *vehicle, Socket *socket){
+void closeClient(Taxi *taxi, Driver *driver, Vehicle *vehicle, Socket *socket) {
     delete taxi;
     delete driver;
     delete vehicle;

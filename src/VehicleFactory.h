@@ -12,6 +12,9 @@
 class VehicleFactory {
 
 public:
+    /*
+     * Creates the required vehicle according to the received type.
+     */
     Vehicle* makeVehicle(unsigned int id, unsigned int vehicleType,
                         char manufacturer, char color);
 };
