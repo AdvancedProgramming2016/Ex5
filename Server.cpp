@@ -14,7 +14,7 @@
 int main(int argc, char *argv[]){
 
     //Create the socket.
-    Socket *socket = new Udp(1, atoi(argv[1]), "127.0.0.1");
+    Socket *socket = new Udp(1, "127.0.0.1", atoi(argv[1]));
     Menu menu(socket);
 
     //Initializes and runs the menu.

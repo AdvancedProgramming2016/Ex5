@@ -31,7 +31,7 @@ void closeClient(Taxi *taxi, Driver *driver, Vehicle *vehicle, Socket *socket);
 int main(int argc, char *argv[]) {
 
     //The socket connecting between the client and the server.
-    Socket       *socket    = new Udp(0, atoi(argv[1]), argv[2]);
+    Socket       *socket    = new Udp(0, argv[1], atoi(argv[2]));
     //Serializer used for serializing and deserializing objects.
     Serializer   serializer;
     //Will handle parsing the user input.
