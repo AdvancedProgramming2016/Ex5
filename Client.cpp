@@ -57,7 +57,6 @@ int main(int argc, char *argv[]) {
 
     //Receives data from the server.
     socket->reciveData(buffer, sizeof(buffer));
-    std::cout << buffer << endl;
 
     //Deserializes the data received from the server into a vehicle object.
     serializer.deserialize(buffer, sizeof(buffer), vehicle);
@@ -71,7 +70,6 @@ int main(int argc, char *argv[]) {
         char communicationBuffer[1024];
 
         socket->reciveData(communicationBuffer, sizeof(communicationBuffer));
-        std::cout << communicationBuffer << std::endl;
 
         //If received "exit", close the client.
         if (strcmp(communicationBuffer, "exit") == 0) {

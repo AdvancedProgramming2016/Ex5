@@ -40,7 +40,6 @@ int Menu::initializeGame() {
 void Menu::sendToSocketVehicle(unsigned int vehicleId) {
 
     Vehicle     *vehicle = getDriverVehicle(vehicleId);
-    char        buffer2[1024];
     std::string serialVehicle;
     serialVehicle = this->serializer.serialize(vehicle);
 
@@ -53,7 +52,6 @@ Driver *Menu::listenToSocketForDriver() {
     char buffer[1024];
     this->socket->reciveData(buffer, 1024);
 
-    std::cout << buffer << std::endl;
     Driver *driver;
     this->serializer.deserialize(buffer, sizeof(buffer), driver);
 
@@ -84,20 +82,16 @@ int Menu::runMenu() {
                 std::cin >> numOfDrivers;
 
                 Driver *driver;
-                //Vehicle *vehicle;
 
                 // Receive driver objects from client
                 for (i = 0; i < numOfDrivers; i++) {
 
-                    std::cout << "waiting for client" << std::endl;
                     driver = this->listenToSocketForDriver();
-                    //vehicle =  getDriverVehicle(driver->getVehicleId());
                     this->getMainFlow()->getTaxiCenter()->addDriver(driver);
 
                     sendToSocketVehicle(driver->getVehicleId());
                 }
             }
-
 
                 break;
 
@@ -128,7 +122,6 @@ int Menu::runMenu() {
                 //Exit system
             case 7:
 
-                // std::string exit = "exit";
                 // Send to eache driver exit command
                 this->getSocket()->sendData("exit");
                 this->getMainFlow()->exitSystem();

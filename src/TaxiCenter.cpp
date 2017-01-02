@@ -66,7 +66,7 @@ void TaxiCenter::assignTrip(Socket &socket, Serializer serializer) {
                     serialTrip = serializer.serialize(currTrip);
                     socket.sendData(serialTrip);
 
-                   // delete tripVec[i];
+                    //Remove the trip from the trips vector;
                     tripVec.erase(tripVec.begin() + i);
                 }
             }
@@ -98,8 +98,6 @@ void TaxiCenter::moveOneStep(Socket &socket, Serializer serializer) {
             Point *currPoint = 0;
             socket.reciveData(buffer, 1024);
             serializer.deserialize(buffer, sizeof(buffer), currPoint);
-
-            std::cout << *currPoint << std::endl;
 
             currTaxi->setCurrentPosition(*currPoint);
 

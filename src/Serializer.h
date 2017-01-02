@@ -21,7 +21,10 @@
 #ifndef EX4_SERIALIZER_H
 #define EX4_SERIALIZER_H
 
-
+/**
+ * The class represents a serializer which serializes a given object,
+ * to a string.
+ */
 class Serializer {
 
 public:
