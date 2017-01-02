@@ -91,7 +91,7 @@ int Menu::runMenu() {
 
                     std::cout << "waiting for client" << std::endl;
                     driver = this->listenToSocketForDriver();
-                    // vehicle =  getDriverVehicle(driver->getVehicleId());
+                    //vehicle =  getDriverVehicle(driver->getVehicleId());
                     this->getMainFlow()->getTaxiCenter()->addDriver(driver);
 
                     sendToSocketVehicle(driver->getVehicleId());

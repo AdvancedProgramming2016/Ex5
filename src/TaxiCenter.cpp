@@ -66,7 +66,7 @@ void TaxiCenter::assignTrip(Socket &socket, Serializer serializer) {
                     serialTrip = serializer.serialize(currTrip);
                     socket.sendData(serialTrip);
 
-                    delete tripVec[i];
+                   // delete tripVec[i];
                     tripVec.erase(tripVec.begin() + i);
                 }
             }
