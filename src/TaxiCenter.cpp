@@ -72,8 +72,6 @@ void TaxiCenter::assignTrip(Socket &socket, Serializer serializer) {
             }
         }
     }
-
-    this->clock->increaseTime();
 }
 
 void TaxiCenter::moveOneStep(Socket &socket, Serializer serializer) {
@@ -89,7 +87,7 @@ void TaxiCenter::moveOneStep(Socket &socket, Serializer serializer) {
 
         // If taxi has trip and hasn't ended yet, send him message
         // to move one step
-        if (currTaxi->getTrip() != 0) {
+        if (currTaxi->getTrip() != 0 && this->clock->getTime() != 0) {
 
             // Tell driver to advance one step
             std::string go = "go";
@@ -117,6 +115,8 @@ void TaxiCenter::moveOneStep(Socket &socket, Serializer serializer) {
             delete currPoint;
         }
     }
+
+    this->clock->increaseTime();
 }
 
 std::vector<Driver *> &TaxiCenter::getDrivers() {

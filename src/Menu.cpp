@@ -136,13 +136,13 @@ int Menu::runMenu() {
                 // Advance one step
             case 9:
 
-                // Move all the taxis one step
-                this->getMainFlow()->getTaxiCenter()->moveOneStep(
-                        *(this->getSocket()), this->getSerializer());
-
                 // Check that all the trips that need to start are attached
                 // to a driver
                 this->getMainFlow()->getTaxiCenter()->assignTrip(
+                        *(this->getSocket()), this->getSerializer());
+
+                // Move all the taxis one step
+                this->getMainFlow()->getTaxiCenter()->moveOneStep(
                         *(this->getSocket()), this->getSerializer());
 
                 // Invalid input
