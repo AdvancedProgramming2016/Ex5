@@ -12,4 +12,4 @@ StandardVehicle::StandardVehicle() {
 
 }
 
-BOOST_CLASS_EXPORT(StandardVehicle);
+

@@ -16,12 +16,18 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/iostreams/stream.hpp>
+#include <boost/serialization/export.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include "src/Driver.h"
 #include "src/Serializer.h"
 #include "src/StringParser.h"
+#include "src/StandardVehicle.h"
+#include "src/LuxuryVehicle.h"
 #include <cstdlib>
+
+BOOST_CLASS_EXPORT_GUID(StandardVehicle, "StandardVehicle")
+BOOST_CLASS_EXPORT_GUID(LuxuryVehicle, "LuxuryVehicle")
 
 /*
  * Closes the client.
@@ -39,7 +45,7 @@ int main(int argc, char *argv[]) {
     Driver       *driver    = 0;
     Vehicle      *vehicle   = 0;
     Taxi         *taxi      = 0;
-    Trip         *trip;
+    Trip         *trip      = 0;
     bool         exitCalled = false;
 
     socket->initialize();
@@ -86,8 +92,11 @@ int main(int argc, char *argv[]) {
             socket->sendData(serial);
         } else {
 
-            delete trip;
-            trip = 0;
+            if (trip != 0) {
+                delete trip;
+                trip = 0;
+            }
+
             //Set the received trip from the server in the taxi.
             serializer.deserialize(communicationBuffer,
                                    sizeof(communicationBuffer), trip);
@@ -106,4 +115,5 @@ void closeClient(Taxi *taxi, Driver *driver, Vehicle *vehicle, Socket *socket) {
     delete vehicle;
     delete socket;
     exit(0);
+
 }

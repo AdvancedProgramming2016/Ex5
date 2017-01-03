@@ -5,8 +5,6 @@ Grid::Grid(unsigned int length, unsigned int width,
            std::vector<Point> &obstacles) : m_length(length), m_width(width),
                                             obstacles(obstacles) {
 
-    this->m_edges.reserve(length * width);
-
     for (int i = length - 1; i >= 0; i--) {
 
         for (int j = 0; j < width; ++j) {

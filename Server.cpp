@@ -5,11 +5,11 @@
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/archive/binary_oarchive.hpp>
+#include <boost/serialization/export.hpp>
 #include "src/Driver.h"
 #include "sockets/Udp.h"
 #include "src/StandardVehicle.h"
 #include "src/Menu.h"
-
 
 int main(int argc, char *argv[]){
 
