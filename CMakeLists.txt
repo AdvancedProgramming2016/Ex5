@@ -14,7 +14,7 @@ set(SOURCE_FILES src/VehicleFactory.cpp src/VehicleFactory.h src/Point.cpp src/P
         src/Taxi.cpp src/Taxi.h src/TaxiCenter.cpp src/TaxiCenter.h src/Trip.cpp src/Trip.h src/Menu.cpp src/Menu.h
         src/BaseParser.h src/StringParser.cpp src/StringParser.h sockets/Socket.cpp sockets/Socket.h sockets/Udp.cpp sockets/Udp.h src/Serializer.cpp src/Serializer.h)
 
-add_executable(client Client.cpp ${SOURCE_FILES})
+add_executable(client Client.cpp ${SOURCE_FILES} sockets/Tcp.cpp sockets/Tcp.h)
 add_executable(server Server.cpp ${SOURCE_FILES})
 target_link_libraries(client ${Boost_LIBRARIES})
 target_link_libraries(server ${Boost_LIBRARIES})
