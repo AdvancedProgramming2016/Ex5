@@ -16,8 +16,7 @@ class Menu {
 private:
     StringParser stringParser;
     MainFlow     *mainFlow;
-    Socket       *socket;
-    Serializer   serializer;
+    int *currentOperation;
 
 public:
 
@@ -31,15 +30,9 @@ public:
      */
     virtual ~Menu();
 
-    /*
-     * Listen to socket and receive driver.
-     */
-    Driver *listenToSocketForDriver();
+    void setCurrentOperation(int option);
 
-    /*
-     * Send vehicle to socket.
-     */
-    void sendToSocketVehicle(unsigned int vehicleId);
+    void wakeUpThreads();
 
     /*
      * Returns serializer

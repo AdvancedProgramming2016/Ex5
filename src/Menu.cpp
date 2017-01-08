@@ -1,23 +1,16 @@
 #include "Menu.h"
+#include <pthread.h>
 
 Menu::Menu(Socket *socket) {
 
-    this->socket = socket;
-    this->socket->initialize();
-    this->mainFlow = new MainFlow;
+    this->currentOperation = 0;
+    this->mainFlow = new MainFlow(socket, this->currentOperation);
 
 }
 
 Menu::~Menu() {
 
     delete this->mainFlow;
-    delete this->socket;
-
-}
-
-Socket *Menu::getSocket() {
-
-    return this->socket;
 
 }
 
@@ -37,36 +30,9 @@ int Menu::initializeGame() {
     this->getMainFlow()->createTaxiCenter(&location);
 }
 
-void Menu::sendToSocketVehicle(unsigned int vehicleId) {
-
-    Vehicle     *vehicle = getDriverVehicle(vehicleId);
-    std::string serialVehicle;
-    serialVehicle = this->serializer.serialize(vehicle);
-
-    this->getSocket()->sendData(serialVehicle);
-
-}
-
-Driver *Menu::listenToSocketForDriver() {
-
-    char buffer[1024];
-    this->socket->reciveData(buffer, 1024);
-
-    Driver *driver;
-    this->serializer.deserialize(buffer, sizeof(buffer), driver);
-
-    return driver;
-
-}
-
-Serializer Menu::getSerializer() {
-    return this->serializer;
-}
-
 int Menu::runMenu() {
 
     int userOption = 0;
-    int i          = 0;
 
     while (userOption <= 9) {
 
@@ -75,24 +41,13 @@ int Menu::runMenu() {
         switch (userOption) {
 
             // Create driver
-            case 1: {
+            case 1:
                 int numOfDrivers = 0;
 
                 // Receive from user num of drivers to create
                 std::cin >> numOfDrivers;
 
-                Driver *driver;
-
-                // Receive driver objects from client
-                for (i = 0; i < numOfDrivers; i++) {
-
-                    driver = this->listenToSocketForDriver();
-                    this->getMainFlow()->getTaxiCenter()->addDriver(driver);
-
-                    sendToSocketVehicle(driver->getVehicleId());
-                }
-            }
-
+                this->getMainFlow()->selectDrivers(numOfDrivers);
                 break;
 
                 // Create trip
@@ -107,8 +62,9 @@ int Menu::runMenu() {
                         this->stringParser.parseVehicleInput());
                 break;
 
-                // Request for driver location
+                // Request driver location
             case 4:
+
                 this->getMainFlow()->getTaxiCenter()->requestDriverLocation(
                         this->stringParser.parseDriverLocation());
                 break;
@@ -122,38 +78,32 @@ int Menu::runMenu() {
                 //Exit system
             case 7:
 
-                // Send to eache driver exit command
-                this->getSocket()->sendData("exit");
+                // Send each driver exit command
+                this->setCurrentOperation(7);
+                this->wakeUpThreads();
                 this->getMainFlow()->exitSystem();
+
 
                 // Advance one step
             case 9:
 
-                // Check that all the trips that need to start are attached
-                // to a driver
-                this->getMainFlow()->getTaxiCenter()->assignTrip(
-                        *(this->getSocket()), this->getSerializer());
-
-                // Move all the taxis one step
-                this->getMainFlow()->getTaxiCenter()->moveOneStep(
-                        *(this->getSocket()), this->getSerializer());
-
-                // Invalid input
+                this->setCurrentOperation(9);
+                this->wakeUpThreads();
+                this->getMainFlow()->performTask9();
                 break;
         }
     }
 }
 
-Vehicle *Menu::getDriverVehicle(unsigned int vehicleId) {
+void Menu::setCurrentOperation(int option) {
+    *(this->currentOperation) = option;
+}
 
-    std::vector<Vehicle *> vehicles = this->getMainFlow()->getTaxiCenter()->
-            getVehicles();
-    for (int               i        = 0; i < vehicles.size(); ++i) {
-
-        if (vehicles[i]->getVehicleId() == vehicleId) {
-
-            return vehicles[i];
-        }
+void Menu::wakeUpThreads() {
+    for (int i = 0; i < this->getMainFlow()->getMutexs().size(); i++) {
+        pthread_mutex_unlock(&(this->getMainFlow()->getMutexs().at(i)));
     }
 }
+
+
 
