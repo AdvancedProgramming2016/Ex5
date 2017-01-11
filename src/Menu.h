@@ -16,7 +16,6 @@ class Menu {
 private:
     StringParser stringParser;
     MainFlow     *mainFlow;
-    int *currentOperation;
 
 public:
 
@@ -24,6 +23,8 @@ public:
      * Ctor
      */
     Menu(Socket *socket);
+
+    int *currentOperation;
 
     /*
      * Destructor

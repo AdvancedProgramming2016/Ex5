@@ -7,6 +7,7 @@
 
 ClientThread::ClientThread(pthread_mutex_t mutex, MainFlow *mainFlow) {
     this->mutex = mutex;
+    this->mainFlow = mainFlow;
 }
 
 MainFlow *ClientThread::getMainFlow() {

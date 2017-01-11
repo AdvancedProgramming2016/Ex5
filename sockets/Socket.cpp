@@ -19,7 +19,7 @@
 * ip, and no port number and socket descriptor, 0 backlogs.			   *
 ***********************************************************************/
 Socket::Socket() {
-    this->ip_address = "";
+    this->ip_address = "127.0.0.1";
     this->backLog = NONE;
     this->socketDescriptor = NONE;
     this->isServer = true;

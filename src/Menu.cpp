@@ -3,7 +3,7 @@
 
 Menu::Menu(Socket *socket) {
 
-    this->currentOperation = 0;
+
     this->mainFlow = new MainFlow(socket, this->currentOperation);
 
 }

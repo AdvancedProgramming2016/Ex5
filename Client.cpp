@@ -27,6 +27,7 @@
 #include "sockets/Tcp.h"
 #include <cstdlib>
 
+#include <boost/log/trivial.hpp>
 BOOST_CLASS_EXPORT_GUID(StandardVehicle, "StandardVehicle")
 BOOST_CLASS_EXPORT_GUID(LuxuryVehicle, "LuxuryVehicle")
 
@@ -58,21 +59,21 @@ int main(int argc, char *argv[]) {
     std::string serialDriver = serializer.serialize(driver);
 
     //Sends the string to the server
+    BOOST_LOG_TRIVIAL(info) << "Sending driver object to server";
     socket->sendData(serialDriver);
 
     char newPortBuffer[1024];
     // Receives new port from the server
+    BOOST_LOG_TRIVIAL(info) << "Waiting for server to assign new port";
     socket->reciveData(newPortBuffer, sizeof(newPortBuffer));
 
-    std::cout << newPortBuffer << std::endl;
-
     // Delete old socket
+    BOOST_LOG_TRIVIAL(info) << "Deleting port 5555";
     delete socket;
     socket = 0;
 
     // Open socket to new port
-
-    std::cout << "Opening new port: " << atoi(newPortBuffer) << std::endl;
+    BOOST_LOG_TRIVIAL(info) << "Opening new port: " << atoi(newPortBuffer);
     socket = new Tcp(0, atoi(newPortBuffer));
     socket->initialize();
 
