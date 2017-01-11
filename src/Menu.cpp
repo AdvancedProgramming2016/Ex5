@@ -41,7 +41,7 @@ int Menu::runMenu() {
         switch (userOption) {
 
             // Create driver
-            case 1:
+            case 1: {
                 int numOfDrivers = 0;
 
                 // Receive from user num of drivers to create
@@ -49,7 +49,7 @@ int Menu::runMenu() {
 
                 this->getMainFlow()->selectDrivers(numOfDrivers);
                 break;
-
+            }
                 // Create trip
             case 2:
                 this->getMainFlow()->createTrip(
@@ -89,7 +89,6 @@ int Menu::runMenu() {
 
                 this->setCurrentOperation(9);
                 this->wakeUpThreads();
-                this->getMainFlow()->performTask9();
                 break;
         }
     }

@@ -38,7 +38,7 @@ void closeClient(Taxi *taxi, Driver *driver, Vehicle *vehicle, Socket *socket);
 int main(int argc, char *argv[]) {
 
     //The socket connecting between the client and the server.
-    Socket       *socket    = new Tcp(0, argv[1], atoi(argv[2]));
+    Socket       *socket    = new Tcp(0, atoi(argv[1]));
     //Serializer used for serializing and deserializing objects.
     Serializer   serializer;
     //Will handle parsing the user input.
@@ -60,6 +60,22 @@ int main(int argc, char *argv[]) {
     //Sends the string to the server
     socket->sendData(serialDriver);
 
+    char newPortBuffer[1024];
+    // Receives new port from the server
+    socket->reciveData(newPortBuffer, sizeof(newPortBuffer));
+
+    std::cout << newPortBuffer << std::endl;
+
+    // Delete old socket
+    delete socket;
+    socket = 0;
+
+    // Open socket to new port
+
+    std::cout << "Opening new port: " << atoi(newPortBuffer) << std::endl;
+    socket = new Tcp(0, atoi(newPortBuffer));
+    socket->initialize();
+
     char buffer[1024];
 
     //Receives data from the server.
@@ -67,16 +83,6 @@ int main(int argc, char *argv[]) {
 
     //Deserializes the data received from the server into a vehicle object.
     serializer.deserialize(buffer, sizeof(buffer), vehicle);
-
-    char newPortBuffer[1024];
-    // Receives new port from the server
-    socket->reciveData(newPortBuffer, sizeof(buffer));
-
-    delete socket;
-
-    // Open socket to new port
-    socket = new Tcp(0, atoi(newPortBuffer));
-    socket->initialize();
 
     taxi         = new Taxi(driver, vehicle, Point(0, 0));
     serialDriver = "";

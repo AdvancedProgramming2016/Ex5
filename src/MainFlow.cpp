@@ -8,13 +8,21 @@
 MainFlow::MainFlow(Socket *socket, int *operationNumber) {
 
     this->socket = socket;
+    BOOST_LOG_TRIVIAL(info) << "Opening main socket.";
     this->socket->initialize();
     this->operationNumber = operationNumber;
     this->vacantPort = 42345;
 }
 
 MainFlow::~MainFlow() {
+
+    BOOST_LOG_TRIVIAL(info) << "Deleting all the open sockets.";
     delete this->socket;
+
+    // Delete all the client opened sockets
+    for (int i = 0; i < this->getSocketVector().size(); i++) {
+        delete this->getSocketVector().at(i);
+    }
 }
 
 int *MainFlow::getOperationNumber() {
@@ -67,7 +75,6 @@ void MainFlow::sendToSocketVehicle(unsigned int vehicleId) {
     serialVehicle = this->serializer.serialize(vehicle);
 
     this->getSocket()->sendData(serialVehicle);
-
 }
 
 Vehicle *MainFlow::getDriverVehicle(unsigned int vehicleId) {
@@ -91,6 +98,60 @@ Serializer MainFlow::getSerializer() {
     return this->serializer;
 }
 
+void * MainFlow::sendToListenToSocketForDriver(void *clientThread) {
+    return (((ClientThread *) clientThread)->getMainFlow()->listenToSocketForDriver(
+            ((ClientThread *) clientThread)->getMutex()));
+}
+
+void * MainFlow::listenToSocketForDriver(pthread_mutex_t mtx) {
+
+    char buffer[1024];
+    Driver *driver;
+    pthread_mutex_t addDriverMtx;
+
+    this->getSocket()->reciveData(buffer, 1024);
+
+    std::cout << buffer << std::endl;
+
+    // Allow one thread to add driver at a time
+    pthread_mutex_lock(&addDriverMtx);
+
+    this->getSerializer().deserialize(buffer, sizeof(buffer), driver);
+
+    this->getTaxiCenter()->addDriver(driver);
+
+    // Unlock mutex
+    pthread_mutex_unlock(&addDriverMtx);
+
+// Create new socket for new client
+    Socket *newSocket = new Tcp(true, this->getVacantPort());
+    this->insertClientSocket(newSocket); // Add new socket to vector.
+    newSocket->initialize();
+    this->sendClientNewPort(this->getVacantPort());
+    this->increaseVacantPort();
+
+    newSocket->sendData(boost::lexical_cast<string>(driver->getVehicleId()));
+
+// Perform user selection unless 7 was selected
+    while (*(this->getOperationNumber()) != 7) {
+
+        // Wait for server command to continue and write to log
+        BOOST_LOG_TRIVIAL(info) << "Waiting for command from server.";
+        pthread_mutex_lock(&mtx);
+
+        this->performTask9(newSocket);
+
+    }
+
+// TODO: Understand how to send to specific socket
+    newSocket->sendData("exit");
+
+// Kill thread
+    BOOST_LOG_TRIVIAL(info) << "Exiting current thread.";
+    pthread_exit(NULL);
+
+}
+
 void MainFlow::selectDrivers(int numOfDrivers) {
 
     // Receive driver objects from client
@@ -99,12 +160,15 @@ void MainFlow::selectDrivers(int numOfDrivers) {
         pthread_t currThread;
         pthread_mutex_t currMtx;
 
+        //pthread_mutex_lock(&currMtx);
+        ClientThread clientThread(currMtx, this);
+
         // Init thread for driver
         pthread_create(&currThread, NULL,
-                       listenToSocketForDriver,
-                       (void *) (&currMtx));
+                       sendToListenToSocketForDriver,
+                       (void *) (&clientThread));
 
-        BOOST_LOG_TRIVIAL(info) << "INFO: New thread created with thread id: "
+        BOOST_LOG_TRIVIAL(info) << "New thread created with thread id: "
                                 << currThread;
 
         this->addThreadToVector(currThread);
@@ -114,7 +178,7 @@ void MainFlow::selectDrivers(int numOfDrivers) {
     }
 }
 
-void MainFlow::performTask9(Socket *socket) {
+void MainFlow::performTask9(Socket *currSocket) {
 
     pthread_mutex_t assignTripMtx;
 
@@ -123,11 +187,11 @@ void MainFlow::performTask9(Socket *socket) {
     // Check that all the trips that need to start are attached
     // to a driver
     this->getTaxiCenter()->assignTrip(
-            *(socket), this->getSerializer());
+            *(currSocket), this->getSerializer());
 
     // Move all the taxis one step
     this->getTaxiCenter()->moveOneStep(
-            *(socket), this->getSerializer());
+            *(currSocket), this->getSerializer());
 
     pthread_mutex_unlock(&assignTripMtx);
 }
@@ -140,56 +204,19 @@ void MainFlow::increaseVacantPort() {
     ++(this->vacantPort);
 }
 
-void *MainFlow::listenToSocketForDriver(void *mtx) {
-
-    char buffer[1024];
-    Driver *driver;
-    pthread_mutex_t addDriverMtx;
-    pthread_mutex_t *currMtx = (pthread_mutex_t *) mtx;
-
-    this->getSocket()->reciveData(buffer, 1024);
-
-    // Allow one thread to add driver at a time
-    pthread_mutex_lock(&addDriverMtx);
-
-    this->getSerializer().deserialize(buffer, sizeof(buffer), driver);
-
-    this->getTaxiCenter()->addDriver(driver);
-
-    // Unlock mutex
-    pthread_mutex_unlock(&addDriverMtx);
-
-    this->sendToSocketVehicle(driver->getVehicleId());
-
-    // Create new socket for new client
-    // TODO: Delete new Socket at the end of the program
-    Socket *newSocket = new Tcp(true, this->getVacantPort());
-    newSocket->initialize();
-    this->sendClientNewPort(this->getVacantPort());
-    this->increaseVacantPort();
-
-    // Perform user selection unless 7 was selected
-    while (*(this->getOperationNumber()) != 7) {
-
-        // Wait for server command to continue and write to log
-        BOOST_LOG_TRIVIAL(info) << "INFO: Waiting for command from server.";
-        pthread_mutex_lock(currMtx);
-
-        this->performTask9(newSocket);
-    }
-
-    // TODO: Understand how to send to specific socket
-    newSocket->sendData("exit");
-    // Kill thread
-    BOOST_LOG_TRIVIAL(info) << "INFO: Exiting current thread.";
-    pthread_exit(NULL);
-
-}
 
 void MainFlow::sendClientNewPort(unsigned int newPort) {
 
     // Case newPort to string and send the new socket to client
-    this->getSocket()->sendData((boost::lexical_cast<string>(newPort)));
+    this->getSocket()->sendData(boost::lexical_cast<string>(newPort));
+}
+
+std::vector<Socket *> MainFlow::getSocketVector() {
+    return this->socketVector;
+}
+
+void MainFlow::insertClientSocket(Socket *socket) {
+    this->socketVector.push_back(socket);
 }
 
 std::vector<pthread_mutex_t> MainFlow::getMutexs() {
@@ -237,8 +264,3 @@ void MainFlow::cleanGrid() {
         v->setFather(0);
     }
 }
-
-
-
-
-

@@ -8,6 +8,9 @@
 #include "VehicleFactory.h"
 #include "StringParser.h"
 #include "Clock.h"
+#include "ClientThread.h"
+
+class ClientThread;
 
 class BaseParser;
 
@@ -25,6 +28,7 @@ private:
     Grid       *map;
     std::vector<pthread_t> threads;
     std::vector<pthread_mutex_t> mutexs;
+    std::vector<Socket *> socketVector;
     Socket       *socket;
     Serializer   serializer;
     int *operationNumber;
@@ -50,6 +54,10 @@ public:
     // Gets the next operation number
     int *getOperationNumber();
 
+    std::vector<Socket *> getSocketVector();
+
+    void insertClientSocket(Socket *socket);
+
     // Gets a vacant port from the server
     unsigned int getVacantPort();
 
@@ -59,10 +67,15 @@ public:
     /*
      * Listen to socket and receive driver.
      */
-    void *listenToSocketForDriver(void* mtx);
+    void * listenToSocketForDriver(pthread_mutex_t mtx);
+
+    /*
+     * Recevies the mutex and thread and send to listenToSocketForDriver func.
+     */
+    static void *sendToListenToSocketForDriver(void *clientThread);
 
     // TODO: change function names
-    void performTask9(Socket *socket);
+    void performTask9(Socket *currSocket);
 
     /*
      * Return serializer object
