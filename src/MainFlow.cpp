@@ -5,12 +5,12 @@
 #include <cstdlib>
 #include <pthread.h>
 
-MainFlow::MainFlow(Socket *socket, int *operationNumber) {
+MainFlow::MainFlow(Socket *socket, int operationNumber) {
 
     this->socket = socket;
     BOOST_LOG_TRIVIAL(info) << "Opening main socket.";
     this->socket->initialize();
-    this->operationNumber = operationNumber;
+    this->operationNumber = &operationNumber;
     this->vacantPort = 42345;
 }
 
@@ -98,11 +98,11 @@ Serializer MainFlow::getSerializer() {
     return this->serializer;
 }
 
-void MainFlow::addClientThread(ClientThread clientThread) {
+void MainFlow::addClientThread(ClientThread *clientThread) {
     this->clientThreadVector.push_back(clientThread);
 }
 
-std::vector<ClientThread> MainFlow::getClientThreadVector() {
+std::vector<ClientThread *> MainFlow::getClientThreadVector() {
     return this->clientThreadVector;
 }
 
@@ -112,24 +112,24 @@ void MainFlow::selectDrivers(int numOfDrivers) {
     for (int i = 0; i < numOfDrivers; i++) {
 
         pthread_t currThread;
-        pthread_mutex_t currMtx;
 
-        //pthread_mutex_lock(&currMtx);
-        ClientThread clientThread(currMtx, this);
+        // TODO: delete all the client threads
+        ClientThread *clientThread = new ClientThread(this);
         this->addClientThread(clientThread);
 
         // Init thread for driver
         pthread_create(&currThread, NULL,
                        ClientThread::sendToListenToSocketForDriver,
-                       (void *) (&clientThread));
+                       (void *) (clientThread));
 
         BOOST_LOG_TRIVIAL(info) << "New thread created with thread id: "
                                 << currThread;
-        clientThread.setThread(currThread);
+        clientThread->setThread(currThread);
         this->addThreadToVector(currThread);
 
         // Wait for thread
-        pthread_join(currThread, NULL);
+        // TODO: Check whether necessary
+        //pthread_exit(currThread, NULL);
     }
 }
 
@@ -172,14 +172,6 @@ std::vector<Socket *> MainFlow::getSocketVector() {
 
 void MainFlow::insertClientSocket(Socket *socket) {
     this->socketVector.push_back(socket);
-}
-
-std::vector<pthread_mutex_t> MainFlow::getMutexs() {
-    return this->mutexs;
-}
-
-void MainFlow::addMutex(pthread_mutex_t mtx) {
-    this->mutexs.push_back(mtx);
 }
 
 Grid *MainFlow::getMap() const {

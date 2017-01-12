@@ -122,6 +122,7 @@ int main(int argc, char *argv[]) {
             serializer.deserialize(communicationBuffer,
                                    sizeof(communicationBuffer), trip);
             taxi->setTrip(trip);
+            BOOST_LOG_TRIVIAL(info) << "Received the trip";
         }
     }
 

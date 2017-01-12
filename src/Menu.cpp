@@ -3,8 +3,7 @@
 
 Menu::Menu(Socket *socket) {
 
-
-    this->mainFlow = new MainFlow(socket, this->currentOperation);
+    this->mainFlow = new MainFlow(socket, 0);
 
 }
 
@@ -79,29 +78,24 @@ int Menu::runMenu() {
             case 7:
 
                 // Send each driver exit command
-                this->setCurrentOperation(7);
-                this->wakeUpThreads();
+                this->wakeUpThreads(7);
                 this->getMainFlow()->exitSystem();
 
 
                 // Advance one step
             case 9:
 
-                this->setCurrentOperation(9);
-                this->wakeUpThreads();
+                this->wakeUpThreads(9);
                 break;
         }
     }
 }
 
-void Menu::setCurrentOperation(int option) {
-    *(this->currentOperation) = option;
-}
-
 void Menu::wakeUpThreads(int operationNumber) {
-    int numberOfThreads = this->getMainFlow()->getClientThreadVector().size();
+    std::vector<ClientThread *> clientThreadVec = this->getMainFlow()->getClientThreadVector();
+    int numberOfThreads = clientThreadVec.size();
     for (int i = 0; i < numberOfThreads; i++) {
-        this->getMainFlow()->setOperationNumber(operationNumber);
+        clientThreadVec.at(i)->setThreadCommand(operationNumber);
     }
 
 }

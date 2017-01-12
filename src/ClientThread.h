@@ -11,7 +11,6 @@ class ClientThread {
 private:
 
     MainFlow *mainFlow;
-    pthread_mutex_t mutex;
     int threadCommand;
     Socket *socket;
     pthread_t thread;
@@ -23,13 +22,14 @@ public:
 
 public:
 
-    ClientThread(pthread_mutex_t mutex, MainFlow *mainFlow);
+    ClientThread(MainFlow *mainFlow);
+
     MainFlow *getMainFlow();
-    pthread_mutex_t getMutex();
+
     /*
      * Listen to socket and receive driver.
      */
-    void * listenToSocketForDriver(pthread_mutex_t mtx);
+    void * listenToSocketForDriver();
 
     /*
      * Recevies the mutex and thread and send to listenToSocketForDriver func.

@@ -4,9 +4,8 @@
 #include "../sockets/Tcp.h"
 
 
-ClientThread::ClientThread(pthread_mutex_t mutex, MainFlow *mainFlow)
+ClientThread::ClientThread(MainFlow *mainFlow)
         : threadCommand(0) {
-    this->mutex    = mutex;
     this->mainFlow = mainFlow;
 }
 
@@ -14,20 +13,15 @@ MainFlow *ClientThread::getMainFlow() {
     return this->mainFlow;
 }
 
-pthread_mutex_t ClientThread::getMutex() {
-    return this->mutex;
-}
-
 
 void *ClientThread::sendToListenToSocketForDriver(void *clientThread) {
-    return (((ClientThread *) clientThread)->listenToSocketForDriver(
-            ((ClientThread *) clientThread)->getMutex()));
+    return (((ClientThread *) clientThread)->listenToSocketForDriver());
 }
 
-void *ClientThread::listenToSocketForDriver(pthread_mutex_t mtx) {
+void *ClientThread::listenToSocketForDriver() {
 
-    char            buffer[1024];
-    Driver          *driver;
+    char buffer[1024];
+    Driver *driver;
     pthread_mutex_t addDriverMtx;
 
     BOOST_LOG_TRIVIAL(info) << "Starting thread function";
@@ -47,13 +41,11 @@ void *ClientThread::listenToSocketForDriver(pthread_mutex_t mtx) {
 
     BOOST_LOG_TRIVIAL(info) << "Sending port";
     // Send client new port to communicate with
-    int             newPort = this->getMainFlow()->getVacantPort();
+    int newPort = this->getMainFlow()->getVacantPort();
     this->getMainFlow()->getSocket()->sendData(
             boost::lexical_cast<string>(newPort));
 
-    char temp[1024];
-    //BOOST_LOG_TRIVIAL(info) <<"Receiving junk data";
-    //this->getSocket()->reciveData(temp, 1024);
+    //char temp[1024];
     // Create new socket for new client
     this->socket = new Tcp(true, newPort);
     this->socket->initialize();
@@ -71,12 +63,14 @@ void *ClientThread::listenToSocketForDriver(pthread_mutex_t mtx) {
 
     BOOST_LOG_TRIVIAL(info) << "Waiting for first command from server.";
 
-    while (this->getThreadCommand() == 0) {
+    while(true) {
+
 
         if (this->getThreadCommand() == 9) {
 
-            this->getMainFlow()->performTask9(this->socket);
             BOOST_LOG_TRIVIAL(info) << "Performed task 9";
+            this->getMainFlow()->performTask9(this->socket);
+            this->threadCommand = 0;
         } else if (this->getThreadCommand() == 7) {
 
             this->socket->sendData("exit");
@@ -84,7 +78,6 @@ void *ClientThread::listenToSocketForDriver(pthread_mutex_t mtx) {
             pthread_exit(NULL);
         }
 
-        this->threadCommand = 0;
     }
 }
 

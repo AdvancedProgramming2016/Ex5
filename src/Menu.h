@@ -31,9 +31,7 @@ public:
      */
     virtual ~Menu();
 
-    void setCurrentOperation(int option);
-
-    void wakeUpThreads();
+    void wakeUpThreads(int operationNumber);
 
     /*
      * Returns serializer

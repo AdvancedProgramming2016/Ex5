@@ -27,9 +27,8 @@ private:
     TaxiCenter *taxiCenter;
     Grid       *map;
     std::vector<pthread_t> threads;
-    std::vector<pthread_mutex_t> mutexs;
     std::vector<Socket *> socketVector;
-    std::vector<ClientThread> clientThreadVector;
+    std::vector<ClientThread *> clientThreadVector;
     Socket       *socket;
     Serializer   serializer;
     int *operationNumber;
@@ -40,7 +39,7 @@ public:
     /*
      * Ctor
      */
-    MainFlow(Socket *socket, int *operationNumber);
+    MainFlow(Socket *socket, int operationNumber);
 
     /*
      * Dtor
@@ -57,9 +56,9 @@ public:
 
     std::vector<Socket *> getSocketVector();
 
-    void addClientThread(ClientThread clientThread);
+    void addClientThread(ClientThread *clientThread);
 
-    std::vector<ClientThread> getClientThreadVector();
+    std::vector<ClientThread *> getClientThreadVector();
 
     void insertClientSocket(Socket *socket);
 
@@ -83,8 +82,6 @@ public:
      */
     void selectDrivers(int numOfDrivers);
 
-    void addMutex(pthread_mutex_t mtx);
-
     /*
      * Send vehicle to socket.
      */
@@ -94,8 +91,6 @@ public:
      * Sends the client the new port the servers is listening to.
      */
     void sendClientNewPort(unsigned int newPort);
-
-    std::vector<pthread_mutex_t> getMutexs();
 
     /*
      * Creates a taxi center.
