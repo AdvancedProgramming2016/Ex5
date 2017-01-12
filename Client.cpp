@@ -67,6 +67,7 @@ int main(int argc, char *argv[]) {
     BOOST_LOG_TRIVIAL(info) << "Waiting for server to assign new port";
     socket->reciveData(newPortBuffer, sizeof(newPortBuffer));
 
+   // socket->sendData("got it");
     // Delete old socket
     BOOST_LOG_TRIVIAL(info) << "Deleting port 5555";
     delete socket;
@@ -74,26 +75,28 @@ int main(int argc, char *argv[]) {
 
     // Open socket to new port
     BOOST_LOG_TRIVIAL(info) << "Opening new port: " << atoi(newPortBuffer);
-    socket = new Tcp(0, atoi(newPortBuffer));
-    socket->initialize();
+    Socket *newSocket = new Tcp(0, atoi(newPortBuffer));
+    newSocket->initialize();
 
     char buffer[1024];
 
     //Receives data from the server.
-    socket->reciveData(buffer, sizeof(buffer));
+    newSocket->reciveData(buffer, sizeof(buffer));
+    BOOST_LOG_TRIVIAL(info) << "Receiving serialized vehicle.";
 
     //Deserializes the data received from the server into a vehicle object.
     serializer.deserialize(buffer, sizeof(buffer), vehicle);
+    BOOST_LOG_TRIVIAL(info) << "Desirialized vehicle";
 
     taxi         = new Taxi(driver, vehicle, Point(0, 0));
     serialDriver = "";
-
+    BOOST_LOG_TRIVIAL(info) << "Waiting for command.";
     //Take input from the server while it's not an exit command.
     while (!exitCalled) {
 
         char communicationBuffer[1024];
 
-        socket->reciveData(communicationBuffer, sizeof(communicationBuffer));
+        newSocket->reciveData(communicationBuffer, sizeof(communicationBuffer));
 
         //If received "exit", close the client.
         if (strcmp(communicationBuffer, "exit") == 0) {

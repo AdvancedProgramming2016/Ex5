@@ -68,13 +68,13 @@ TaxiCenter *MainFlow::getTaxiCenter() const {
     return taxiCenter;
 }
 
-void MainFlow::sendToSocketVehicle(unsigned int vehicleId) {
+void MainFlow::sendToSocketVehicle(unsigned int vehicleId, Socket *socket) {
 
     Vehicle *vehicle = this->getDriverVehicle(vehicleId);
     std::string serialVehicle;
     serialVehicle = this->serializer.serialize(vehicle);
 
-    this->getSocket()->sendData(serialVehicle);
+    socket->sendData(serialVehicle);
 }
 
 Vehicle *MainFlow::getDriverVehicle(unsigned int vehicleId) {
@@ -98,63 +98,12 @@ Serializer MainFlow::getSerializer() {
     return this->serializer;
 }
 
-void *MainFlow::sendToListenToSocketForDriver(void *clientThread) {
-    return (((ClientThread *) clientThread)->getMainFlow()->listenToSocketForDriver(
-            ((ClientThread *) clientThread)->getMutex()));
+void MainFlow::addClientThread(ClientThread clientThread) {
+    this->clientThreadVector.push_back(clientThread);
 }
 
-void *MainFlow::listenToSocketForDriver(pthread_mutex_t mtx) {
-
-    char buffer[1024];
-    Driver *driver;
-    pthread_mutex_t addDriverMtx;
-
-    this->getSocket()->reciveData(buffer, 1024);
-
-    // Allow one thread to add driver at a time
-    pthread_mutex_lock(&addDriverMtx);
-
-    this->getSerializer().deserialize(buffer, sizeof(buffer), driver);
-
-    this->getTaxiCenter()->addDriver(driver);
-
-    // Unlock mutex
-    pthread_mutex_unlock(&addDriverMtx);
-
-    // Send client new port to communicate with
-    this->getSocket()->sendData(
-            boost::lexical_cast<string>(this->getVacantPort()));
-
-    // Create new socket for new client
-    Socket *newSocket = new Tcp(true, this->getVacantPort());
-    newSocket->initialize();
-    this->insertClientSocket(newSocket); // Add new socket to vector.
-    BOOST_LOG_TRIVIAL(info) << "Initializing new port: "
-                            << this->getVacantPort();
-
-    this->increaseVacantPort();
-
-    BOOST_LOG_TRIVIAL(info) << "Sending to client vehicle";
-    newSocket->sendData(boost::lexical_cast<string>(driver->getVehicleId()));
-
-    // Perform user selection unless 7 was selected
-    while (*(this->getOperationNumber()) != 7) {
-
-        // Wait for server command to continue and write to log
-        BOOST_LOG_TRIVIAL(info) << "Waiting for command from server.";
-        pthread_mutex_lock(&mtx);
-
-        this->performTask9(newSocket);
-
-    }
-
-// TODO: Understand how to send to specific socket
-    newSocket->sendData("exit");
-
-// Kill thread
-    BOOST_LOG_TRIVIAL(info) << "Exiting current thread.";
-    pthread_exit(NULL);
-
+std::vector<ClientThread> MainFlow::getClientThreadVector() {
+    return this->clientThreadVector;
 }
 
 void MainFlow::selectDrivers(int numOfDrivers) {
@@ -167,15 +116,16 @@ void MainFlow::selectDrivers(int numOfDrivers) {
 
         //pthread_mutex_lock(&currMtx);
         ClientThread clientThread(currMtx, this);
+        this->addClientThread(clientThread);
 
         // Init thread for driver
         pthread_create(&currThread, NULL,
-                       sendToListenToSocketForDriver,
+                       ClientThread::sendToListenToSocketForDriver,
                        (void *) (&clientThread));
 
         BOOST_LOG_TRIVIAL(info) << "New thread created with thread id: "
                                 << currThread;
-
+        clientThread.setThread(currThread);
         this->addThreadToVector(currThread);
 
         // Wait for thread

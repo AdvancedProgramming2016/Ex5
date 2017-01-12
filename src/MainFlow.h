@@ -29,6 +29,7 @@ private:
     std::vector<pthread_t> threads;
     std::vector<pthread_mutex_t> mutexs;
     std::vector<Socket *> socketVector;
+    std::vector<ClientThread> clientThreadVector;
     Socket       *socket;
     Serializer   serializer;
     int *operationNumber;
@@ -56,6 +57,10 @@ public:
 
     std::vector<Socket *> getSocketVector();
 
+    void addClientThread(ClientThread clientThread);
+
+    std::vector<ClientThread> getClientThreadVector();
+
     void insertClientSocket(Socket *socket);
 
     // Gets a vacant port from the server
@@ -64,15 +69,6 @@ public:
     // Increase the vacant port by one
     void increaseVacantPort();
 
-    /*
-     * Listen to socket and receive driver.
-     */
-    void * listenToSocketForDriver(pthread_mutex_t mtx);
-
-    /*
-     * Recevies the mutex and thread and send to listenToSocketForDriver func.
-     */
-    static void *sendToListenToSocketForDriver(void *clientThread);
 
     // TODO: change function names
     void performTask9(Socket *currSocket);
@@ -92,7 +88,7 @@ public:
     /*
      * Send vehicle to socket.
      */
-    void sendToSocketVehicle(unsigned int vehicleId);
+    void sendToSocketVehicle(unsigned int vehicleId, Socket *socket);
 
     /*
      * Sends the client the new port the servers is listening to.

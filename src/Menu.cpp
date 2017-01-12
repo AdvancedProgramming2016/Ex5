@@ -98,10 +98,12 @@ void Menu::setCurrentOperation(int option) {
     *(this->currentOperation) = option;
 }
 
-void Menu::wakeUpThreads() {
-    for (int i = 0; i < this->getMainFlow()->getMutexs().size(); i++) {
-        pthread_mutex_unlock(&(this->getMainFlow()->getMutexs().at(i)));
+void Menu::wakeUpThreads(int operationNumber) {
+    int numberOfThreads = this->getMainFlow()->getClientThreadVector().size();
+    for (int i = 0; i < numberOfThreads; i++) {
+        this->getMainFlow()->setOperationNumber(operationNumber);
     }
+
 }
 
 
