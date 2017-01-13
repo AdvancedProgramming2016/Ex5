@@ -75,12 +75,17 @@ int Menu::runMenu() {
                 break;
                 */
                 //Exit system
-            case 7:
+            case 7: {
 
+                std::vector<ClientThread *> clientThreadVec = this->getMainFlow()->getClientThreadVector();
                 // Send each driver exit command
-                this->wakeUpThreads(7);  //TODO in order to exit we need to join the threads first
+                this->wakeUpThreads(
+                        7);  //TODO in order to exit we need to join the threads first
+                for (int i = 0; i < clientThreadVec.size(); i++) {
+                    pthread_join(clientThreadVec.at(i)->getThread(), NULL);
+                }
                 this->getMainFlow()->exitSystem();
-
+            }
 
                 // Advance one step
             case 9:

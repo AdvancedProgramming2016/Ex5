@@ -122,6 +122,7 @@ void MainFlow::selectDrivers(int numOfDrivers) {
                        ClientThread::sendToListenToSocketForDriver,
                        (void *) (clientThread));
 
+
         BOOST_LOG_TRIVIAL(info) << "New thread created with thread id: "
                                 << currThread;
         clientThread->setThread(currThread);
