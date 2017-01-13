@@ -78,7 +78,7 @@ int Menu::runMenu() {
             case 7:
 
                 // Send each driver exit command
-                this->wakeUpThreads(7);
+                this->wakeUpThreads(7);  //TODO in order to exit we need to join the threads first
                 this->getMainFlow()->exitSystem();
 
 
@@ -96,6 +96,7 @@ void Menu::wakeUpThreads(int operationNumber) {
     int numberOfThreads = clientThreadVec.size();
     for (int i = 0; i < numberOfThreads; i++) {
         clientThreadVec.at(i)->setThreadCommand(operationNumber);
+        //pthread_join(clientThreadVec.at(i)->getThread(), NULL);
     }
 
 }

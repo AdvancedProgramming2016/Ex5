@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
             taxi->move();
             std::string serial = serializer.serialize(
                     &taxi->getCurrentPosition());
-            socket->sendData(serial);
+            newSocket->sendData(serial);
         } else {
 
             if (trip != 0) {
@@ -127,7 +127,7 @@ int main(int argc, char *argv[]) {
     }
 
     //Close the client process.
-    closeClient(taxi, driver, vehicle, socket);
+    closeClient(taxi, driver, vehicle, newSocket);
 }
 
 void closeClient(Taxi *taxi, Driver *driver, Vehicle *vehicle, Socket *socket) {
