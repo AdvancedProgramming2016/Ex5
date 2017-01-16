@@ -33,6 +33,7 @@ private:
     Serializer   serializer;
     int *operationNumber;
     unsigned int vacantPort;
+    pthread_mutex_t mutex;
 
 public:
 
@@ -70,7 +71,7 @@ public:
 
 
     // TODO: change function names
-    void performTask9(Socket *currSocket);
+    void performTask9(int descriptor);
 
     /*
      * Return serializer object
@@ -85,7 +86,7 @@ public:
     /*
      * Send vehicle to socket.
      */
-    void sendToSocketVehicle(unsigned int vehicleId, Socket *socket);
+    void sendToSocketVehicle(unsigned int vehicleId, int descriptor);
 
     /*
      * Sends the client the new port the servers is listening to.
@@ -151,6 +152,11 @@ public:
      * Cleans the map for the next iteration.
      */
     void cleanGrid();
+
+    /*
+     * Returns mutex
+     */
+    pthread_mutex_t &getMutex() ;
 
 };
 

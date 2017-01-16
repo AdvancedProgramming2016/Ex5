@@ -35,7 +35,7 @@ TaxiCenter::~TaxiCenter() {
 
 }
 
-void TaxiCenter::assignTrip(Socket &socket, Serializer serializer) {
+void TaxiCenter::assignTrip(Socket &socket, Serializer serializer, int descriptor) {
 
     unsigned int i = 0;
     std::vector<Trip *> &tripVec = this->getTrips();
@@ -64,7 +64,7 @@ void TaxiCenter::assignTrip(Socket &socket, Serializer serializer) {
                     // Send trip to client
                     std::string serialTrip;
                     serialTrip = serializer.serialize(currTrip);
-                    socket.sendData(serialTrip);
+                    socket.sendData(serialTrip, descriptor);
 
                     //Remove the trip from the trips vector;
                     tripVec.erase(tripVec.begin() + i);
@@ -74,7 +74,7 @@ void TaxiCenter::assignTrip(Socket &socket, Serializer serializer) {
     }
 }
 
-void TaxiCenter::moveOneStep(Socket &socket, Serializer serializer) {
+void TaxiCenter::moveOneStep(Socket &socket, Serializer serializer, int descriptor) {
 
     std::vector<Taxi *> taxiVec = this->getTaxis();
     int i = 0;
@@ -91,12 +91,12 @@ void TaxiCenter::moveOneStep(Socket &socket, Serializer serializer) {
 
             // Tell driver to advance one step
             std::string go = "go";
-            socket.sendData(go);
+            socket.sendData(go, descriptor);
 
             // Wait for drivers answer
             char buffer[1024];
             Point *currPoint = 0;
-            socket.reciveData(buffer, 1024);
+            socket.receiveData(buffer, 1024, descriptor);
             serializer.deserialize(buffer, sizeof(buffer), currPoint);
 
             currTaxi->setCurrentPosition(*currPoint);

@@ -63,12 +63,12 @@ public:
     /*
      * Assigns the free taxis with trips.
      */
-    void assignTrip(Socket &socket, Serializer serializer);
+    void assignTrip(Socket &socket, Serializer serializer, int descriptor);
 
     /*
      * Moves all the taxis with trips to their next point on the map.
      */
-    void moveOneStep(Socket &socket, Serializer serializer);
+    void moveOneStep(Socket &socket, Serializer serializer, int descriptor);
 
     /*
      * Add a driver to the drivers the taxi center has.

@@ -11,7 +11,10 @@ MainFlow::MainFlow(Socket *socket, int operationNumber) {
     BOOST_LOG_TRIVIAL(info) << "Opening main socket.";
     this->socket->initialize();
     this->operationNumber = &operationNumber;
-    this->vacantPort = 42345;
+    //this->vacantPort      = 42345;
+
+    //this->socket->initialize();
+    pthread_mutex_init(&this->mutex, NULL);
 }
 
 MainFlow::~MainFlow() {
@@ -23,6 +26,8 @@ MainFlow::~MainFlow() {
     for (int i = 0; i < this->getSocketVector().size(); i++) {
         delete this->getSocketVector().at(i);
     }
+
+    pthread_mutex_destroy(&this->mutex);
 }
 
 int *MainFlow::getOperationNumber() {
@@ -68,19 +73,21 @@ TaxiCenter *MainFlow::getTaxiCenter() const {
     return taxiCenter;
 }
 
-void MainFlow::sendToSocketVehicle(unsigned int vehicleId, Socket *socket) {
+void MainFlow::sendToSocketVehicle(unsigned int vehicleId,
+                                   int descriptor) {
 
-    Vehicle *vehicle = this->getDriverVehicle(vehicleId);
+    Vehicle     *vehicle = this->getDriverVehicle(vehicleId);
     std::string serialVehicle;
     serialVehicle = this->serializer.serialize(vehicle);
 
-    socket->sendData(serialVehicle);
+    socket->sendData(serialVehicle, descriptor);
 }
 
 Vehicle *MainFlow::getDriverVehicle(unsigned int vehicleId) {
 
     std::vector<Vehicle *> vehicles = this->getTaxiCenter()->
             getVehicles();
+
     for (int i = 0; i < vehicles.size(); ++i) {
 
         if (vehicles[i]->getVehicleId() == vehicleId) {
@@ -88,6 +95,61 @@ Vehicle *MainFlow::getDriverVehicle(unsigned int vehicleId) {
             return vehicles[i];
         }
     }
+}
+
+
+void MainFlow::selectDrivers(int numOfDrivers) {
+
+    // Receive driver objects from client
+    for (int i = 0; i < numOfDrivers; i++) {
+
+        pthread_t currThread;
+
+        // TODO: delete all the client threads
+        ClientThread *clientThread = new ClientThread(this, i);
+        this->addClientThread(clientThread);
+
+        // Init thread for driver
+        pthread_create(&currThread, NULL,
+                       ClientThread::sendToListenToSocketForDriver,
+                       (void *) (clientThread));
+
+
+        BOOST_LOG_TRIVIAL(info) << "New thread created with thread id: "
+                                << clientThread->getThreadId();
+        clientThread->setThread(currThread);
+        this->addThreadToVector(currThread);
+
+        // Wait for thread
+        // TODO: Check whether necessary
+        //pthread_exit(currThread, NULL);
+    }
+}
+
+void MainFlow::performTask9(int descriptor) {
+
+    pthread_mutex_t assignTripMtx;
+
+    pthread_mutex_lock(&assignTripMtx);
+
+    // Check that all the trips that need to start are attached
+    // to a driver
+    this->getTaxiCenter()->assignTrip(*this->getSocket(), this->getSerializer(),
+                                      descriptor);
+
+    // Move all the taxis one step
+    this->getTaxiCenter()->moveOneStep(
+            *(this->getSocket()), this->getSerializer(), descriptor);
+
+    pthread_mutex_unlock(&assignTripMtx);
+}
+
+unsigned int MainFlow::getVacantPort() {
+    return this->vacantPort;
+}
+
+void MainFlow::increaseVacantPort() {
+    ++(this->vacantPort);
 }
 
 Socket *MainFlow::getSocket() {
@@ -106,65 +168,10 @@ std::vector<ClientThread *> MainFlow::getClientThreadVector() {
     return this->clientThreadVector;
 }
 
-void MainFlow::selectDrivers(int numOfDrivers) {
-
-    // Receive driver objects from client
-    for (int i = 0; i < numOfDrivers; i++) {
-
-        pthread_t currThread;
-
-        // TODO: delete all the client threads
-        ClientThread *clientThread = new ClientThread(this);
-        this->addClientThread(clientThread);
-
-        // Init thread for driver
-        pthread_create(&currThread, NULL,
-                       ClientThread::sendToListenToSocketForDriver,
-                       (void *) (clientThread));
-
-
-        BOOST_LOG_TRIVIAL(info) << "New thread created with thread id: "
-                                << currThread;
-        clientThread->setThread(currThread);
-        this->addThreadToVector(currThread);
-
-        // Wait for thread
-        // TODO: Check whether necessary
-        //pthread_exit(currThread, NULL);
-    }
-}
-
-void MainFlow::performTask9(Socket *currSocket) {
-
-    pthread_mutex_t assignTripMtx;
-
-    pthread_mutex_lock(&assignTripMtx);
-
-    // Check that all the trips that need to start are attached
-    // to a driver
-    this->getTaxiCenter()->assignTrip(
-            *(currSocket), this->getSerializer());
-
-    // Move all the taxis one step
-    this->getTaxiCenter()->moveOneStep(
-            *(currSocket), this->getSerializer());
-
-    pthread_mutex_unlock(&assignTripMtx);
-}
-
-unsigned int MainFlow::getVacantPort() {
-    return this->vacantPort;
-}
-
-void MainFlow::increaseVacantPort() {
-    ++(this->vacantPort);
-}
-
-
 void MainFlow::sendClientNewPort(unsigned int newPort) {
 
     // Case newPort to string and send the new socket to client
-    this->getSocket()->sendData(boost::lexical_cast<string>(newPort));
+    // this->getSocket()->sendData(boost::lexical_cast<string>(newPort));
 }
 
 std::vector<Socket *> MainFlow::getSocketVector() {
@@ -211,4 +218,8 @@ void MainFlow::cleanGrid() {
 
         v->setFather(0);
     }
+}
+
+pthread_mutex_t &MainFlow::getMutex() {
+    return mutex;
 }

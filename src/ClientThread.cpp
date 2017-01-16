@@ -4,8 +4,8 @@
 #include "../sockets/Tcp.h"
 
 
-ClientThread::ClientThread(MainFlow *mainFlow)
-        : threadCommand(0) {
+ClientThread::ClientThread(MainFlow *mainFlow, unsigned int threadId)
+        : threadCommand(0), threadId(threadId), descriptor(0) {
     this->mainFlow = mainFlow;
 }
 
@@ -20,61 +20,89 @@ void *ClientThread::sendToListenToSocketForDriver(void *clientThread) {
 
 void *ClientThread::listenToSocketForDriver() {
 
-    char buffer[1024];
+
+    char   buffer[1024];
     Driver *driver;
-    pthread_mutex_t addDriverMtx;
 
-    BOOST_LOG_TRIVIAL(info) << "Starting thread function";
+    //put this under mutex
+    this->descriptor = this->mainFlow->getSocket()->callAccept();
+    //pthread_mutex_t addDriverMtx;
 
-    this->getMainFlow()->getSocket()->reciveData(buffer, 1024);
+    BOOST_LOG_TRIVIAL(info) << "Thread:" << this->getThreadId()
+                            << " Starting thread function";
 
-    BOOST_LOG_TRIVIAL(info) << "Received driver";
+    pthread_mutex_lock(&this->getMainFlow()->getMutex());
+    this->getMainFlow()->getSocket()->receiveData(buffer, 1024, this->getDescriptor());
+    pthread_mutex_unlock(&this->getMainFlow()->getMutex());
+
+    BOOST_LOG_TRIVIAL(info) << "Thread:" << this->getThreadId()
+                            << " Received driver";
     // Allow one thread to add driver at a time
-    pthread_mutex_lock(&addDriverMtx);
+    //pthread_mutex_lock(&addDriverMtx);
 
+    pthread_mutex_lock(&this->getMainFlow()->getMutex());
     this->getMainFlow()->getSerializer().deserialize(buffer, sizeof(buffer),
                                                      driver);
+    BOOST_LOG_TRIVIAL(info) << "Thread:" << this->getThreadId()
+                            << " Driver id:" << driver->getDriverId();
 
-    BOOST_LOG_TRIVIAL(info) << "Desirialied driver";
+    BOOST_LOG_TRIVIAL(info) << "Thread:" << this->getThreadId()
+                            << " Desirialied driver";
     this->getMainFlow()->getTaxiCenter()->addDriver(driver);
 
 
-    BOOST_LOG_TRIVIAL(info) << "Sending port";
+    //BOOST_LOG_TRIVIAL(info) << "Thread:" << this->getThreadId()
+    //                        << " Sending port";
     // Send client new port to communicate with
-    int newPort = this->getMainFlow()->getVacantPort();
-    this->getMainFlow()->getSocket()->sendData(
-            boost::lexical_cast<string>(newPort));
+    //int    newPort = this->getMainFlow()->getVacantPort();
+    //this->getMainFlow()->getSocket()->sendData(
+    //       boost::lexical_cast<string>(newPort));
+    //delete this->getMainFlow()->getSocket();
+//    Socket * s = this->getMainFlow()->getSocket();
+//    s = new Tcp(1, 5555);
+//    s->initialize();
 
     //char temp[1024];
     // Create new socket for new client
-    this->socket = new Tcp(true, newPort);
-    this->socket->initialize();
-    this->getMainFlow()->insertClientSocket(
-            this->socket); // Add new socket to vector.
-    BOOST_LOG_TRIVIAL(info) << "Initializing new port: "
-                            << this->getMainFlow()->getVacantPort();
+    //this->socket = new Tcp(1, 5555);
 
-    this->getMainFlow()->increaseVacantPort();
+    //this->descriptor = this->mainFlow->getSocket()->callAccept();
+   // this->getMainFlow()->insertClientSocket(
+    //        this->socket); // Add new socket to vector.
 
-    pthread_mutex_unlock(&addDriverMtx);
+//    BOOST_LOG_TRIVIAL(info) << "Thread:" << this->getThreadId()
+//                            << " Initializing new port: "
+//                            << this->getMainFlow()->getVacantPort();
+//    this->getMainFlow()->increaseVacantPort();
 
-    BOOST_LOG_TRIVIAL(info) << "Sending to client vehicle";
-    getMainFlow()->sendToSocketVehicle(driver->getVehicleId(), this->socket);
+    //pthread_mutex_unlock(&addDriverMtx);
 
-    BOOST_LOG_TRIVIAL(info) << "Waiting for first command from server.";
+    BOOST_LOG_TRIVIAL(info) << "Thread:" << this->getThreadId()
+                            << " Sending to client vehicle";
+    getMainFlow()->sendToSocketVehicle(driver->getVehicleId(),
+                                       descriptor);
 
-    while(true) {
+    BOOST_LOG_TRIVIAL(info) << "Thread:" << this->getThreadId()
+                            << " Waiting for first command from server.";
 
+    pthread_mutex_unlock(&this->getMainFlow()->getMutex());
+
+    while (true) {
 
         if (this->getThreadCommand() == 9) {
 
-            BOOST_LOG_TRIVIAL(info) << "Performed task 9";
-            this->getMainFlow()->performTask9(this->socket);
+            pthread_mutex_lock(&this->getMainFlow()->getMutex());
+            BOOST_LOG_TRIVIAL(info) << "Thread:" << this->getThreadId()
+                                    << " Performed task 9";
+            this->getMainFlow()->performTask9(this->getDescriptor());
             this->threadCommand = 0;
+            pthread_mutex_unlock(&this->getMainFlow()->getMutex());
+
         } else if (this->getThreadCommand() == 7) {
 
-            this->socket->sendData("exit");
-            BOOST_LOG_TRIVIAL(info) << "Exiting current thread.";
+            (this->mainFlow->getSocket())->sendData("exit", this->getDescriptor());
+            BOOST_LOG_TRIVIAL(info) << "Thread:" << this->getThreadId()
+                                    << " Exiting current thread.";
             pthread_exit(NULL);
         }
 
@@ -95,4 +123,16 @@ pthread_t ClientThread::getThread() const {
 
 void ClientThread::setThread(pthread_t thread) {
     ClientThread::thread = thread;
+}
+
+unsigned int ClientThread::getThreadId() const {
+    return threadId;
+}
+
+void ClientThread::setDescriptor(int descriptor) {
+    ClientThread::descriptor = descriptor;
+}
+
+int ClientThread::getDescriptor() const {
+    return descriptor;
 }

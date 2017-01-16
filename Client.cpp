@@ -28,6 +28,7 @@
 #include <cstdlib>
 
 #include <boost/log/trivial.hpp>
+
 BOOST_CLASS_EXPORT_GUID(StandardVehicle, "StandardVehicle")
 BOOST_CLASS_EXPORT_GUID(LuxuryVehicle, "LuxuryVehicle")
 
@@ -39,7 +40,8 @@ void closeClient(Taxi *taxi, Driver *driver, Vehicle *vehicle, Socket *socket);
 int main(int argc, char *argv[]) {
 
     //The socket connecting between the client and the server.
-    Socket       *socket    = new Tcp(0, atoi(argv[1]));
+    Socket *socket          = new Tcp(0, atoi(argv[1]));
+
     //Serializer used for serializing and deserializing objects.
     Serializer   serializer;
     //Will handle parsing the user input.
@@ -51,6 +53,7 @@ int main(int argc, char *argv[]) {
     bool         exitCalled = false;
 
     socket->initialize();
+    //descriptor = socket->callAccept();
 
     //Creates a driver from a given user input.
     driver = stringParser.parseDriverInput();
@@ -60,28 +63,29 @@ int main(int argc, char *argv[]) {
 
     //Sends the string to the server
     BOOST_LOG_TRIVIAL(info) << "Sending driver object to server";
-    socket->sendData(serialDriver);
+    socket->sendData(serialDriver, socket->getSocketDescriptor());
 
-    char newPortBuffer[1024];
+    //har newPortBuffer[1024];
     // Receives new port from the server
-    BOOST_LOG_TRIVIAL(info) << "Waiting for server to assign new port";
-    socket->reciveData(newPortBuffer, sizeof(newPortBuffer));
+    //BOOST_LOG_TRIVIAL(info) << "Waiting for server to assign new port";
+    //socket->reciveData(newPortBuffer, sizeof(newPortBuffer), descriptor);
 
-   // socket->sendData("got it");
+    // socket->sendData("got it");
     // Delete old socket
-    BOOST_LOG_TRIVIAL(info) << "Deleting port 5555";
-    delete socket;
-    socket = 0;
+    //BOOST_LOG_TRIVIAL(info) << "Deleting port 5555";
+    //delete socket;
+    //socket = 0;
+    //descriptor = socket->callAccept();
 
     // Open socket to new port
-    BOOST_LOG_TRIVIAL(info) << "Opening new port: " << atoi(newPortBuffer);
-    Socket *newSocket = new Tcp(0, atoi(newPortBuffer));
-    newSocket->initialize();
+    //BOOST_LOG_TRIVIAL(info) << "Opening new port: " << atoi(socket);
+    //Socket *newSocket = new Tcp(0, atoi(socket));
+    //newSocket->initialize();
 
     char buffer[1024];
 
     //Receives data from the server.
-    newSocket->reciveData(buffer, sizeof(buffer));
+    socket->receiveData(buffer, sizeof(buffer), socket->getSocketDescriptor());
     BOOST_LOG_TRIVIAL(info) << "Receiving serialized vehicle.";
 
     //Deserializes the data received from the server into a vehicle object.
@@ -91,12 +95,15 @@ int main(int argc, char *argv[]) {
     taxi         = new Taxi(driver, vehicle, Point(0, 0));
     serialDriver = "";
     BOOST_LOG_TRIVIAL(info) << "Waiting for command.";
+    //descriptor = socket->callAccept();
     //Take input from the server while it's not an exit command.
     while (!exitCalled) {
 
         char communicationBuffer[1024];
 
-        newSocket->reciveData(communicationBuffer, sizeof(communicationBuffer));
+        socket->receiveData(communicationBuffer, sizeof(communicationBuffer),
+                            socket->getSocketDescriptor());
+        BOOST_LOG_TRIVIAL(info) << "Received command.";
 
         //If received "exit", close the client.
         if (strcmp(communicationBuffer, "exit") == 0) {
@@ -110,7 +117,10 @@ int main(int argc, char *argv[]) {
             taxi->move();
             std::string serial = serializer.serialize(
                     &taxi->getCurrentPosition());
-            newSocket->sendData(serial);
+            socket->sendData(serial, socket->getSocketDescriptor());
+            BOOST_LOG_TRIVIAL(info) << "Driver " << driver->getDriverId()
+                                    << " moved to "
+                                    << taxi->getCurrentPosition();
         } else {
 
             if (trip != 0) {
@@ -127,7 +137,7 @@ int main(int argc, char *argv[]) {
     }
 
     //Close the client process.
-    closeClient(taxi, driver, vehicle, newSocket);
+    closeClient(taxi, driver, vehicle, socket);
 }
 
 void closeClient(Taxi *taxi, Driver *driver, Vehicle *vehicle, Socket *socket) {

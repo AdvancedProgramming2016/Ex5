@@ -12,8 +12,9 @@ private:
 
     MainFlow *mainFlow;
     int threadCommand;
-    Socket *socket;
+    unsigned int threadId;
     pthread_t thread;
+    int descriptor;
 
 public:
     int getThreadCommand() const;
@@ -22,7 +23,7 @@ public:
 
 public:
 
-    ClientThread(MainFlow *mainFlow);
+    ClientThread(MainFlow *mainFlow, unsigned int threadId);
 
     MainFlow *getMainFlow();
 
@@ -30,6 +31,9 @@ public:
      * Listen to socket and receive driver.
      */
     void * listenToSocketForDriver();
+
+
+    unsigned int getThreadId() const;
 
     /*
      * Recevies the mutex and thread and send to listenToSocketForDriver func.
@@ -39,6 +43,10 @@ public:
     pthread_t getThread() const;
 
     void setThread(pthread_t thread);
+
+    void setDescriptor(int descriptor);
+
+    int getDescriptor() const;
 
 
 };
