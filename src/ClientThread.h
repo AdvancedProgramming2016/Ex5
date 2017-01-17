@@ -11,6 +11,7 @@ class ClientThread {
 private:
 
     MainFlow *mainFlow;
+    Driver *driver;
     int threadCommand;
     unsigned int threadId;
     pthread_t thread;
@@ -36,7 +37,7 @@ public:
     unsigned int getThreadId() const;
 
     /*
-     * Recevies the mutex and thread and send to listenToSocketForDriver func.
+     * Recevies the receiveDriverMutex and thread and send to listenToSocketForDriver func.
      */
     static void *sendToListenToSocketForDriver(void *clientThread);
 

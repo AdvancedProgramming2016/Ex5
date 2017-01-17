@@ -14,20 +14,23 @@ MainFlow::MainFlow(Socket *socket, int operationNumber) {
     //this->vacantPort      = 42345;
 
     //this->socket->initialize();
-    pthread_mutex_init(&this->mutex, NULL);
+    pthread_mutex_init(&this->receiveDriverMutex, NULL);
+    pthread_mutex_init(&this->sendCommandMutex, NULL);
+
 }
 
 MainFlow::~MainFlow() {
+
+    pthread_mutex_destroy(&this->receiveDriverMutex);
+    pthread_mutex_destroy(&this->sendCommandMutex);
 
     BOOST_LOG_TRIVIAL(info) << "Deleting all the open sockets.";
     delete this->socket;
 
     // Delete all the client opened sockets
-    for (int i = 0; i < this->getSocketVector().size(); i++) {
-        delete this->getSocketVector().at(i);
-    }
-
-    pthread_mutex_destroy(&this->mutex);
+//    for (int i = 0; i < this->getSocketVector().size(); i++) {
+  //      delete this->getSocketVector().at(i);
+    //}
 }
 
 int *MainFlow::getOperationNumber() {
@@ -126,22 +129,22 @@ void MainFlow::selectDrivers(int numOfDrivers) {
     }
 }
 
-void MainFlow::performTask9(int descriptor) {
+void MainFlow::performTask9(Driver *driver, int descriptor) {
 
-    pthread_mutex_t assignTripMtx;
+    //pthread_mutex_t assignTripMtx;
 
-    pthread_mutex_lock(&assignTripMtx);
+    //pthread_mutex_lock(&assignTripMtx);
 
     // Check that all the trips that need to start are attached
     // to a driver
-    this->getTaxiCenter()->assignTrip(*this->getSocket(), this->getSerializer(),
+    this->getTaxiCenter()->assignTrip(driver, *this->getSocket(), this->getSerializer(),
                                       descriptor);
 
     // Move all the taxis one step
-    this->getTaxiCenter()->moveOneStep(
+    this->getTaxiCenter()->moveOneStep(driver,
             *(this->getSocket()), this->getSerializer(), descriptor);
 
-    pthread_mutex_unlock(&assignTripMtx);
+   // pthread_mutex_unlock(&assignTripMtx);
 }
 
 unsigned int MainFlow::getVacantPort() {
@@ -172,14 +175,6 @@ void MainFlow::sendClientNewPort(unsigned int newPort) {
 
     // Case newPort to string and send the new socket to client
     // this->getSocket()->sendData(boost::lexical_cast<string>(newPort));
-}
-
-std::vector<Socket *> MainFlow::getSocketVector() {
-    return this->socketVector;
-}
-
-void MainFlow::insertClientSocket(Socket *socket) {
-    this->socketVector.push_back(socket);
 }
 
 Grid *MainFlow::getMap() const {
@@ -220,6 +215,10 @@ void MainFlow::cleanGrid() {
     }
 }
 
-pthread_mutex_t &MainFlow::getMutex() {
-    return mutex;
+pthread_mutex_t &MainFlow::getMutexReceiveDriver() {
+    return receiveDriverMutex;
+}
+
+pthread_mutex_t &MainFlow::getSendCommandMutex()  {
+    return sendCommandMutex;
 }

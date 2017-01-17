@@ -27,13 +27,13 @@ private:
     TaxiCenter *taxiCenter;
     Grid       *map;
     std::vector<pthread_t> threads;
-    std::vector<Socket *> socketVector;
     std::vector<ClientThread *> clientThreadVector;
     Socket       *socket;
     Serializer   serializer;
     int *operationNumber;
     unsigned int vacantPort;
-    pthread_mutex_t mutex;
+    pthread_mutex_t receiveDriverMutex;
+    pthread_mutex_t sendCommandMutex;
 
 public:
 
@@ -55,13 +55,9 @@ public:
     // Gets the next operation number
     int *getOperationNumber();
 
-    std::vector<Socket *> getSocketVector();
-
     void addClientThread(ClientThread *clientThread);
 
     std::vector<ClientThread *> getClientThreadVector();
-
-    void insertClientSocket(Socket *socket);
 
     // Gets a vacant port from the server
     unsigned int getVacantPort();
@@ -71,7 +67,7 @@ public:
 
 
     // TODO: change function names
-    void performTask9(int descriptor);
+    void performTask9(Driver *driver, int descriptor);
 
     /*
      * Return serializer object
@@ -154,9 +150,11 @@ public:
     void cleanGrid();
 
     /*
-     * Returns mutex
+     * Returns receiveDriverMutex
      */
-    pthread_mutex_t &getMutex() ;
+    pthread_mutex_t &getMutexReceiveDriver() ;
+
+    pthread_mutex_t &getSendCommandMutex();
 
 };
 

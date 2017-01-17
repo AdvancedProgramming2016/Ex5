@@ -1,3 +1,4 @@
+#include <boost/log/trivial.hpp>
 #include "TaxiCenter.h"
 #include "../sockets/Socket.h"
 #include "Serializer.h"
@@ -35,83 +36,99 @@ TaxiCenter::~TaxiCenter() {
 
 }
 
-void TaxiCenter::assignTrip(Socket &socket, Serializer serializer, int descriptor) {
+void
+TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
+                       int descriptor) {
 
-    unsigned int i = 0;
-    std::vector<Trip *> &tripVec = this->getTrips();
-    std::vector<Taxi *> &taxiVec = this->getTaxis();
+    unsigned int        i         = 0;
+    std::vector<Trip *> &tripVec  = this->getTrips();
+    std::vector<Taxi *> &taxiVec  = this->getTaxis();
+    Taxi                *currTaxi = 0;
 
     int j = 0;
     for (j = 0; j < taxiVec.size(); j++) {
 
-        if (taxiVec.at(j)->getTrip() == 0) {
-            for (i = 0; i < this->getTrips().size(); i++) {
+        if (taxiVec[j]->getDriver()->getDriverId() == driver->getDriverId()) {
+            currTaxi = taxiVec[j];
+        }
+    }
 
-                // If trip vector is empty and there are not more trips
-                if (tripVec.empty()) {
-                    return;
-                }
+    if (currTaxi != 0 && currTaxi->getTrip() == 0) {
 
-                // Get current trip
-                Trip *currTrip = tripVec.at(i);
+        for (i = 0; i < this->getTrips().size(); i++) {
 
-                // Check that start time is valid
-                if (currTrip->getTripStartTime() == this->clock->getTime()) {
+            // If trip vector is empty and there are not more trips
+            if (tripVec.empty()) {
+                return;
+            }
 
-                    //Update the current taxi with a trip
-                    taxiVec[j]->setTrip(currTrip);
+            // Get current trip
+            Trip *currTrip = tripVec.at(i);
 
-                    // Send trip to client
-                    std::string serialTrip;
-                    serialTrip = serializer.serialize(currTrip);
-                    socket.sendData(serialTrip, descriptor);
+            // Check that start time is valid
+            if (currTrip->getTripStartTime() == this->clock->getTime()) {
 
-                    //Remove the trip from the trips vector;
-                    tripVec.erase(tripVec.begin() + i);
-                }
+                //Update the current taxi with a trip
+                taxiVec[j]->setTrip(currTrip);
+
+                // Send trip to client
+                std::string serialTrip;
+                serialTrip = serializer.serialize(currTrip);
+                socket.sendData(serialTrip, descriptor);
+                BOOST_LOG_TRIVIAL(info)
+                    << "TaxiCenter sends a trip to client:" << descriptor;
+
+                //Remove the trip from the trips vector;
+                tripVec.erase(tripVec.begin() + i);
             }
         }
     }
 }
 
-void TaxiCenter::moveOneStep(Socket &socket, Serializer serializer, int descriptor) {
+void
+TaxiCenter::moveOneStep(Driver *driver, Socket &socket, Serializer serializer,
+                        int descriptor) {
 
-    std::vector<Taxi *> taxiVec = this->getTaxis();
-    int i = 0;
+    std::vector<Taxi *> taxiVec   = this->getTaxis();
+    int                 i         = 0;
+    Taxi                *currTaxi = 0;
 
-    // Check which driver has trip
-    for (i = 0; i < taxiVec.size(); i++) {
+    int j = 0;
+    for (j = 0; j < taxiVec.size(); j++) {
 
-        // Gets current taxi
-        Taxi *currTaxi = taxiVec.at(i);
-
-        // If taxi has trip and hasn't ended yet, send him message
-        // to move one step
-        if (currTaxi->getTrip() != 0) {
-
-            // Tell driver to advance one step
-            std::string go = "go";
-            socket.sendData(go, descriptor);
-
-            // Wait for drivers answer
-            char buffer[1024];
-            Point *currPoint = 0;
-            socket.receiveData(buffer, 1024, descriptor);
-            serializer.deserialize(buffer, sizeof(buffer), currPoint);
-
-            currTaxi->setCurrentPosition(*currPoint);
-
-            // If driver didn't move one step and his trip ended
-            if (*currPoint == currTaxi->getTrip()->getEndPoint()) {
-                delete currTaxi->getTrip();
-                currTaxi->setTrip(0);
-
-                // Set trip to finish
-                currTaxi->setTrip(0);
-            }
-
-            delete currPoint;
+        if (taxiVec[j]->getDriver()->getDriverId() == driver->getDriverId()) {
+            currTaxi = taxiVec[j];
         }
+    }
+
+    // If taxi has trip and hasn't ended yet, send him message
+    // to move one step
+    if (currTaxi != 0 && currTaxi->getTrip() != 0) {
+
+        // Tell driver to advance one step
+        std::string go   = "go";
+        socket.sendData(go, descriptor);
+        BOOST_LOG_TRIVIAL(info)
+            << "TaxiCenter sends move command to client:" << descriptor;
+
+        // Wait for drivers answer
+        char  buffer[1024];
+        Point *currPoint = 0;
+        socket.receiveData(buffer, 1024, descriptor);
+        serializer.deserialize(buffer, sizeof(buffer), currPoint);
+
+        currTaxi->setCurrentPosition(*currPoint);
+
+        // If driver didn't move one step and his trip ended
+        if (*currPoint == currTaxi->getTrip()->getEndPoint()) {
+            delete currTaxi->getTrip();
+            currTaxi->setTrip(0);
+
+            // Set trip to finish
+            currTaxi->setTrip(0);
+        }
+
+        delete currPoint;
     }
 
     this->clock->increaseTime();

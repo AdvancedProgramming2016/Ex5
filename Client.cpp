@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
 
     //Deserializes the data received from the server into a vehicle object.
     serializer.deserialize(buffer, sizeof(buffer), vehicle);
-    BOOST_LOG_TRIVIAL(info) << "Desirialized vehicle";
+    BOOST_LOG_TRIVIAL(info) << "Desirialized vehicle, vehicle id:" << vehicle->getVehicleId() ;
 
     taxi         = new Taxi(driver, vehicle, Point(0, 0));
     serialDriver = "";
@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
             serializer.deserialize(communicationBuffer,
                                    sizeof(communicationBuffer), trip);
             taxi->setTrip(trip);
-            BOOST_LOG_TRIVIAL(info) << "Received the trip";
+            BOOST_LOG_TRIVIAL(info) << "Received the trip, trip id:" << trip->getRideId();
         }
     }
 
