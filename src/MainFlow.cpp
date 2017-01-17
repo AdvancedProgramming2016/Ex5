@@ -135,14 +135,14 @@ void MainFlow::performTask9(Driver *driver, int descriptor) {
 
     //pthread_mutex_lock(&assignTripMtx);
 
+    // Move all the taxis one step
+    this->getTaxiCenter()->moveOneStep(driver,
+            *(this->getSocket()), this->getSerializer(), descriptor);
+
     // Check that all the trips that need to start are attached
     // to a driver
     this->getTaxiCenter()->assignTrip(driver, *this->getSocket(), this->getSerializer(),
                                       descriptor);
-
-    // Move all the taxis one step
-    this->getTaxiCenter()->moveOneStep(driver,
-            *(this->getSocket()), this->getSerializer(), descriptor);
 
    // pthread_mutex_unlock(&assignTripMtx);
 }
