@@ -13,8 +13,9 @@ set(SOURCE_FILES src/VehicleFactory.cpp src/VehicleFactory.h src/Point.cpp src/P
         src/StandardVehicle.cpp src/StandardVehicle.h src/IObserver.h src/ISubject.h src/MainFlow.cpp
         src/MainFlow.h src/Passenger.cpp src/Passenger.h src/Clock.cpp src/Clock.h
         src/Taxi.cpp src/Taxi.h src/TaxiCenter.cpp src/TaxiCenter.h src/Trip.cpp src/Trip.h src/Menu.cpp src/Menu.h
-        src/BaseParser.h src/StringParser.cpp src/StringParser.h sockets/Socket.cpp sockets/Socket.h sockets/Udp.cpp sockets/Udp.h src/Serializer.cpp src/Serializer.h
-        sockets/Tcp.cpp sockets/Tcp.h src/ClientThread.cpp src/ClientThread.h)
+        src/TripThread.cpp src/TripThread.h src/BaseParser.h src/StringParser.cpp src/StringParser.h sockets/Socket.cpp
+        sockets/Socket.h sockets/Udp.cpp sockets/Udp.h src/Serializer.cpp src/Serializer.h sockets/Tcp.cpp sockets/Tcp.h
+        src/ClientThread.cpp src/ClientThread.h)
 
 add_executable(client Client.cpp ${SOURCE_FILES})
 add_executable(server Server.cpp ${SOURCE_FILES})

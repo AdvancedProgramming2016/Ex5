@@ -101,6 +101,7 @@ void *ClientThread::listenToSocketForDriver() {
                                    << this->mainFlow->getTaxiCenter()->getClock()->getTime();
 
             this->getMainFlow()->performTask9(this->driver, this->getDescriptor());
+
             this->threadCommand = 0;
 
             pthread_mutex_unlock(&this->getMainFlow()->getSendCommandMutex());

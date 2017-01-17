@@ -1,6 +1,7 @@
 
 #include "MainFlow.h"
 #include "../sockets/Tcp.h"
+#include "TripThread.h"
 #include <boost/log/trivial.hpp>
 #include <cstdlib>
 #include <pthread.h>
@@ -16,6 +17,7 @@ MainFlow::MainFlow(Socket *socket, int operationNumber) {
     //this->socket->initialize();
     pthread_mutex_init(&this->receiveDriverMutex, NULL);
     pthread_mutex_init(&this->sendCommandMutex, NULL);
+    pthread_mutex_init(&this->bfsMutex, NULL);
 
 }
 
@@ -23,6 +25,7 @@ MainFlow::~MainFlow() {
 
     pthread_mutex_destroy(&this->receiveDriverMutex);
     pthread_mutex_destroy(&this->sendCommandMutex);
+    pthread_mutex_destroy(&this->bfsMutex);
 
     BOOST_LOG_TRIVIAL(info) << "Deleting all the open sockets.";
     delete this->socket;
@@ -58,16 +61,27 @@ void MainFlow::createVehicle(Vehicle *vehicle) {
 
 void MainFlow::createTrip(Trip *trip) {
 
-    Bfs bfs(this->map, trip->getStartPoint(), trip->getEndPoint());
+    int       retVal = 0;
+    pthread_t pthread;
 
-    // Calculate shortest route
-    bfs.get_route();
-    cleanGrid();
+    TripThread *tripThread = new TripThread(this, trip);
 
-    // Set trip route
-    trip->setTripRoute(bfs.getShortestPath());
+    retVal = pthread_create(&pthread, NULL, &TripThread::callCalculatePath,
+                            tripThread);
 
-    // Push new trip to trip queue
+    if (retVal != 0) {
+
+        BOOST_LOG_TRIVIAL(error) << "ERROR: failed to create trip thread.";
+    }
+
+    tripThread->setThread(pthread);
+
+    BOOST_LOG_TRIVIAL(trace) << "TRACE: created trip thread.";
+
+    //TripThread *tripThread = new TripThread(this, trip, pthread);
+
+
+    this->getTaxiCenter()->getTripThreads().push_back(tripThread);
     this->taxiCenter->addTrip(trip);
 
 }
@@ -121,7 +135,6 @@ void MainFlow::selectDrivers(int numOfDrivers) {
         BOOST_LOG_TRIVIAL(info) << "New thread created with thread id: "
                                 << clientThread->getThreadId();
         clientThread->setThread(currThread);
-        this->addThreadToVector(currThread);
 
         // Wait for thread
         // TODO: Check whether necessary
@@ -179,14 +192,6 @@ void MainFlow::sendClientNewPort(unsigned int newPort) {
 
 Grid *MainFlow::getMap() const {
     return map;
-}
-
-std::vector<pthread_t> MainFlow::getThreadsVector() {
-    return this->threads;
-}
-
-void MainFlow::addThreadToVector(pthread_t thread) {
-    this->threads.push_back(thread);
 }
 
 void MainFlow::exitSystem() {

@@ -3,6 +3,7 @@
 #define EX1_TASK2_BFS_H
 
 #include "Graph.h"
+#include "Grid.h"
 
 /**
  * The class represents the BFS algorithm.
@@ -12,7 +13,7 @@
 class Bfs {
 
 private:
-    Graph              *m_graph;
+    Grid              m_graph;
     Point              m_source;
     Point              m_dest;
     std::vector<Point> shortest_path;
@@ -27,7 +28,7 @@ public:
     /*
      * constructor for the bfs algorithm
      */
-    Bfs(Graph *graph, Point source, Point dest);
+    Bfs(Grid graph, Point source, Point dest);
 
     /*
      * The method calculates the shortest path between two points.

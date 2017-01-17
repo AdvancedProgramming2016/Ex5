@@ -22,18 +22,22 @@ class clock;
 
 class MainFlow {
 
+    friend class TripThread;
+
 private:
 
     TaxiCenter *taxiCenter;
     Grid       *map;
-    std::vector<pthread_t> threads;
     std::vector<ClientThread *> clientThreadVector;
+
+private:
     Socket       *socket;
     Serializer   serializer;
     int *operationNumber;
     unsigned int vacantPort;
     pthread_mutex_t receiveDriverMutex;
     pthread_mutex_t sendCommandMutex;
+    pthread_mutex_t bfsMutex;
 
 public:
 
@@ -95,16 +99,6 @@ public:
      * Creates a taxi center.
      */
     void createTaxiCenter(Point *location);
-
-    /*
-     * Gets the vector of all the threads
-     */
-    std::vector<pthread_t> getThreadsVector();
-
-    /*
-     * Adds thread to the vector of threads
-     */
-    void addThreadToVector(pthread_t thread);
 
     /*
      * Return socket

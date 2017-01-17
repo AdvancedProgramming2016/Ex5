@@ -70,6 +70,9 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
             if (currTrip->getTripStartTime() == this->clock->getTime() &&
                 currTaxi->getCurrentPosition() == currTrip->getStartPoint()) {
 
+                pthread_t threadToWait = findTripThread(currTrip)->getThread();
+                BOOST_LOG_TRIVIAL(info) << "waiting for trip thread:" << threadToWait;
+                pthread_join(threadToWait, NULL);
                 //Update the current taxi with a trip
                 currTaxi->setTrip(currTrip);
 
@@ -171,6 +174,17 @@ void TaxiCenter::addVehicle(Vehicle *vehicle) {
     vehicles.push_back(vehicle);
 }
 
+TripThread *TaxiCenter::findTripThread(Trip *trip) {
+
+    for (int i = 0; i < tripThreads.size(); ++i) {
+
+        if (tripThreads[i]->getTrip()->getRideId() == trip->getRideId()) {
+
+            return tripThreads[i];
+        }
+    }
+}
+
 void TaxiCenter::createTaxi(Driver *driver) {
 
     for (int i = 0; i < vehicles.size(); ++i) {
@@ -213,6 +227,10 @@ void TaxiCenter::update(Taxi *taxi) {
             taxi->getDriver()->getDriverId())
             taxis[i] = taxi;
     }
+}
+
+vector<TripThread *> &TaxiCenter::getTripThreads() {
+    return tripThreads;
 }
 
 Clock *TaxiCenter::getClock() const {

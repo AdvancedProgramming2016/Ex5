@@ -3,9 +3,8 @@
 #include <algorithm>
 #include "Bfs.h"
 
-Bfs::Bfs(Graph *graph, Point source, Point dest) : m_source(source),
-                                                   m_dest(dest) {
-    this->m_graph  = graph;
+Bfs::Bfs(Grid graph, Point source, Point dest) : m_graph(graph),m_source(source),
+                                                 m_dest(dest) {
     this->m_source = source;
     this->m_dest   = dest;
 }
@@ -23,11 +22,11 @@ void Bfs::get_route() {
 
     std::queue<Vertex *> queue;
     std::vector<Vertex>  path;
-    path.reserve(this->m_graph->get_edges().size());
+    path.reserve(this->m_graph.get_edges().size());
     Vertex *v;
 
     shortest_path.reserve(path.size());
-    v = m_graph->get_vertex(m_source);
+    v = m_graph.get_vertex(m_source);
     v->set_visited();
     queue.push(v);
 
@@ -46,7 +45,7 @@ void Bfs::get_route() {
 
         for (int i = 0; i < v->getNum_of_relations(); ++i) {
 
-            temp = v->getM_relations_list().at(i);
+            temp = this->m_graph.get_vertex(v->getM_relations_list().at(i)->getM_point());
 
             if (!temp->isM_is_visited()) {
                 temp->set_visited();
