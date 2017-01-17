@@ -50,6 +50,7 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
 
         if (taxiVec[j]->getDriver()->getDriverId() == driver->getDriverId()) {
             currTaxi = taxiVec[j];
+            break;
         }
     }
 
@@ -66,10 +67,11 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
             Trip *currTrip = tripVec.at(i);
 
             // Check that start time is valid
-            if (currTrip->getTripStartTime() == this->clock->getTime()) {
+            if (currTrip->getTripStartTime() == this->clock->getTime() &&
+                currTaxi->getCurrentPosition() == currTrip->getStartPoint()) {
 
                 //Update the current taxi with a trip
-                taxiVec[j]->setTrip(currTrip);
+                currTaxi->setTrip(currTrip);
 
                 // Send trip to client
                 std::string serialTrip;
@@ -89,16 +91,20 @@ void
 TaxiCenter::moveOneStep(Driver *driver, Socket &socket, Serializer serializer,
                         int descriptor) {
 
-    std::vector<Taxi *> taxiVec   = this->getTaxis();
-    int                 i         = 0;
-    Taxi                *currTaxi = 0;
+    std::vector<Taxi *> &taxiVec = this->getTaxis();
+    int                 i        = 0;
+    Taxi                *currTaxi;
 
-    int j = 0;
-    for (j = 0; j < taxiVec.size(); j++) {
+    // Check which driver has trip
+    for (i = 0; i < taxiVec.size(); i++) {
 
-        if (taxiVec[j]->getDriver()->getDriverId() == driver->getDriverId()) {
-            currTaxi = taxiVec[j];
+        // Gets current taxi
+        if (taxiVec[i]->getDriver()->getDriverId() == driver->getDriverId()) {
+
+            currTaxi = taxiVec.at(i);
+            break;
         }
+
     }
 
     // If taxi has trip and hasn't ended yet, send him message
@@ -131,7 +137,7 @@ TaxiCenter::moveOneStep(Driver *driver, Socket &socket, Serializer serializer,
         delete currPoint;
     }
 
-    this->clock->increaseTime();
+    //this->clock->increaseTime();
 }
 
 std::vector<Driver *> &TaxiCenter::getDrivers() {

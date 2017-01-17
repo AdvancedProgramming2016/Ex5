@@ -57,6 +57,8 @@ public:
 
     void addClientThread(ClientThread *clientThread);
 
+    void clockSleep();
+
     std::vector<ClientThread *> getClientThreadVector();
 
     // Gets a vacant port from the server

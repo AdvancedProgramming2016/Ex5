@@ -1,5 +1,6 @@
 #include "Menu.h"
 #include <pthread.h>
+#include <boost/log/trivial.hpp>
 
 Menu::Menu(Socket *socket) {
 
@@ -90,16 +91,21 @@ int Menu::runMenu() {
                 // Advance one step
             case 9:
 
+                BOOST_LOG_TRIVIAL(info) << "Program time:"
+                                        << this->mainFlow->getTaxiCenter()->getClock()->getTime();
                 this->wakeUpThreads(9);
+                this->getMainFlow()->clockSleep();
+                this->mainFlow->getTaxiCenter()->getClock()->increaseTime();
                 break;
         }
     }
 }
 
+
 void Menu::wakeUpThreads(int operationNumber) {
     std::vector<ClientThread *> clientThreadVec = this->getMainFlow()->getClientThreadVector();
-    int numberOfThreads = clientThreadVec.size();
-    for (int i = 0; i < numberOfThreads; i++) {
+    int                         numberOfThreads = clientThreadVec.size();
+    for (int                    i               = 0; i < numberOfThreads; i++) {
         clientThreadVec.at(i)->setThreadCommand(operationNumber);
         //pthread_join(clientThreadVec.at(i)->getThread(), NULL);
     }

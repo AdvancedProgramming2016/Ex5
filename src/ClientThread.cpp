@@ -97,6 +97,9 @@ void *ClientThread::listenToSocketForDriver() {
 
             BOOST_LOG_TRIVIAL(info) << "Thread:" << this->getThreadId()
                                     << " Performed task 9";
+            BOOST_LOG_TRIVIAL(info) << "Program time:"
+                                   << this->mainFlow->getTaxiCenter()->getClock()->getTime();
+
             this->getMainFlow()->performTask9(this->driver, this->getDescriptor());
             this->threadCommand = 0;
 

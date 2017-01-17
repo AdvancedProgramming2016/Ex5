@@ -222,3 +222,15 @@ pthread_mutex_t &MainFlow::getMutexReceiveDriver() {
 pthread_mutex_t &MainFlow::getSendCommandMutex()  {
     return sendCommandMutex;
 }
+
+void MainFlow::clockSleep() {
+
+    int i = 0;
+    while(i < this->getClientThreadVector().size()){
+
+        if(this->getClientThreadVector()[i]->getThreadCommand() == 0){
+            i++;
+        }
+    }
+
+}
