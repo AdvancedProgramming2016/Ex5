@@ -29,7 +29,7 @@ MainFlow::~MainFlow() {
 
     // Delete all the client opened sockets
 //    for (int i = 0; i < this->getSocketVector().size(); i++) {
-  //      delete this->getSocketVector().at(i);
+    //      delete this->getSocketVector().at(i);
     //}
 }
 
@@ -79,7 +79,7 @@ TaxiCenter *MainFlow::getTaxiCenter() const {
 void MainFlow::sendToSocketVehicle(unsigned int vehicleId,
                                    int descriptor) {
 
-    Vehicle     *vehicle = this->getDriverVehicle(vehicleId);
+    Vehicle *vehicle = this->getDriverVehicle(vehicleId);
     std::string serialVehicle;
     serialVehicle = this->serializer.serialize(vehicle);
 
@@ -135,16 +135,19 @@ void MainFlow::performTask9(Driver *driver, int descriptor) {
 
     //pthread_mutex_lock(&assignTripMtx);
 
-    // Check that all the trips that need to start are attached
-    // to a driver
-    this->getTaxiCenter()->assignTrip(driver, *this->getSocket(), this->getSerializer(),
-                                      descriptor);
 
     // Move all the taxis one step
     this->getTaxiCenter()->moveOneStep(driver,
-            *(this->getSocket()), this->getSerializer(), descriptor);
+                                       *(this->getSocket()),
+                                       this->getSerializer(), descriptor);
 
-   // pthread_mutex_unlock(&assignTripMtx);
+    // Check that all the trips that need to start are attached
+    // to a driver
+    this->getTaxiCenter()->assignTrip(driver, *this->getSocket(),
+                                      this->getSerializer(),
+                                      descriptor);
+
+    // pthread_mutex_unlock(&assignTripMtx);
 }
 
 unsigned int MainFlow::getVacantPort() {
@@ -219,16 +222,16 @@ pthread_mutex_t &MainFlow::getMutexReceiveDriver() {
     return receiveDriverMutex;
 }
 
-pthread_mutex_t &MainFlow::getSendCommandMutex()  {
+pthread_mutex_t &MainFlow::getSendCommandMutex() {
     return sendCommandMutex;
 }
 
 void MainFlow::clockSleep() {
 
     int i = 0;
-    while(i < this->getClientThreadVector().size()){
+    while (i < this->getClientThreadVector().size()) {
 
-        if(this->getClientThreadVector()[i]->getThreadCommand() == 0){
+        if (this->getClientThreadVector()[i]->getThreadCommand() == 0) {
             i++;
         }
     }
