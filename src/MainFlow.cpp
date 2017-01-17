@@ -1,6 +1,7 @@
 
 #include "MainFlow.h"
 #include "../sockets/Tcp.h"
+#include "TripThread.h"
 #include <boost/log/trivial.hpp>
 #include <cstdlib>
 #include <pthread.h>
@@ -16,6 +17,7 @@ MainFlow::MainFlow(Socket *socket, int operationNumber) {
     //this->socket->initialize();
     pthread_mutex_init(&this->receiveDriverMutex, NULL);
     pthread_mutex_init(&this->sendCommandMutex, NULL);
+    pthread_mutex_init(&this->bfsMutex, NULL);
 
 }
 
@@ -23,13 +25,14 @@ MainFlow::~MainFlow() {
 
     pthread_mutex_destroy(&this->receiveDriverMutex);
     pthread_mutex_destroy(&this->sendCommandMutex);
+    pthread_mutex_destroy(&this->bfsMutex);
 
     BOOST_LOG_TRIVIAL(info) << "Deleting all the open sockets.";
     delete this->socket;
 
     // Delete all the client opened sockets
 //    for (int i = 0; i < this->getSocketVector().size(); i++) {
-    //      delete this->getSocketVector().at(i);
+  //      delete this->getSocketVector().at(i);
     //}
 }
 
@@ -58,16 +61,27 @@ void MainFlow::createVehicle(Vehicle *vehicle) {
 
 void MainFlow::createTrip(Trip *trip) {
 
-    Bfs bfs(this->map, trip->getStartPoint(), trip->getEndPoint());
+    int       retVal = 0;
+    pthread_t pthread;
 
-    // Calculate shortest route
-    bfs.get_route();
-    cleanGrid();
+    TripThread *tripThread = new TripThread(this, trip);
 
-    // Set trip route
-    trip->setTripRoute(bfs.getShortestPath());
+    retVal = pthread_create(&pthread, NULL, &TripThread::callCalculatePath,
+                            tripThread);
 
-    // Push new trip to trip queue
+    if (retVal != 0) {
+
+        BOOST_LOG_TRIVIAL(error) << "ERROR: failed to create trip thread.";
+    }
+
+    tripThread->setThread(pthread);
+
+    BOOST_LOG_TRIVIAL(trace) << "TRACE: created trip thread.";
+
+    //TripThread *tripThread = new TripThread(this, trip, pthread);
+
+
+    this->getTaxiCenter()->getTripThreads().push_back(tripThread);
     this->taxiCenter->addTrip(trip);
 
 }
@@ -79,7 +93,7 @@ TaxiCenter *MainFlow::getTaxiCenter() const {
 void MainFlow::sendToSocketVehicle(unsigned int vehicleId,
                                    int descriptor) {
 
-    Vehicle *vehicle = this->getDriverVehicle(vehicleId);
+    Vehicle     *vehicle = this->getDriverVehicle(vehicleId);
     std::string serialVehicle;
     serialVehicle = this->serializer.serialize(vehicle);
 
@@ -121,7 +135,6 @@ void MainFlow::selectDrivers(int numOfDrivers) {
         BOOST_LOG_TRIVIAL(info) << "New thread created with thread id: "
                                 << clientThread->getThreadId();
         clientThread->setThread(currThread);
-        this->addThreadToVector(currThread);
 
         // Wait for thread
         // TODO: Check whether necessary
@@ -135,19 +148,16 @@ void MainFlow::performTask9(Driver *driver, int descriptor) {
 
     //pthread_mutex_lock(&assignTripMtx);
 
-
     // Move all the taxis one step
     this->getTaxiCenter()->moveOneStep(driver,
-                                       *(this->getSocket()),
-                                       this->getSerializer(), descriptor);
+            *(this->getSocket()), this->getSerializer(), descriptor);
 
     // Check that all the trips that need to start are attached
     // to a driver
-    this->getTaxiCenter()->assignTrip(driver, *this->getSocket(),
-                                      this->getSerializer(),
+    this->getTaxiCenter()->assignTrip(driver, *this->getSocket(), this->getSerializer(),
                                       descriptor);
 
-    // pthread_mutex_unlock(&assignTripMtx);
+   // pthread_mutex_unlock(&assignTripMtx);
 }
 
 unsigned int MainFlow::getVacantPort() {
@@ -184,14 +194,6 @@ Grid *MainFlow::getMap() const {
     return map;
 }
 
-std::vector<pthread_t> MainFlow::getThreadsVector() {
-    return this->threads;
-}
-
-void MainFlow::addThreadToVector(pthread_t thread) {
-    this->threads.push_back(thread);
-}
-
 void MainFlow::exitSystem() {
 
     delete this->taxiCenter;
@@ -222,16 +224,16 @@ pthread_mutex_t &MainFlow::getMutexReceiveDriver() {
     return receiveDriverMutex;
 }
 
-pthread_mutex_t &MainFlow::getSendCommandMutex() {
+pthread_mutex_t &MainFlow::getSendCommandMutex()  {
     return sendCommandMutex;
 }
 
 void MainFlow::clockSleep() {
 
     int i = 0;
-    while (i < this->getClientThreadVector().size()) {
+    while(i < this->getClientThreadVector().size()){
 
-        if (this->getClientThreadVector()[i]->getThreadCommand() == 0) {
+        if(this->getClientThreadVector()[i]->getThreadCommand() == 0){
             i++;
         }
     }

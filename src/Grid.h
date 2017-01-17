@@ -8,7 +8,7 @@
  * The class represents a 2D grid.
  * It inherits from the Graph class.
  */
-class Grid : public Graph {
+class Grid : public Graph{
 
 private:
     int                m_length;
@@ -27,6 +27,8 @@ public:
      */
     Grid(unsigned int length, unsigned int width,
          std::vector<Point> &obstacles);
+
+    virtual Vertex *get_vertex(Point point);
 
     /*
      * Returns the obstacles that appear on the map.

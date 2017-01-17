@@ -10,6 +10,7 @@
 #include "../sockets/Socket.h"
 #include "Serializer.h"
 #include "Clock.h"
+#include "TripThread.h"
 
 class Driver;
 
@@ -20,6 +21,8 @@ class Point;
 class Trip;
 
 class Passenger;
+
+class TripThread;
 
 /**
  * The class represents a taxi center, which manages all the taxis.
@@ -34,6 +37,7 @@ private:
     std::vector<Taxi *>    taxis;
     std::vector<Trip *>    trips;
     Point                  *taxiCenterLocation;
+    std::vector<TripThread *> tripThreads;
     Clock                  *clock;
 
 private:
@@ -42,6 +46,8 @@ private:
      * Adds a taxi to the taxis list.
      */
     void addTaxi(Taxi *taxi);
+
+    TripThread *findTripThread(Trip *trip);
 
 public:
 
@@ -119,6 +125,8 @@ public:
      * Update according to the subject.
      */
     virtual void update(Taxi *taxi);
+
+    vector<TripThread *> &getTripThreads();
 
     /*
      * Returns the clock.

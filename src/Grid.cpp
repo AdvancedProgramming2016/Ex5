@@ -58,7 +58,7 @@ void Grid::build_relations() {
 }
 
 void Grid::insertObstacles() {
-    int i = 0;
+    int                i           = 0;
     std::vector<Point> obstacleVec = this->getObstacles();
 
     // Mark all obstacles on grid as visited
@@ -71,15 +71,32 @@ const std::vector<Point> &Grid::getObstacles() const {
     return obstacles;
 }
 
+
 bool Grid::isObstacle(const Point &point) {
 
     for (int i = 0; i < this->obstacles.size(); ++i) {
 
-        if(obstacles[i] == point){
+        if (obstacles[i] == point) {
             return true;
         }
     }
 
     return false;
+}
+
+
+Vertex *Grid::get_vertex(Point point) {
+
+    Vertex *retVertex;
+    int location = 0;
+
+    location =
+            (this->m_length * this->m_width) - this->m_width -
+            (point.getXCoordinate() * this->m_width) + point.getYCoordinate(); //TODO Test to make sure it works
+
+    retVertex = &this->m_edges.at(location);
+
+    return retVertex;
+
 }
 

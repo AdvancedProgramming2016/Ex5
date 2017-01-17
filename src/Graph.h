@@ -25,7 +25,7 @@ public:
     /*
      * The method returns a vertex from a given point on the graph
      */
-    Vertex *get_vertex(Point point);
+    virtual Vertex *get_vertex(Point point);
 
 };
 

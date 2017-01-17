@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
     //Take input from the server while it's not an exit command.
     while (!exitCalled) {
 
-        char communicationBuffer[1024];
+        char communicationBuffer[16384];
 
         socket->receiveData(communicationBuffer, sizeof(communicationBuffer),
                             socket->getSocketDescriptor());

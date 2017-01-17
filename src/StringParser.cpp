@@ -41,8 +41,8 @@ Grid *StringParser::parseGridInput() {
     int      y              = 1;
 
     // Receive input from the user
-    std::cin >> width;
     std::cin >> height;
+    std::cin >> width;
     std::cin >> numOfObstacles;
 
     std::vector<Point> obstacles;
