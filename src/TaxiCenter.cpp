@@ -11,25 +11,31 @@ TaxiCenter::TaxiCenter(Point *taxiCenterLocation) :
 
 TaxiCenter::~TaxiCenter() {
 
-    //delete all the trips
+    // Delete all the trips.
     for (int tripsIndex = 0; tripsIndex < trips.size(); ++tripsIndex) {
         delete trips[tripsIndex];
     }
 
-    //delete all the taxis.
+    // Delete all the taxis.
     for (int taxisIndex = 0; taxisIndex < taxis.size(); ++taxisIndex) {
         delete taxis[taxisIndex];
     }
 
-
+    // Delete all the drivers.
     for (int driversIndex = 0; driversIndex < drivers.size(); ++driversIndex) {
         delete drivers[driversIndex];
     }
 
-    //delete all the vehicles.
+    // Delete all the vehicles.
     for (int vehiclesIndex = 0;
          vehiclesIndex < vehicles.size(); ++vehiclesIndex) {
         delete vehicles[vehiclesIndex];
+    }
+
+    // Delete all the trip threads.
+    for (int tripThread = 0;
+         tripThread < this->tripThreads.size(); tripThread++) {
+        delete this->tripThreads[tripThread];
     }
 
     delete this->clock;
@@ -40,10 +46,10 @@ void
 TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
                        int descriptor) {
 
-    unsigned int        i         = 0;
-    std::vector<Trip *> &tripVec  = this->getTrips();
-    std::vector<Taxi *> &taxiVec  = this->getTaxis();
-    Taxi                *currTaxi = 0;
+    unsigned int i = 0;
+    std::vector<Trip *> &tripVec = this->getTrips();
+    std::vector<Taxi *> &taxiVec = this->getTaxis();
+    Taxi *currTaxi = 0;
 
     int j = 0;
     for (j = 0; j < taxiVec.size(); j++) {
@@ -71,7 +77,8 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
                 currTaxi->getCurrentPosition() == currTrip->getStartPoint()) {
 
                 pthread_t threadToWait = findTripThread(currTrip)->getThread();
-                BOOST_LOG_TRIVIAL(info) << "waiting for trip thread:" << threadToWait;
+                BOOST_LOG_TRIVIAL(info) << "waiting for trip thread:"
+                                        << threadToWait;
                 pthread_join(threadToWait, NULL);
                 //Update the current taxi with a trip
                 currTaxi->setTrip(currTrip);
@@ -80,7 +87,7 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
                 std::string serialTrip;
                 serialTrip = serializer.serialize(currTrip);
                 socket.sendData(serialTrip, descriptor);
-                BOOST_LOG_TRIVIAL(info)
+                BOOST_LOG_TRIVIAL(debug)
                     << "TaxiCenter sends a trip to client:" << descriptor;
 
                 //Remove the trip from the trips vector;
@@ -95,8 +102,8 @@ TaxiCenter::moveOneStep(Driver *driver, Socket &socket, Serializer serializer,
                         int descriptor) {
 
     std::vector<Taxi *> &taxiVec = this->getTaxis();
-    int                 i        = 0;
-    Taxi                *currTaxi;
+    int i = 0;
+    Taxi *currTaxi;
 
     // Check which driver has trip
     for (i = 0; i < taxiVec.size(); i++) {
@@ -115,13 +122,13 @@ TaxiCenter::moveOneStep(Driver *driver, Socket &socket, Serializer serializer,
     if (currTaxi != 0 && currTaxi->getTrip() != 0) {
 
         // Tell driver to advance one step
-        std::string go   = "go";
+        std::string go = "go";
         socket.sendData(go, descriptor);
-        BOOST_LOG_TRIVIAL(info)
+        BOOST_LOG_TRIVIAL(debug)
             << "TaxiCenter sends move command to client:" << descriptor;
 
         // Wait for drivers answer
-        char  buffer[1024];
+        char buffer[1024];
         Point *currPoint = 0;
         socket.receiveData(buffer, 1024, descriptor);
         serializer.deserialize(buffer, sizeof(buffer), currPoint);
@@ -140,7 +147,6 @@ TaxiCenter::moveOneStep(Driver *driver, Socket &socket, Serializer serializer,
         delete currPoint;
     }
 
-    //this->clock->increaseTime();
 }
 
 std::vector<Driver *> &TaxiCenter::getDrivers() {
