@@ -32,13 +32,13 @@ class TripThread;
 class TaxiCenter : public IObserver {
 
 private:
-    std::vector<Driver *>  drivers;
+    std::vector<Driver *> drivers;
     std::vector<Vehicle *> vehicles;
-    std::vector<Taxi *>    taxis;
-    std::vector<Trip *>    trips;
-    Point                  *taxiCenterLocation;
+    std::vector<Taxi *> taxis;
+    std::vector<Trip *> trips;
+    Point *taxiCenterLocation;
     std::vector<TripThread *> tripThreads;
-    Clock                  *clock;
+    Clock *clock;
 
 private:
 
@@ -69,12 +69,14 @@ public:
     /*
      * Assigns the free taxis with trips.
      */
-    void assignTrip(Driver *driver, Socket &socket, Serializer serializer, int descriptor);
+    void assignTrip(Driver *driver, Socket &socket, Serializer serializer,
+                    int descriptor);
 
     /*
      * Moves all the taxis with trips to their next point on the map.
      */
-    void moveOneStep(Driver *driver, Socket &socket, Serializer serializer, int descriptor);
+    void moveOneStep(Driver *driver, Socket &socket, Serializer serializer,
+                     int descriptor);
 
     /*
      * Add a driver to the drivers the taxi center has.

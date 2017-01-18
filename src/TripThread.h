@@ -18,18 +18,39 @@ private:
 
 public:
 
+    /*
+     * Gets mainflow object.
+     */
     MainFlow *getMainFlow() const;
 
+    /*
+     * Ctor
+     */
     TripThread(MainFlow *mainFlow, Trip *trip);
 
+    /*
+     * Add thread.
+     */
     void setThread(pthread_t thread);
 
+    /*
+     * Get trip object.
+     */
     Trip *getTrip() const;
 
+    /*
+     * Get thread object.
+     */
     pthread_t getThread() const;
 
+    /*
+     * Function calculates shortest path to dest.
+     */
     void *calculatePath();
-    
+
+    /*
+     * Calls calculate path.
+     */
     static void *callCalculatePath(void *param);
 };
 

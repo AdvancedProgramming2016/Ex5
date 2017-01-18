@@ -24,8 +24,6 @@ void *TripThread::calculatePath() {
 
     BOOST_LOG_TRIVIAL(trace) << "Finished calculating path.";
 
-   // this->mainFlow->cleanGrid();
-
     BOOST_LOG_TRIVIAL(trace) << "Finished cleaning path.";
 
     trip->setTripRoute(bfs.getShortestPath());
@@ -34,11 +32,13 @@ void *TripThread::calculatePath() {
 
     BOOST_LOG_TRIVIAL(trace) << "Exiting trip thread.";
 
+    //delete this;
+
     pthread_exit(NULL);
 }
 
 void *TripThread::callCalculatePath(void *param) {
-
+    BOOST_LOG_TRIVIAL(trace) << "Calculating path.";
     return ((TripThread *) param)->calculatePath();
 }
 

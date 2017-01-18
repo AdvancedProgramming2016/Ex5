@@ -40,20 +40,19 @@ void closeClient(Taxi *taxi, Driver *driver, Vehicle *vehicle, Socket *socket);
 int main(int argc, char *argv[]) {
 
     //The socket connecting between the client and the server.
-    Socket *socket          = new Tcp(0, atoi(argv[1]));
+    Socket *socket = new Tcp(0, atoi(argv[1]));
 
     //Serializer used for serializing and deserializing objects.
-    Serializer   serializer;
+    Serializer serializer;
     //Will handle parsing the user input.
     StringParser stringParser;
-    Driver       *driver    = 0;
-    Vehicle      *vehicle   = 0;
-    Taxi         *taxi      = 0;
-    Trip         *trip      = 0;
-    bool         exitCalled = false;
+    Driver *driver = 0;
+    Vehicle *vehicle = 0;
+    Taxi *taxi = 0;
+    Trip *trip = 0;
+    bool exitCalled = false;
 
     socket->initialize();
-    //descriptor = socket->callAccept();
 
     //Creates a driver from a given user input.
     driver = stringParser.parseDriverInput();
@@ -65,23 +64,6 @@ int main(int argc, char *argv[]) {
     BOOST_LOG_TRIVIAL(info) << "Sending driver object to server";
     socket->sendData(serialDriver, socket->getSocketDescriptor());
 
-    //har newPortBuffer[1024];
-    // Receives new port from the server
-    //BOOST_LOG_TRIVIAL(info) << "Waiting for server to assign new port";
-    //socket->reciveData(newPortBuffer, sizeof(newPortBuffer), descriptor);
-
-    // socket->sendData("got it");
-    // Delete old socket
-    //BOOST_LOG_TRIVIAL(info) << "Deleting port 5555";
-    //delete socket;
-    //socket = 0;
-    //descriptor = socket->callAccept();
-
-    // Open socket to new port
-    //BOOST_LOG_TRIVIAL(info) << "Opening new port: " << atoi(socket);
-    //Socket *newSocket = new Tcp(0, atoi(socket));
-    //newSocket->initialize();
-
     char buffer[1024];
 
     //Receives data from the server.
@@ -90,12 +72,13 @@ int main(int argc, char *argv[]) {
 
     //Deserializes the data received from the server into a vehicle object.
     serializer.deserialize(buffer, sizeof(buffer), vehicle);
-    BOOST_LOG_TRIVIAL(info) << "Desirialized vehicle, vehicle id:" << vehicle->getVehicleId() ;
+    BOOST_LOG_TRIVIAL(info) << "Desirialized vehicle, vehicle id:"
+                            << vehicle->getVehicleId();
 
-    taxi         = new Taxi(driver, vehicle, Point(0, 0));
+    taxi = new Taxi(driver, vehicle, Point(0, 0));
     serialDriver = "";
     BOOST_LOG_TRIVIAL(info) << "Waiting for command.";
-    //descriptor = socket->callAccept();
+
     //Take input from the server while it's not an exit command.
     while (!exitCalled) {
 
@@ -132,7 +115,8 @@ int main(int argc, char *argv[]) {
             serializer.deserialize(communicationBuffer,
                                    sizeof(communicationBuffer), trip);
             taxi->setTrip(trip);
-            BOOST_LOG_TRIVIAL(info) << "Received the trip, trip id:" << trip->getRideId();
+            BOOST_LOG_TRIVIAL(info) << "Received the trip, trip id:"
+                                    << trip->getRideId();
         }
     }
 

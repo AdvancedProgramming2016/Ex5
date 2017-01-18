@@ -58,12 +58,10 @@ public:
     */
     unsigned int getYearsOfExperience() const;
 
-
     /*
     * Returns the counter of customers.
     */
     unsigned int getCounterOfCustomers() const;
-
 
     /*
     * Increases the driver's years of experience by one.

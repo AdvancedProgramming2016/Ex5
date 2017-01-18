@@ -26,6 +26,9 @@ public:
 
     ClientThread(MainFlow *mainFlow, unsigned int threadId);
 
+    /*
+     * Return mainflow object
+     */
     MainFlow *getMainFlow();
 
     /*
@@ -33,7 +36,9 @@ public:
      */
     void * listenToSocketForDriver();
 
-
+    /*
+     * Returns thread id
+     */
     unsigned int getThreadId() const;
 
     /*
@@ -41,14 +46,25 @@ public:
      */
     static void *sendToListenToSocketForDriver(void *clientThread);
 
+    /*
+     * Returns thread
+     */
     pthread_t getThread() const;
 
+    /*
+     * Sets the thread member
+     */
     void setThread(pthread_t thread);
 
+    /*
+     * Sets the socket descriptor
+     */
     void setDescriptor(int descriptor);
 
+    /*
+     * Gets the socket descriptor
+     */
     int getDescriptor() const;
-
 
 };
 

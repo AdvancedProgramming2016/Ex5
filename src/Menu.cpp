@@ -80,8 +80,7 @@ int Menu::runMenu() {
 
                 std::vector<ClientThread *> clientThreadVec = this->getMainFlow()->getClientThreadVector();
                 // Send each driver exit command
-                this->wakeUpThreads(
-                        7);  //TODO in order to exit we need to join the threads first
+                this->wakeUpThreads(7);
                 for (int i = 0; i < clientThreadVec.size(); i++) {
                     pthread_join(clientThreadVec.at(i)->getThread(), NULL);
                 }
@@ -91,8 +90,8 @@ int Menu::runMenu() {
                 // Advance one step
             case 9:
 
-                BOOST_LOG_TRIVIAL(info) << "Program time:"
-                                        << this->mainFlow->getTaxiCenter()->getClock()->getTime();
+                BOOST_LOG_TRIVIAL(debug) << "Program time:"
+                                         << this->mainFlow->getTaxiCenter()->getClock()->getTime();
                 this->wakeUpThreads(9);
                 this->getMainFlow()->clockSleep();
                 this->mainFlow->getTaxiCenter()->getClock()->increaseTime();
@@ -104,8 +103,8 @@ int Menu::runMenu() {
 
 void Menu::wakeUpThreads(int operationNumber) {
     std::vector<ClientThread *> clientThreadVec = this->getMainFlow()->getClientThreadVector();
-    int                         numberOfThreads = clientThreadVec.size();
-    for (int                    i               = 0; i < numberOfThreads; i++) {
+    int numberOfThreads = clientThreadVec.size();
+    for (int i = 0; i < numberOfThreads; i++) {
         clientThreadVec.at(i)->setThreadCommand(operationNumber);
         //pthread_join(clientThreadVec.at(i)->getThread(), NULL);
     }

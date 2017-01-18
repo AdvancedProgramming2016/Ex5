@@ -92,7 +92,7 @@ Vertex *Grid::get_vertex(Point point) {
 
     location =
             (this->m_length * this->m_width) - this->m_width -
-            (point.getXCoordinate() * this->m_width) + point.getYCoordinate(); //TODO Test to make sure it works
+            (point.getXCoordinate() * this->m_width) + point.getYCoordinate();
 
     retVertex = &this->m_edges.at(location);
 

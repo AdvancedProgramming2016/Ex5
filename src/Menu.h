@@ -39,9 +39,9 @@ public:
     Serializer getSerializer();
 
     /*
-     * Gets the udp object
+     * Gets the socket object
      */
-    Socket *getSocket();
+    //Socket *getSocket();
 
     /*
      * Initialize the grid with user input.

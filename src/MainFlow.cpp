@@ -12,9 +12,7 @@ MainFlow::MainFlow(Socket *socket, int operationNumber) {
     BOOST_LOG_TRIVIAL(info) << "Opening main socket.";
     this->socket->initialize();
     this->operationNumber = &operationNumber;
-    //this->vacantPort      = 42345;
 
-    //this->socket->initialize();
     pthread_mutex_init(&this->receiveDriverMutex, NULL);
     pthread_mutex_init(&this->sendCommandMutex, NULL);
     pthread_mutex_init(&this->bfsMutex, NULL);
@@ -30,10 +28,6 @@ MainFlow::~MainFlow() {
     BOOST_LOG_TRIVIAL(info) << "Deleting all the open sockets.";
     delete this->socket;
 
-    // Delete all the client opened sockets
-//    for (int i = 0; i < this->getSocketVector().size(); i++) {
-  //      delete this->getSocketVector().at(i);
-    //}
 }
 
 int *MainFlow::getOperationNumber() {
@@ -71,15 +65,12 @@ void MainFlow::createTrip(Trip *trip) {
 
     if (retVal != 0) {
 
-        BOOST_LOG_TRIVIAL(error) << "ERROR: failed to create trip thread.";
+        BOOST_LOG_TRIVIAL(error) << "Failed to create trip thread.";
     }
 
     tripThread->setThread(pthread);
 
-    BOOST_LOG_TRIVIAL(trace) << "TRACE: created trip thread.";
-
-    //TripThread *tripThread = new TripThread(this, trip, pthread);
-
+    BOOST_LOG_TRIVIAL(info) << "Created trip thread.";
 
     this->getTaxiCenter()->getTripThreads().push_back(tripThread);
     this->taxiCenter->addTrip(trip);
@@ -114,7 +105,6 @@ Vehicle *MainFlow::getDriverVehicle(unsigned int vehicleId) {
     }
 }
 
-
 void MainFlow::selectDrivers(int numOfDrivers) {
 
     // Receive driver objects from client
@@ -122,7 +112,6 @@ void MainFlow::selectDrivers(int numOfDrivers) {
 
         pthread_t currThread;
 
-        // TODO: delete all the client threads
         ClientThread *clientThread = new ClientThread(this, i);
         this->addClientThread(clientThread);
 
@@ -136,17 +125,10 @@ void MainFlow::selectDrivers(int numOfDrivers) {
                                 << clientThread->getThreadId();
         clientThread->setThread(currThread);
 
-        // Wait for thread
-        // TODO: Check whether necessary
-        //pthread_exit(currThread, NULL);
     }
 }
 
 void MainFlow::performTask9(Driver *driver, int descriptor) {
-
-    //pthread_mutex_t assignTripMtx;
-
-    //pthread_mutex_lock(&assignTripMtx);
 
     // Move all the taxis one step
     this->getTaxiCenter()->moveOneStep(driver,
@@ -154,10 +136,10 @@ void MainFlow::performTask9(Driver *driver, int descriptor) {
 
     // Check that all the trips that need to start are attached
     // to a driver
+    BOOST_LOG_TRIVIAL(debug) << "Assigning driver: " << driver->getDriverId() << " a trip";
     this->getTaxiCenter()->assignTrip(driver, *this->getSocket(), this->getSerializer(),
                                       descriptor);
 
-   // pthread_mutex_unlock(&assignTripMtx);
 }
 
 unsigned int MainFlow::getVacantPort() {

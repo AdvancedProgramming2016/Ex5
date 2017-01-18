@@ -56,11 +56,20 @@ public:
      */
     void createMap(Grid *grid);
 
-    // Gets the next operation number
+    /*
+     * Gets the next operation number
+     */
     int *getOperationNumber();
 
+    /*
+     * Adds the client thread to vector
+     */
     void addClientThread(ClientThread *clientThread);
 
+    /*
+     * Makes the main thread wait for remaining threads to finish executing
+     * command
+     */
     void clockSleep();
 
     std::vector<ClientThread *> getClientThreadVector();
@@ -71,8 +80,9 @@ public:
     // Increase the vacant port by one
     void increaseVacantPort();
 
-
-    // TODO: change function names
+    /*
+     * Performs task number 9 - assign trip and move one step
+     */
     void performTask9(Driver *driver, int descriptor);
 
     /*
@@ -150,6 +160,9 @@ public:
      */
     pthread_mutex_t &getMutexReceiveDriver() ;
 
+    /*
+     * Gets send command mutex
+     */
     pthread_mutex_t &getSendCommandMutex();
 
 };
