@@ -1,6 +1,6 @@
 #include "Menu.h"
 #include <pthread.h>
-#include <boost/log/trivial.hpp>
+//#include <boost/log/trivial.hpp>
 
 Menu::Menu(Socket *socket) {
 
@@ -90,8 +90,8 @@ int Menu::runMenu() {
                 // Advance one step
             case 9:
 
-                BOOST_LOG_TRIVIAL(debug) << "Program time:"
-                                         << this->mainFlow->getTaxiCenter()->getClock()->getTime();
+                //BOOST_LOG_TRIVIAL(debug) << "Program time:"
+                //                         << this->mainFlow->getTaxiCenter()->getClock()->getTime();
                 this->wakeUpThreads(9);
                 this->getMainFlow()->clockSleep();
                 this->mainFlow->getTaxiCenter()->getClock()->increaseTime();

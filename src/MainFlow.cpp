@@ -2,14 +2,14 @@
 #include "MainFlow.h"
 #include "../sockets/Tcp.h"
 #include "TripThread.h"
-#include <boost/log/trivial.hpp>
+//#include <boost/log/trivial.hpp>
 #include <cstdlib>
 #include <pthread.h>
 
 MainFlow::MainFlow(Socket *socket, int operationNumber) {
 
     this->socket = socket;
-    BOOST_LOG_TRIVIAL(info) << "Opening main socket.";
+    //BOOST_LOG_TRIVIAL(info) << "Opening main socket.";
     this->socket->initialize();
     this->operationNumber = &operationNumber;
 
@@ -25,7 +25,7 @@ MainFlow::~MainFlow() {
     pthread_mutex_destroy(&this->sendCommandMutex);
     pthread_mutex_destroy(&this->bfsMutex);
 
-    BOOST_LOG_TRIVIAL(info) << "Deleting all the open sockets.";
+    //BOOST_LOG_TRIVIAL(info) << "Deleting all the open sockets.";
     delete this->socket;
 
 }
@@ -65,12 +65,12 @@ void MainFlow::createTrip(Trip *trip) {
 
     if (retVal != 0) {
 
-        BOOST_LOG_TRIVIAL(error) << "Failed to create trip thread.";
+        //BOOST_LOG_TRIVIAL(error) << "Failed to create trip thread.";
     }
 
     tripThread->setThread(pthread);
 
-    BOOST_LOG_TRIVIAL(info) << "Created trip thread.";
+    //BOOST_LOG_TRIVIAL(info) << "Created trip thread.";
 
     this->getTaxiCenter()->getTripThreads().push_back(tripThread);
     this->taxiCenter->addTrip(trip);
@@ -120,9 +120,8 @@ void MainFlow::selectDrivers(int numOfDrivers) {
                        ClientThread::sendToListenToSocketForDriver,
                        (void *) (clientThread));
 
-
-        BOOST_LOG_TRIVIAL(info) << "New thread created with thread id: "
-                                << clientThread->getThreadId();
+        //BOOST_LOG_TRIVIAL(info) << "New thread created with thread id: "
+         //                       << clientThread->getThreadId();
         clientThread->setThread(currThread);
 
     }
@@ -136,7 +135,7 @@ void MainFlow::performTask9(Driver *driver, int descriptor) {
 
     // Check that all the trips that need to start are attached
     // to a driver
-    BOOST_LOG_TRIVIAL(debug) << "Assigning driver: " << driver->getDriverId() << " a trip";
+    //BOOST_LOG_TRIVIAL(debug) << "Assigning driver: " << driver->getDriverId() << " a trip";
     this->getTaxiCenter()->assignTrip(driver, *this->getSocket(), this->getSerializer(),
                                       descriptor);
 

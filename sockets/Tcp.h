@@ -18,7 +18,14 @@ public:
 	* The output: none										               *
 	* The Function operation: creating new Tcp						       *
 	***********************************************************************/
-	Tcp(bool isServers, int port_num);
+	Tcp(bool isServers, std::string ip_addr, int port_num);
+    /***********************************************************************
+	* function name: Tcp												   *
+	* The Input: Boolean, true - if server, false if client and port number*
+	* The output: none										               *
+	* The Function operation: creating new Tcp						       *
+	***********************************************************************/
+    Tcp(bool isServers, int port_num);
 	/***********************************************************************
 	* function name: ~Tcp												   *
 	* The Input: none													   *
@@ -34,7 +41,9 @@ public:
 	* socket descriptor.												   *
 	***********************************************************************/
 	int initialize();
-	/***********************************************************************
+	/******************************************************
+	 *
+	 * *****************
 	* function name: sendData											   *
 	* The Input: string representing the data to send		               *
 	* The output: int number representing the return status		           *

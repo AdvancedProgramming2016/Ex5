@@ -13,6 +13,21 @@
 ************************************************************/
 
 #include "Tcp.h"
+#include <cstdio>
+#include <cstdlib>
+
+/***********************************************************************
+* function name: Tcp												   *
+* The Input: Boolean, true - if server, false if client	and port number*
+* The output: none										               *
+* The Function operation: creating new Tcp. initialize if server and   *
+* port_num by the input												   *
+***********************************************************************/
+Tcp::Tcp(bool isServers, std::string ip_addr, int port_num) {
+    this->port_number = port_num;
+    this->isServer = isServers;
+    this->ip_address = ip_addr;
+}
 
 /***********************************************************************
 * function name: Tcp												   *
@@ -24,7 +39,6 @@
 Tcp::Tcp(bool isServers, int port_num) {
     this->port_number = port_num;
     this->isServer = isServers;
-
 }
 
 /***********************************************************************
@@ -95,11 +109,6 @@ int Tcp::initialize() {
 
 }
 
-
-
-
-
-
 /***********************************************************************
 * function name: acceptOneClient									   *
 * The Input: None                                                      *
@@ -122,11 +131,6 @@ int Tcp::callAccept(){
     }
     return  clientDescriptor;
 }
-
-
-
-
-
 
 /***********************************************************************
 * function name: sendData											   *

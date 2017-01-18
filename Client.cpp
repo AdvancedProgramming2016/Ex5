@@ -27,7 +27,7 @@
 #include "sockets/Tcp.h"
 #include <cstdlib>
 
-#include <boost/log/trivial.hpp>
+//#include <boost/log/trivial.hpp>
 
 BOOST_CLASS_EXPORT_GUID(StandardVehicle, "StandardVehicle")
 BOOST_CLASS_EXPORT_GUID(LuxuryVehicle, "LuxuryVehicle")
@@ -40,7 +40,7 @@ void closeClient(Taxi *taxi, Driver *driver, Vehicle *vehicle, Socket *socket);
 int main(int argc, char *argv[]) {
 
     //The socket connecting between the client and the server.
-    Socket *socket = new Tcp(0, atoi(argv[1]));
+    Socket *socket = new Tcp(0, argv[1], atoi(argv[2]));
 
     //Serializer used for serializing and deserializing objects.
     Serializer serializer;
@@ -61,23 +61,23 @@ int main(int argc, char *argv[]) {
     std::string serialDriver = serializer.serialize(driver);
 
     //Sends the string to the server
-    BOOST_LOG_TRIVIAL(info) << "Sending driver object to server";
+    //BOOST_LOG_TRIVIAL(info) << "Sending driver object to server";
     socket->sendData(serialDriver, socket->getSocketDescriptor());
 
     char buffer[1024];
 
     //Receives data from the server.
     socket->receiveData(buffer, sizeof(buffer), socket->getSocketDescriptor());
-    BOOST_LOG_TRIVIAL(info) << "Receiving serialized vehicle.";
+    //BOOST_LOG_TRIVIAL(info) << "Receiving serialized vehicle.";
 
     //Deserializes the data received from the server into a vehicle object.
     serializer.deserialize(buffer, sizeof(buffer), vehicle);
-    BOOST_LOG_TRIVIAL(info) << "Desirialized vehicle, vehicle id:"
-                            << vehicle->getVehicleId();
+    //BOOST_LOG_TRIVIAL(info) << "Desirialized vehicle, vehicle id:"
+    //                        << vehicle->getVehicleId();
 
     taxi = new Taxi(driver, vehicle, Point(0, 0));
     serialDriver = "";
-    BOOST_LOG_TRIVIAL(info) << "Waiting for command.";
+    //BOOST_LOG_TRIVIAL(info) << "Waiting for command.";
 
     //Take input from the server while it's not an exit command.
     while (!exitCalled) {
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
 
         socket->receiveData(communicationBuffer, sizeof(communicationBuffer),
                             socket->getSocketDescriptor());
-        BOOST_LOG_TRIVIAL(info) << "Received command.";
+        //BOOST_LOG_TRIVIAL(info) << "Received command.";
 
         //If received "exit", close the client.
         if (strcmp(communicationBuffer, "exit") == 0) {
@@ -101,9 +101,9 @@ int main(int argc, char *argv[]) {
             std::string serial = serializer.serialize(
                     &taxi->getCurrentPosition());
             socket->sendData(serial, socket->getSocketDescriptor());
-            BOOST_LOG_TRIVIAL(info) << "Driver " << driver->getDriverId()
-                                    << " moved to "
-                                    << taxi->getCurrentPosition();
+            //BOOST_LOG_TRIVIAL(info) << "Driver " << driver->getDriverId()
+            //                        << " moved to "
+            //                        << taxi->getCurrentPosition();
         } else {
 
             if (trip != 0) {
@@ -115,8 +115,8 @@ int main(int argc, char *argv[]) {
             serializer.deserialize(communicationBuffer,
                                    sizeof(communicationBuffer), trip);
             taxi->setTrip(trip);
-            BOOST_LOG_TRIVIAL(info) << "Received the trip, trip id:"
-                                    << trip->getRideId();
+            //BOOST_LOG_TRIVIAL(info) << "Received the trip, trip id:"
+            //                        << trip->getRideId();
         }
     }
 

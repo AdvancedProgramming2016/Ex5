@@ -1,4 +1,4 @@
-#include <boost/log/trivial.hpp>
+//#include <boost/log/trivial.hpp>
 #include "TaxiCenter.h"
 #include "../sockets/Socket.h"
 #include "Serializer.h"
@@ -77,8 +77,8 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
                 currTaxi->getCurrentPosition() == currTrip->getStartPoint()) {
 
                 pthread_t threadToWait = findTripThread(currTrip)->getThread();
-                BOOST_LOG_TRIVIAL(info) << "waiting for trip thread:"
-                                        << threadToWait;
+                //BOOST_LOG_TRIVIAL(info) << "waiting for trip thread:"
+                //                        << threadToWait;
                 pthread_join(threadToWait, NULL);
                 //Update the current taxi with a trip
                 currTaxi->setTrip(currTrip);
@@ -87,8 +87,8 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
                 std::string serialTrip;
                 serialTrip = serializer.serialize(currTrip);
                 socket.sendData(serialTrip, descriptor);
-                BOOST_LOG_TRIVIAL(debug)
-                    << "TaxiCenter sends a trip to client:" << descriptor;
+                //BOOST_LOG_TRIVIAL(debug)
+                //    << "TaxiCenter sends a trip to client:" << descriptor;
 
                 //Remove the trip from the trips vector;
                 tripVec.erase(tripVec.begin() + i);
@@ -124,8 +124,8 @@ TaxiCenter::moveOneStep(Driver *driver, Socket &socket, Serializer serializer,
         // Tell driver to advance one step
         std::string go = "go";
         socket.sendData(go, descriptor);
-        BOOST_LOG_TRIVIAL(debug)
-            << "TaxiCenter sends move command to client:" << descriptor;
+        //BOOST_LOG_TRIVIAL(debug)
+        //    << "TaxiCenter sends move command to client:" << descriptor;
 
         // Wait for drivers answer
         char buffer[1024];
