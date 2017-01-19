@@ -16,8 +16,6 @@ class Menu {
 private:
     StringParser stringParser;
     MainFlow     *mainFlow;
-    Socket       *socket;
-    Serializer   serializer;
 
 public:
 
@@ -26,20 +24,14 @@ public:
      */
     Menu(Socket *socket);
 
+    int *currentOperation;
+
     /*
      * Destructor
      */
     virtual ~Menu();
 
-    /*
-     * Listen to socket and receive driver.
-     */
-    Driver *listenToSocketForDriver();
-
-    /*
-     * Send vehicle to socket.
-     */
-    void sendToSocketVehicle(unsigned int vehicleId);
+    void wakeUpThreads(int operationNumber);
 
     /*
      * Returns serializer
@@ -47,9 +39,9 @@ public:
     Serializer getSerializer();
 
     /*
-     * Gets the udp object
+     * Gets the socket object
      */
-    Socket *getSocket();
+    //Socket *getSocket();
 
     /*
      * Initialize the grid with user input.

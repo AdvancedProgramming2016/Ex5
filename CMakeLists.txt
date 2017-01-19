@@ -3,8 +3,9 @@ project(Ex4)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(BOOST_ROOT CACHE PATH "/usr/include/boost/")
-find_package(Boost 1.58.0 COMPONENTS serialization system)
+find_package(Boost 1.58.0 COMPONENTS serialization system log)
 include_directories(${Boost_INCLUDE_DIR})
+ADD_DEFINITIONS(-DBOOST_LOG_DYN_LINK)
 
 set(SOURCE_FILES src/VehicleFactory.cpp src/VehicleFactory.h src/Point.cpp src/Point.h src/Vertex.cpp src/Vertex.h
         src/Graph.cpp src/Graph.h src/Grid.cpp src/Grid.h src/Bfs.cpp src/Bfs.h src/Driver.cpp
@@ -12,9 +13,11 @@ set(SOURCE_FILES src/VehicleFactory.cpp src/VehicleFactory.h src/Point.cpp src/P
         src/StandardVehicle.cpp src/StandardVehicle.h src/IObserver.h src/ISubject.h src/MainFlow.cpp
         src/MainFlow.h src/Passenger.cpp src/Passenger.h src/Clock.cpp src/Clock.h
         src/Taxi.cpp src/Taxi.h src/TaxiCenter.cpp src/TaxiCenter.h src/Trip.cpp src/Trip.h src/Menu.cpp src/Menu.h
-        src/BaseParser.h src/StringParser.cpp src/StringParser.h sockets/Socket.cpp sockets/Socket.h sockets/Udp.cpp sockets/Udp.h src/Serializer.cpp src/Serializer.h)
+        src/TripThread.cpp src/TripThread.h src/BaseParser.h src/StringParser.cpp src/StringParser.h sockets/Socket.cpp
+        sockets/Socket.h sockets/Udp.cpp sockets/Udp.h src/Serializer.cpp src/Serializer.h sockets/Tcp.cpp sockets/Tcp.h
+        src/ClientThread.cpp src/ClientThread.h)
 
-add_executable(client Client.cpp ${SOURCE_FILES} sockets/Tcp.cpp sockets/Tcp.h)
+add_executable(client Client.cpp ${SOURCE_FILES})
 add_executable(server Server.cpp ${SOURCE_FILES})
-target_link_libraries(client ${Boost_LIBRARIES})
-target_link_libraries(server ${Boost_LIBRARIES})
+target_link_libraries(client pthread ${Boost_LIBRARIES})
+target_link_libraries(server pthread ${Boost_LIBRARIES})

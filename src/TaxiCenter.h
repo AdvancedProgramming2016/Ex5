@@ -10,6 +10,7 @@
 #include "../sockets/Socket.h"
 #include "Serializer.h"
 #include "Clock.h"
+#include "TripThread.h"
 
 class Driver;
 
@@ -21,6 +22,8 @@ class Trip;
 
 class Passenger;
 
+class TripThread;
+
 /**
  * The class represents a taxi center, which manages all the taxis.
  * It receives passengers calls, and assigns drivers to vehicles.
@@ -29,12 +32,13 @@ class Passenger;
 class TaxiCenter : public IObserver {
 
 private:
-    std::vector<Driver *>  drivers;
+    std::vector<Driver *> drivers;
     std::vector<Vehicle *> vehicles;
-    std::vector<Taxi *>    taxis;
-    std::vector<Trip *>    trips;
-    Point                  *taxiCenterLocation;
-    Clock                  *clock;
+    std::vector<Taxi *> taxis;
+    std::vector<Trip *> trips;
+    Point *taxiCenterLocation;
+    std::vector<TripThread *> tripThreads;
+    Clock *clock;
 
 private:
 
@@ -42,6 +46,8 @@ private:
      * Adds a taxi to the taxis list.
      */
     void addTaxi(Taxi *taxi);
+
+    TripThread *findTripThread(Trip *trip);
 
 public:
 
@@ -63,12 +69,14 @@ public:
     /*
      * Assigns the free taxis with trips.
      */
-    void assignTrip(Socket &socket, Serializer serializer);
+    void assignTrip(Driver *driver, Socket &socket, Serializer serializer,
+                    int descriptor);
 
     /*
      * Moves all the taxis with trips to their next point on the map.
      */
-    void moveOneStep(Socket &socket, Serializer serializer);
+    void moveOneStep(Driver *driver, Socket &socket, Serializer serializer,
+                     int descriptor);
 
     /*
      * Add a driver to the drivers the taxi center has.
@@ -119,6 +127,8 @@ public:
      * Update according to the subject.
      */
     virtual void update(Taxi *taxi);
+
+    vector<TripThread *> &getTripThreads();
 
     /*
      * Returns the clock.
