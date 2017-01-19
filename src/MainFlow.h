@@ -32,6 +32,7 @@ private:
 
 private:
     Socket       *socket;
+    std::queue<int> *threadIdQueue;
     Serializer   serializer;
     int *operationNumber;
     unsigned int vacantPort;
@@ -50,6 +51,10 @@ public:
      * Dtor
      */
     ~MainFlow();
+
+    std::queue<int> *getThreadIdQueue();
+
+    void addClientId(int threadId);
 
     /*
      * Creates a map with obstacles.

@@ -12,6 +12,7 @@ MainFlow::MainFlow(Socket *socket, int operationNumber) {
     //BOOST_LOG_TRIVIAL(info) << "Opening main socket.";
     this->socket->initialize();
     this->operationNumber = &operationNumber;
+    this->threadIdQueue = new queue<int>();
 
     pthread_mutex_init(&this->receiveDriverMutex, NULL);
     pthread_mutex_init(&this->sendCommandMutex, NULL);
@@ -24,6 +25,8 @@ MainFlow::~MainFlow() {
     pthread_mutex_destroy(&this->receiveDriverMutex);
     pthread_mutex_destroy(&this->sendCommandMutex);
     pthread_mutex_destroy(&this->bfsMutex);
+
+    delete this->threadIdQueue;
 
     //BOOST_LOG_TRIVIAL(info) << "Deleting all the open sockets.";
     delete this->socket;
@@ -105,6 +108,14 @@ Vehicle *MainFlow::getDriverVehicle(unsigned int vehicleId) {
     }
 }
 
+std::queue<int> *MainFlow::getThreadIdQueue() {
+    return this->threadIdQueue;
+}
+
+void MainFlow::addClientId(int threadId) {
+    this->threadIdQueue->push(threadId);
+}
+
 void MainFlow::selectDrivers(int numOfDrivers) {
 
     // Receive driver objects from client
@@ -113,7 +124,11 @@ void MainFlow::selectDrivers(int numOfDrivers) {
         pthread_t currThread;
 
         ClientThread *clientThread = new ClientThread(this, i);
+
         this->addClientThread(clientThread);
+
+        // Add client ID to queue
+        this->addClientId(i);
 
         // Init thread for driver
         pthread_create(&currThread, NULL,
@@ -129,15 +144,15 @@ void MainFlow::selectDrivers(int numOfDrivers) {
 
 void MainFlow::performTask9(Driver *driver, int descriptor) {
 
-    // Move all the taxis one step
-    this->getTaxiCenter()->moveOneStep(driver,
-            *(this->getSocket()), this->getSerializer(), descriptor);
-
     // Check that all the trips that need to start are attached
     // to a driver
     //BOOST_LOG_TRIVIAL(debug) << "Assigning driver: " << driver->getDriverId() << " a trip";
     this->getTaxiCenter()->assignTrip(driver, *this->getSocket(), this->getSerializer(),
                                       descriptor);
+
+                                      // Move all the taxis one step
+    this->getTaxiCenter()->moveOneStep(driver,
+            *(this->getSocket()), this->getSerializer(), descriptor);
 
 }
 

@@ -3,22 +3,23 @@
 #include "ClientThread.h"
 #include "../sockets/Tcp.h"
 
-ClientThread::ClientThread(MainFlow *mainFlow, unsigned int threadId)
-        : threadCommand(0), threadId(threadId), descriptor(0) {
+ClientThread::ClientThread(MainFlow *mainFlow, unsigned int threadId) {
     this->mainFlow = mainFlow;
+    this->threadId = threadId;
+    this->descriptor = 0;
+    this->threadCommand = 0;
+    this->firstTimeFlag = true;
 }
 
 MainFlow *ClientThread::getMainFlow() {
     return this->mainFlow;
 }
 
-
 void *ClientThread::sendToListenToSocketForDriver(void *clientThread) {
     return (((ClientThread *) clientThread)->listenToSocketForDriver());
 }
 
 void *ClientThread::listenToSocketForDriver() {
-
 
     char   buffer[1024];
 
@@ -58,6 +59,17 @@ void *ClientThread::listenToSocketForDriver() {
 
         if (this->getThreadCommand() == 9) {
 
+            // If second iteration, push to queue.
+            if (!this->firstTimeFlag) {
+                this->firstTimeFlag = false;
+                this->getMainFlow()->getThreadIdQueue()->push(this->getThreadId());
+            }
+
+            // Wait for thread turn to get trip
+            while (this->getThreadId() != this->getMainFlow()->getThreadIdQueue()->front()) {
+                continue;
+            }
+
             pthread_mutex_lock(&this->getMainFlow()->getSendCommandMutex());
 
             //BOOST_LOG_TRIVIAL(debug) << "Thread:" << this->getThreadId()
@@ -70,6 +82,9 @@ void *ClientThread::listenToSocketForDriver() {
 
             this->threadCommand = 0;
 
+            // Remove thread from queue
+            this->getMainFlow()->getThreadIdQueue()->pop();
+
             pthread_mutex_unlock(&this->getMainFlow()->getSendCommandMutex());
 
         } else if (this->getThreadCommand() == 7) {
@@ -80,7 +95,7 @@ void *ClientThread::listenToSocketForDriver() {
             //                        << " Exiting current thread.";
             pthread_exit(NULL);
         }
-
+        this->firstTimeFlag = false;
     }
 }
 

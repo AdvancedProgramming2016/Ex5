@@ -3,6 +3,7 @@
 #ifndef EX4_CLIENTTHREAD_H
 #define EX4_CLIENTTHREAD_H
 
+#include <queue>
 #include "MainFlow.h"
 class MainFlow;
 
@@ -13,6 +14,7 @@ private:
     MainFlow *mainFlow;
     Driver *driver;
     int threadCommand;
+    bool firstTimeFlag;
     unsigned int threadId;
     pthread_t thread;
     int descriptor;
