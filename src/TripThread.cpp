@@ -18,11 +18,9 @@ void *TripThread::calculatePath() {
 
     pthread_mutex_lock(&this->mainFlow->bfsMutex);
 
-    Bfs bfs(*this->mainFlow->map, trip->getStartPoint(), trip->getEndPoint()); //TODO not generic because it takes Grid, and bot Graph
+    Bfs bfs(*this->mainFlow->map, trip->getStartPoint(), trip->getEndPoint());
 
-    std::cout << "Starting to calculate trip:" << this->trip->getRideId() << std::endl;
     bfs.get_route();
-    std::cout << "Finished to calculate trip:" << this->trip->getRideId() << std::endl;
 
     //BOOST_LOG_TRIVIAL(trace) << "Finished calculating path.";
 

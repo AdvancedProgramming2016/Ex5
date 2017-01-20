@@ -6,13 +6,15 @@
 #include <cstdlib>
 #include <pthread.h>
 
-MainFlow::MainFlow(Socket *socket, int operationNumber): order(0), startOrder(0) {
+MainFlow::MainFlow(Socket *socket, int operationNumber) : order(0),
+                                                          startOrder(0),
+                                                          numOfDrivers(0) {
 
     this->socket = socket;
     //BOOST_LOG_TRIVIAL(info) << "Opening main socket.";
     this->socket->initialize();
     this->operationNumber = &operationNumber;
-    this->threadIdQueue = new queue<int>();
+    this->threadIdQueue   = new queue<int>();
 
     pthread_mutex_init(&this->receiveDriverMutex, NULL);
     pthread_mutex_init(&this->sendCommandMutex, NULL);
@@ -110,10 +112,6 @@ Vehicle *MainFlow::getDriverVehicle(unsigned int vehicleId) {
     }
 }
 
-std::queue<int> *MainFlow::getThreadIdQueue() {
-    return this->threadIdQueue;
-}
-
 void MainFlow::addClientId(int threadId) {
     this->threadIdQueue->push(threadId);
 }
@@ -123,15 +121,16 @@ void MainFlow::selectDrivers(int numOfDrivers) {
     // Receive driver objects from client
     for (unsigned int i = 0; i < numOfDrivers; i++) {
 
+
         pthread_t currThread;
 
-        ClientThread *clientThread = new ClientThread(this, i);
+        ClientThread *clientThread = new ClientThread(this, this->numOfDrivers);
+        this->numOfDrivers += 1;
 
         // Init thread for driver
         pthread_create(&currThread, NULL,
                        &ClientThread::sendToListenToSocketForDriver,
-                        clientThread);
-        std::cout << "Thread:" << clientThread->getThreadId() << " created" << std::endl;
+                       clientThread);
 
         clientThread->setThread(currThread);
         this->addClientThread(clientThread);
@@ -142,7 +141,7 @@ void MainFlow::selectDrivers(int numOfDrivers) {
 
 
         //BOOST_LOG_TRIVIAL(info) << "New thread created with thread id: "
-         //                       << clientThread->getThreadId();
+        //                       << clientThread->getThreadId();
         clientThread->setThread(currThread);
     }
 }
@@ -151,13 +150,16 @@ void MainFlow::performTask9(Driver *driver, int descriptor) {
 
     // Check that all the trips that need to start are attached
     // to a driver
-    //BOOST_LOG_TRIVIAL(debug) << "Assigning driver: " << driver->getDriverId() << " a trip";
-    this->getTaxiCenter()->assignTrip(driver, *this->getSocket(), this->getSerializer(),
+    //BOOST_LOG_TRIVIAL(debug) << "Assigning driver: "
+    // << driver->getDriverId() << " a trip";
+    this->getTaxiCenter()->assignTrip(driver, *this->getSocket(),
+                                      this->getSerializer(),
                                       descriptor);
 
-                                      // Move all the taxis one step
+    // Move all the taxis one step
     this->getTaxiCenter()->moveOneStep(driver,
-            *(this->getSocket()), this->getSerializer(), descriptor);
+                                       *(this->getSocket()),
+                                       this->getSerializer(), descriptor);
 
 }
 
@@ -225,16 +227,16 @@ pthread_mutex_t &MainFlow::getMutexReceiveDriver() {
     return receiveDriverMutex;
 }
 
-pthread_mutex_t &MainFlow::getSendCommandMutex()  {
+pthread_mutex_t &MainFlow::getSendCommandMutex() {
     return sendCommandMutex;
 }
 
 void MainFlow::clockSleep() {
 
     int i = 0;
-    while(i < this->getClientThreadVector().size()){
+    while (i < this->getClientThreadVector().size()) {
 
-        if(this->getClientThreadVector()[i]->getThreadCommand() == 0){
+        if (this->getClientThreadVector()[i]->getThreadCommand() == 0) {
             i++;
         }
     }
@@ -249,7 +251,7 @@ void MainFlow::setOrder(int order) {
     MainFlow::order = order;
 }
 
- pthread_mutex_t &MainFlow::getThreadMutex()  {
+pthread_mutex_t &MainFlow::getThreadMutex() {
     return threadMutex;
 }
 

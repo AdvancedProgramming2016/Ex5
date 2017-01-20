@@ -6,7 +6,6 @@
 
 #include "Driver.h"
 #include "StringParser.h"
-#include "../sockets/Udp.h"
 #include "MainFlow.h"
 #include "TaxiCenter.h"
 #include "Serializer.h"
@@ -34,11 +33,6 @@ public:
     void wakeUpThreads(int operationNumber);
 
     /*
-     * Returns serializer
-     */
-    Serializer getSerializer();
-
-    /*
      * Gets the socket object
      */
     //Socket *getSocket();
@@ -58,7 +52,6 @@ public:
      */
     MainFlow *getMainFlow();
 
-    Vehicle* getDriverVehicle(unsigned int vehicleId);
 
 };
 

@@ -29,8 +29,6 @@ private:
     TaxiCenter *taxiCenter;
     Grid       *map;
     std::vector<ClientThread *> clientThreadVector;
-
-private:
     Socket       *socket;
     std::queue<int> *threadIdQueue;
     Serializer   serializer;
@@ -39,22 +37,10 @@ private:
     pthread_mutex_t receiveDriverMutex;
     pthread_mutex_t sendCommandMutex;
     pthread_mutex_t threadMutex;
-public:
-     pthread_mutex_t &getThreadMutex() ;
-
-private:
     pthread_mutex_t bfsMutex;
     int order;
     int startOrder;
-public:
-    int getStartOrder() const;
-
-    void setStartOrder(int startOrder);
-
-public:
-    int getOrder() const;
-
-    void setOrder(int order);
+    unsigned int numOfDrivers;
 
 public:
 
@@ -67,8 +53,6 @@ public:
      * Dtor
      */
     ~MainFlow();
-
-    std::queue<int> *getThreadIdQueue();
 
     void addClientId(int threadId);
 
@@ -93,6 +77,9 @@ public:
      */
     void clockSleep();
 
+    /*
+     * Returns the client thread vector.
+     */
     std::vector<ClientThread *> getClientThreadVector();
 
     // Gets a vacant port from the server
@@ -185,6 +172,31 @@ public:
      * Gets send command mutex
      */
     pthread_mutex_t &getSendCommandMutex();
+
+    /*
+     * Returns the thread mutex.
+     */
+    pthread_mutex_t &getThreadMutex();
+
+    /*
+     * Returns the starting order/
+     */
+    int getStartOrder() const;
+
+    /*
+     * Sets the starting order.
+     */
+    void setStartOrder(int startOrder);
+
+    /*
+     * Returns the order.
+     */
+    int getOrder() const;
+
+    /*
+     * Sets the order.
+     */
+    void setOrder(int order);
 
 };
 

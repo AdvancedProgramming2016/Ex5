@@ -8,7 +8,6 @@ ClientThread::ClientThread(MainFlow *mainFlow, unsigned int threadId) {
     this->threadId      = threadId;
     this->descriptor    = 0;
     this->threadCommand = 0;
-    this->firstTimeFlag = true;
 }
 
 MainFlow *ClientThread::getMainFlow() {
@@ -21,8 +20,8 @@ void *ClientThread::sendToListenToSocketForDriver(void *clientThread) {
 
 void *ClientThread::listenToSocketForDriver() {
 
-    while(true){
-        if(this->mainFlow->getStartOrder() != this->getThreadId()){
+    while (true) {
+        if (this->mainFlow->getStartOrder() != this->getThreadId()) {
             continue;
         }
         this->mainFlow->setStartOrder(this->mainFlow->getStartOrder() + 1);
@@ -30,8 +29,6 @@ void *ClientThread::listenToSocketForDriver() {
     }
     pthread_mutex_lock(&this->getMainFlow()->getMutexReceiveDriver());
 
-    std::cout << "Thread:" << this->getThreadId()
-                            << " Starting thread function\n";
     char buffer[1024];
 
     this->descriptor = this->mainFlow->getSocket()->callAccept();
@@ -48,7 +45,6 @@ void *ClientThread::listenToSocketForDriver() {
 
     this->getMainFlow()->getSerializer().deserialize(buffer, sizeof(buffer),
                                                      this->driver);
-    std::cout << "thread:" << this->getThreadId() << "has driver:" << this->driver->getDriverId() << std::endl;
     //BOOST_LOG_TRIVIAL(debug) << "Thread:" << this->getThreadId()
     //                        << " Driver id:" << driver->getDriverId();
 
@@ -68,72 +64,71 @@ void *ClientThread::listenToSocketForDriver() {
     pthread_mutex_unlock(&this->getMainFlow()->getMutexReceiveDriver());
 
 
-        while (true) {
+    while (true) {
 
-            if (this->getThreadCommand() == 9 && this->mainFlow->getOrder() == this->getThreadId()) {
+        if (this->getThreadCommand() == 9 &&
+            this->mainFlow->getOrder() == this->getThreadId()) {
 
-                pthread_mutex_lock(&this->getMainFlow()->getSendCommandMutex());
-                std::cout << "Thread" << this->getThreadId() << " performing task 9\n";
-                std::cout << "Time" << this->mainFlow->getTaxiCenter()->getClock()->getTime() << std::endl;
+            pthread_mutex_lock(&this->getMainFlow()->getSendCommandMutex());
 
-                //BOOST_LOG_TRIVIAL(debug) << "Thread:" << this->getThreadId()
-                //                        << " Performed task 9";
+            //BOOST_LOG_TRIVIAL(debug) << "Thread:" << this->getThreadId()
+            //                        << " Performed task 9";
 
-                //BOOST_LOG_TRIVIAL(debug) << "Program time: "
-                //                       << this->mainFlow->getTaxiCenter()->getClock()->getTime();
+            //BOOST_LOG_TRIVIAL(debug) << "Program time: "
+            //                       << this->mainFlow->getTaxiCenter()->getClock()->getTime();
 
-                this->getMainFlow()->performTask9(this->driver,
-                                                  this->getDescriptor());
+            this->getMainFlow()->performTask9(this->driver,
+                                              this->getDescriptor());
 
-                this->threadCommand = 0;
-                this->mainFlow->setOrder(this->mainFlow->getOrder() + 1);
+            this->threadCommand = 0;
+            this->mainFlow->setOrder(this->mainFlow->getOrder() + 1);
 
-                if(this->mainFlow->getClientThreadVector().size() == this->mainFlow->getOrder()){
-                    this->mainFlow->setOrder(0);
-                }
-                std::cout << "Thread" << this->getThreadId() << " finished performing task 9\n";
-                std::cout << "Time" << this->mainFlow->getTaxiCenter()->getClock()->getTime() << std::endl;;
-                pthread_mutex_unlock(
-                        &this->getMainFlow()->getSendCommandMutex());
-
-            } else if (this->getThreadCommand() == 7) {
-
-                (this->mainFlow->getSocket())->sendData("exit",
-                                                        this->getDescriptor());
-                //BOOST_LOG_TRIVIAL(debug) << "Thread:" << this->getThreadId()
-                //                        << " Exiting current thread.";
-                this->mainFlow->setOrder(this->mainFlow->getOrder() + 1);
-                pthread_exit(NULL);
+            if (this->mainFlow->getClientThreadVector().size() ==
+                this->mainFlow->getOrder()) {
+                this->mainFlow->setOrder(0);
             }
+
+            pthread_mutex_unlock(
+                    &this->getMainFlow()->getSendCommandMutex());
+
+        } else if (this->getThreadCommand() == 7) {
+
+            (this->mainFlow->getSocket())->sendData("exit",
+                                                    this->getDescriptor());
+            //BOOST_LOG_TRIVIAL(debug) << "Thread:" << this->getThreadId()
+            //                        << " Exiting current thread.";
+            this->mainFlow->setOrder(this->mainFlow->getOrder() + 1);
+            pthread_exit(NULL);
         }
-
-
     }
 
-    int ClientThread::getThreadCommand() const {
-        return threadCommand;
-    }
 
-    void ClientThread::setThreadCommand(int threadCommand) {
-        ClientThread::threadCommand = threadCommand;
-    }
+}
 
-    pthread_t ClientThread::getThread() const {
-        return thread;
-    }
+int ClientThread::getThreadCommand() const {
+    return threadCommand;
+}
 
-    void ClientThread::setThread(pthread_t thread) {
-        ClientThread::thread = thread;
-    }
+void ClientThread::setThreadCommand(int threadCommand) {
+    ClientThread::threadCommand = threadCommand;
+}
 
-    unsigned int ClientThread::getThreadId() const {
-        return threadId;
-    }
+pthread_t ClientThread::getThread() const {
+    return thread;
+}
 
-    void ClientThread::setDescriptor(int descriptor) {
-        ClientThread::descriptor = descriptor;
-    }
+void ClientThread::setThread(pthread_t thread) {
+    ClientThread::thread = thread;
+}
 
-    int ClientThread::getDescriptor() const {
-        return descriptor;
-    }
+unsigned int ClientThread::getThreadId() const {
+    return threadId;
+}
+
+void ClientThread::setDescriptor(int descriptor) {
+    ClientThread::descriptor = descriptor;
+}
+
+int ClientThread::getDescriptor() const {
+    return descriptor;
+}
