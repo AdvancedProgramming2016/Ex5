@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <pthread.h>
 
-MainFlow::MainFlow(Socket *socket, int operationNumber) {
+MainFlow::MainFlow(Socket *socket, int operationNumber): order(0), startOrder(0) {
 
     this->socket = socket;
     //BOOST_LOG_TRIVIAL(info) << "Opening main socket.";
@@ -17,6 +17,7 @@ MainFlow::MainFlow(Socket *socket, int operationNumber) {
     pthread_mutex_init(&this->receiveDriverMutex, NULL);
     pthread_mutex_init(&this->sendCommandMutex, NULL);
     pthread_mutex_init(&this->bfsMutex, NULL);
+    pthread_mutex_init(&this->threadMutex, NULL);
 
 }
 
@@ -25,6 +26,7 @@ MainFlow::~MainFlow() {
     pthread_mutex_destroy(&this->receiveDriverMutex);
     pthread_mutex_destroy(&this->sendCommandMutex);
     pthread_mutex_destroy(&this->bfsMutex);
+    pthread_mutex_destroy(&this->threadMutex);
 
     delete this->threadIdQueue;
 
@@ -119,26 +121,29 @@ void MainFlow::addClientId(int threadId) {
 void MainFlow::selectDrivers(int numOfDrivers) {
 
     // Receive driver objects from client
-    for (int i = 0; i < numOfDrivers; i++) {
+    for (unsigned int i = 0; i < numOfDrivers; i++) {
 
         pthread_t currThread;
 
         ClientThread *clientThread = new ClientThread(this, i);
 
+        // Init thread for driver
+        pthread_create(&currThread, NULL,
+                       &ClientThread::sendToListenToSocketForDriver,
+                        clientThread);
+        std::cout << "Thread:" << clientThread->getThreadId() << " created" << std::endl;
+
+        clientThread->setThread(currThread);
         this->addClientThread(clientThread);
 
         // Add client ID to queue
-        this->addClientId(i);
+        //this->addClientId(i);
 
-        // Init thread for driver
-        pthread_create(&currThread, NULL,
-                       ClientThread::sendToListenToSocketForDriver,
-                       (void *) (clientThread));
+
 
         //BOOST_LOG_TRIVIAL(info) << "New thread created with thread id: "
          //                       << clientThread->getThreadId();
         clientThread->setThread(currThread);
-
     }
 }
 
@@ -234,4 +239,24 @@ void MainFlow::clockSleep() {
         }
     }
 
+}
+
+int MainFlow::getOrder() const {
+    return order;
+}
+
+void MainFlow::setOrder(int order) {
+    MainFlow::order = order;
+}
+
+ pthread_mutex_t &MainFlow::getThreadMutex()  {
+    return threadMutex;
+}
+
+int MainFlow::getStartOrder() const {
+    return startOrder;
+}
+
+void MainFlow::setStartOrder(int startOrder) {
+    MainFlow::startOrder = startOrder;
 }

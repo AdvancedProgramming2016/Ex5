@@ -117,6 +117,7 @@ int main(int argc, char *argv[]) {
             taxi->setTrip(trip);
             //BOOST_LOG_TRIVIAL(info) << "Received the trip, trip id:"
             //                        << trip->getRideId();
+            std::cout << "Got trip:" << trip->getRideId() << std::endl;
         }
     }
 

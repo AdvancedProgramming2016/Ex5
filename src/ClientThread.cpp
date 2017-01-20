@@ -21,6 +21,17 @@ void *ClientThread::sendToListenToSocketForDriver(void *clientThread) {
 
 void *ClientThread::listenToSocketForDriver() {
 
+    while(true){
+        if(this->mainFlow->getStartOrder() != this->getThreadId()){
+            continue;
+        }
+        this->mainFlow->setStartOrder(this->mainFlow->getStartOrder() + 1);
+        break;
+    }
+    pthread_mutex_lock(&this->getMainFlow()->getMutexReceiveDriver());
+
+    std::cout << "Thread:" << this->getThreadId()
+                            << " Starting thread function\n";
     char buffer[1024];
 
     this->descriptor = this->mainFlow->getSocket()->callAccept();
@@ -28,7 +39,7 @@ void *ClientThread::listenToSocketForDriver() {
     //BOOST_LOG_TRIVIAL(debug) << "Thread:" << this->getThreadId()
     //                        << " Starting thread function";
 
-    pthread_mutex_lock(&this->getMainFlow()->getMutexReceiveDriver());
+
     this->getMainFlow()->getSocket()->receiveData(buffer, 1024,
                                                   this->getDescriptor());
 
@@ -37,6 +48,7 @@ void *ClientThread::listenToSocketForDriver() {
 
     this->getMainFlow()->getSerializer().deserialize(buffer, sizeof(buffer),
                                                      this->driver);
+    std::cout << "thread:" << this->getThreadId() << "has driver:" << this->driver->getDriverId() << std::endl;
     //BOOST_LOG_TRIVIAL(debug) << "Thread:" << this->getThreadId()
     //                        << " Driver id:" << driver->getDriverId();
 
@@ -58,39 +70,11 @@ void *ClientThread::listenToSocketForDriver() {
 
         while (true) {
 
-            bool done = false;
-            while (true) {
-                if (this->getThreadId() == 0) {
-                    break;
-                }
-                for (int i = 0; i < this->getThreadId(); ++i) {
-                    if(this->getMainFlow()->getClientThreadVector().at(i)->getThreadCommand() == 9){
-                        done = false;
-                        continue;
-                    }
-                    done = true;
-                }
+            if (this->getThreadCommand() == 9 && this->mainFlow->getOrder() == this->getThreadId()) {
 
-                if(done == true){
-                    break;
-                }
-
-            }
-
-            if (this->getThreadCommand() == 9) {
-/*
-            // If second iteration, push to queue.
-            if (!this->firstTimeFlag) {
-                this->firstTimeFlag = false;
-                this->getMainFlow()->getThreadIdQueue()->push(this->getThreadId());
-            }
-
-            // Wait for thread turn to get trip
-            while (this->getThreadId() != this->getMainFlow()->getThreadIdQueue()->front()) {
-                continue;
-            }
-*/
                 pthread_mutex_lock(&this->getMainFlow()->getSendCommandMutex());
+                std::cout << "Thread" << this->getThreadId() << " performing task 9\n";
+                std::cout << "Time" << this->mainFlow->getTaxiCenter()->getClock()->getTime() << std::endl;
 
                 //BOOST_LOG_TRIVIAL(debug) << "Thread:" << this->getThreadId()
                 //                        << " Performed task 9";
@@ -102,10 +86,13 @@ void *ClientThread::listenToSocketForDriver() {
                                                   this->getDescriptor());
 
                 this->threadCommand = 0;
+                this->mainFlow->setOrder(this->mainFlow->getOrder() + 1);
 
-                // Remove thread from queue
-                //          this->getMainFlow()->getThreadIdQueue()->pop();
-
+                if(this->mainFlow->getClientThreadVector().size() == this->mainFlow->getOrder()){
+                    this->mainFlow->setOrder(0);
+                }
+                std::cout << "Thread" << this->getThreadId() << " finished performing task 9\n";
+                std::cout << "Time" << this->mainFlow->getTaxiCenter()->getClock()->getTime() << std::endl;;
                 pthread_mutex_unlock(
                         &this->getMainFlow()->getSendCommandMutex());
 
@@ -115,9 +102,9 @@ void *ClientThread::listenToSocketForDriver() {
                                                         this->getDescriptor());
                 //BOOST_LOG_TRIVIAL(debug) << "Thread:" << this->getThreadId()
                 //                        << " Exiting current thread.";
+                this->mainFlow->setOrder(this->mainFlow->getOrder() + 1);
                 pthread_exit(NULL);
             }
-            this->firstTimeFlag = false;
         }
 
 

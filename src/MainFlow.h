@@ -38,7 +38,23 @@ private:
     unsigned int vacantPort;
     pthread_mutex_t receiveDriverMutex;
     pthread_mutex_t sendCommandMutex;
+    pthread_mutex_t threadMutex;
+public:
+     pthread_mutex_t &getThreadMutex() ;
+
+private:
     pthread_mutex_t bfsMutex;
+    int order;
+    int startOrder;
+public:
+    int getStartOrder() const;
+
+    void setStartOrder(int startOrder);
+
+public:
+    int getOrder() const;
+
+    void setOrder(int order);
 
 public:
 

@@ -56,6 +56,7 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
 
         if (taxiVec[j]->getDriver()->getDriverId() == driver->getDriverId()) {
             currTaxi = taxiVec[j];
+            std::cout << "driver id:" << currTaxi->getDriver()->getDriverId() << std::endl;
             break;
         }
     }
@@ -63,11 +64,6 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
     if (currTaxi != 0 && currTaxi->getTrip() == 0) {
 
         for (i = 0; i < this->getTrips().size(); i++) {
-
-            // If trip vector is empty and there are not more trips
-            if (tripVec.empty()) {
-                return;
-            }
 
             // Get current trip
             Trip *currTrip = tripVec.at(i);
@@ -87,11 +83,14 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
                 std::string serialTrip;
                 serialTrip = serializer.serialize(currTrip);
                 socket.sendData(serialTrip, descriptor);
+                std::cout << "Sending trip:" << currTrip->getRideId() << "to driver" << currTaxi->getDriver()->getDriverId() << std::endl;
                 //BOOST_LOG_TRIVIAL(debug)
                 //    << "TaxiCenter sends a trip to client:" << descriptor;
 
                 //Remove the trip from the trips vector;
                 tripVec.erase(tripVec.begin() + i);
+
+                break;
             }
         }
     }
