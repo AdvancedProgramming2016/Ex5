@@ -85,3 +85,6 @@ Tcp.o: sockets/Tcp.h sockets/Tcp.cpp sockets/Socket.h sockets/Socket.cpp
 
 clean:
 	rm -f *.o a.out
+
+unzip:
+	unzip ex5.zip
