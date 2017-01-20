@@ -20,7 +20,9 @@ void *TripThread::calculatePath() {
 
     Bfs bfs(*this->mainFlow->map, trip->getStartPoint(), trip->getEndPoint()); //TODO not generic because it takes Grid, and bot Graph
 
+    std::cout << "Starting to calculate trip:" << this->trip->getRideId() << std::endl;
     bfs.get_route();
+    std::cout << "Finished to calculate trip:" << this->trip->getRideId() << std::endl;
 
     //BOOST_LOG_TRIVIAL(trace) << "Finished calculating path.";
 
