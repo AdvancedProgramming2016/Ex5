@@ -18,7 +18,7 @@ void *TripThread::calculatePath() {
 
     pthread_mutex_lock(&this->mainFlow->bfsMutex);
 
-    Bfs bfs(*this->mainFlow->map, trip->getStartPoint(), trip->getEndPoint()); //TODO not generic because it takes Grid, and bot Graph
+    Bfs bfs(*this->mainFlow->map, trip->getStartPoint(), trip->getEndPoint());
 
     bfs.get_route();
 

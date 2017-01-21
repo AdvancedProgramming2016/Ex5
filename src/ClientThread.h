@@ -14,15 +14,9 @@ private:
     MainFlow *mainFlow;
     Driver *driver;
     int threadCommand;
-    bool firstTimeFlag;
     unsigned int threadId;
     pthread_t thread;
     int descriptor;
-
-public:
-    int getThreadCommand() const;
-
-    void setThreadCommand(int threadCommand);
 
 public:
 
@@ -67,6 +61,16 @@ public:
      * Gets the socket descriptor
      */
     int getDescriptor() const;
+
+    /*
+     * Returns thread command.
+     */
+    int getThreadCommand() const;
+
+    /*
+     * Sets thread command.
+     */
+    void setThreadCommand(int threadCommand);
 
 };
 

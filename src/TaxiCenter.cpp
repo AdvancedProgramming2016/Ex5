@@ -64,11 +64,6 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
 
         for (i = 0; i < this->getTrips().size(); i++) {
 
-            // If trip vector is empty and there are not more trips
-            if (tripVec.empty()) {
-                return;
-            }
-
             // Get current trip
             Trip *currTrip = tripVec.at(i);
 
@@ -92,6 +87,8 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
 
                 //Remove the trip from the trips vector;
                 tripVec.erase(tripVec.begin() + i);
+
+                break;
             }
         }
     }
