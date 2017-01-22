@@ -2,7 +2,7 @@
 #include "MainFlow.h"
 #include "../sockets/Tcp.h"
 #include "../threads/TripThread.h"
-///#include <boost/log/trivial.hpp>
+//#include <boost/log/trivial.hpp>
 #include <cstdlib>
 #include <pthread.h>
 
@@ -113,10 +113,6 @@ Vehicle *MainFlow::getDriverVehicle(unsigned int vehicleId) {
     }
 }
 
-void MainFlow::addClientId(int threadId) {
-    this->threadIdQueue->push(threadId);
-}
-
 void MainFlow::selectDrivers(int numOfDrivers) {
 
     // Receive driver objects from client
@@ -149,7 +145,7 @@ void MainFlow::selectDrivers(int numOfDrivers) {
 
 void MainFlow::performTask9(Driver *driver, int descriptor) {
 
-
+    this->getThreadPool()->waitForThreads();
     // Check that all the trips that need to start are attached
     // to a driver
     //BOOST_LOG_TRIVIAL(debug) << "Assigning driver: "
@@ -163,14 +159,6 @@ void MainFlow::performTask9(Driver *driver, int descriptor) {
                                        *(this->getSocket()),
                                        this->getSerializer(), descriptor);
 
-}
-
-unsigned int MainFlow::getVacantPort() {
-    return this->vacantPort;
-}
-
-void MainFlow::increaseVacantPort() {
-    ++(this->vacantPort);
 }
 
 Socket *MainFlow::getSocket() {
@@ -189,12 +177,6 @@ std::vector<ClientThread *> MainFlow::getClientThreadVector() {
     return this->clientThreadVector;
 }
 
-void MainFlow::sendClientNewPort(unsigned int newPort) {
-
-    // Case newPort to string and send the new socket to client
-    // this->getSocket()->sendData(boost::lexical_cast<string>(newPort));
-}
-
 Grid *MainFlow::getMap() const {
     return map;
 }
@@ -206,23 +188,6 @@ void MainFlow::exitSystem() {
 
     //exit the system
     exit(0);
-}
-
-void MainFlow::cleanGrid() {
-
-    Vertex *v;
-
-    for (int i = 0; i < this->map->get_edges().size(); ++i) {
-
-        v = this->map->get_vertex(map->get_edges()[i].getM_point());
-
-        if (!this->getMap()->isObstacle(v->getM_point())) {
-
-            v->set_unvisited();
-        }
-
-        v->setFather(0);
-    }
 }
 
 pthread_mutex_t &MainFlow::getMutexReceiveDriver() {

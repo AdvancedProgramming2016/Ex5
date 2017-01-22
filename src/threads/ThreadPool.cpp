@@ -2,6 +2,15 @@
 #include "ThreadPool.h"
 #include <unistd.h>
 #include <iostream>
+#include <boost/log/trivial.hpp>
+
+static void *starTasks(void *arg) {
+
+    ThreadPool *pool = (ThreadPool *) arg;
+    pool->executeTasks();
+
+    return NULL;
+}
 
 ThreadPool::ThreadPool(int threads_num) : threads_num(threads_num),
                                           stop(false), taskCounter(0) {
@@ -24,14 +33,6 @@ ThreadPool::~ThreadPool() {
     pthread_mutex_destroy(&this->taskCounterMutex);
 }
 
-static void *starTasks(void *arg) {
-
-    ThreadPool *pool = (ThreadPool *) arg;
-    pool->executeTasks();
-
-    return NULL;
-}
-
 void ThreadPool::executeTasks() {
 
     while (!stop) {
@@ -43,6 +44,7 @@ void ThreadPool::executeTasks() {
             Task *task = tasksQueue.front();
             tasksQueue.pop();
             pthread_mutex_unlock(&lock);
+            BOOST_LOG_TRIVIAL(trace) << "Executing task";
             task->execute();
 
         } else {
@@ -70,7 +72,7 @@ bool ThreadPool::isEmpty() {
 
 }
 
-pthread_mutex_t &ThreadPool::getTaskCounterMutex() const {
+pthread_mutex_t &ThreadPool::getTaskCounterMutex() {
     return taskCounterMutex;
 }
 
@@ -80,6 +82,13 @@ void ThreadPool::decreaseTaskCounter() {
 
 void ThreadPool::waitForThreads() {
 
-    bool isFinshed = false;
-    while()
+    BOOST_LOG_TRIVIAL(info) << "Waiting for trips to finish calculating";
+    bool isFinished = false;
+
+    while(!isFinished){
+
+        if(this->taskCounter == 0){
+            isFinished = true;
+        }
+    }
 }
