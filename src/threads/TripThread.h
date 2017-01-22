@@ -4,8 +4,8 @@
 
 
 #include <sys/types.h>
-#include "Trip.h"
-#include "MainFlow.h"
+#include "../taxi/Trip.h"
+#include "../control/MainFlow.h"
 class MainFlow;
 
 class TripThread {

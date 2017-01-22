@@ -4,11 +4,11 @@
 #define EX2_CHECK_MENU_H
 
 
-#include "Driver.h"
-#include "StringParser.h"
+#include "../taxi/Driver.h"
+#include "../parsers/StringParser.h"
 #include "MainFlow.h"
 #include "TaxiCenter.h"
-#include "Serializer.h"
+#include "../serializers/Serializer.h"
 
 class Menu {
 

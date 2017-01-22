@@ -1,9 +1,9 @@
 #include <iostream>
 #include <unistd.h>
-#include "src/Driver.h"
-#include "sockets/Tcp.h"
-#include "src/StandardVehicle.h"
-#include "src/Menu.h"
+#include "src/taxi/Driver.h"
+#include "src/sockets/Tcp.h"
+#include "src/taxi/StandardVehicle.h"
+#include "src/control/Menu.h"
 //#include <boost/log/core.hpp>
 //#include <boost/log/trivial.hpp>
 //#include <boost/log/expressions.hpp>

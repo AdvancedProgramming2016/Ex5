@@ -3,7 +3,7 @@
 #define EX2_CHECK_STRINGPARSER_H
 
 #include "BaseParser.h"
-#include "VehicleFactory.h"
+#include "../taxi/VehicleFactory.h"
 #include <string>
 
 class Graph;

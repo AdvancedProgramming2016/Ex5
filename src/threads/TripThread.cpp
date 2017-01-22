@@ -31,6 +31,9 @@ void *TripThread::calculatePath() {
     pthread_mutex_unlock(&this->mainFlow->bfsMutex);
 
     //BOOST_LOG_TRIVIAL(trace) << "Exiting trip thread.";
+    pthread_mutex_lock(&this->getMainFlow()->getThreadPool()->getTaskCounterMutex());
+    this->getMainFlow()->getThreadPool()->decreaseTaskCounter();
+    pthread_mutex_unlock(&this->getMainFlow()->getThreadPool()->getTaskCounterMutex());
 
     pthread_exit(NULL);
 }

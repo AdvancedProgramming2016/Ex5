@@ -1,8 +1,8 @@
 
 #include "MainFlow.h"
 #include "../sockets/Tcp.h"
-#include "TripThread.h"
-//#include <boost/log/trivial.hpp>
+#include "../threads/TripThread.h"
+///#include <boost/log/trivial.hpp>
 #include <cstdlib>
 #include <pthread.h>
 
@@ -21,10 +21,13 @@ MainFlow::MainFlow(Socket *socket, int operationNumber) : order(0),
     pthread_mutex_init(&this->bfsMutex, NULL);
     pthread_mutex_init(&this->threadMutex, NULL);
 
+    this->threadPool = new ThreadPool(THREAD_POOL_SIZE);
+
 }
 
 MainFlow::~MainFlow() {
 
+    this->threadPool->terminate();
     pthread_mutex_destroy(&this->receiveDriverMutex);
     pthread_mutex_destroy(&this->sendCommandMutex);
     pthread_mutex_destroy(&this->bfsMutex);
@@ -62,20 +65,18 @@ void MainFlow::createVehicle(Vehicle *vehicle) {
 
 void MainFlow::createTrip(Trip *trip) {
 
-    int       retVal = 0;
-    pthread_t pthread;
-
     TripThread *tripThread = new TripThread(this, trip);
 
-    retVal = pthread_create(&pthread, NULL, &TripThread::callCalculatePath,
-                            tripThread);
+//    retVal = pthread_create(&pthread, NULL, &TripThread::callCalculatePath,
+//                            tripThread);
+//
+//    if (retVal != 0) {
+//
+//        //BOOST_LOG_TRIVIAL(error) << "Failed to create trip thread.";
+//    }
 
-    if (retVal != 0) {
-
-        //BOOST_LOG_TRIVIAL(error) << "Failed to create trip thread.";
-    }
-
-    tripThread->setThread(pthread);
+    this->tasks.push_back(new Task(&TripThread::callCalculatePath, tripThread));
+    this->threadPool->addTask(this->tasks[this->tasks.size() - 1]);
 
     //BOOST_LOG_TRIVIAL(info) << "Created trip thread.";
 
@@ -147,6 +148,7 @@ void MainFlow::selectDrivers(int numOfDrivers) {
 }
 
 void MainFlow::performTask9(Driver *driver, int descriptor) {
+
 
     // Check that all the trips that need to start are attached
     // to a driver
@@ -261,4 +263,8 @@ int MainFlow::getStartOrder() const {
 
 void MainFlow::setStartOrder(int startOrder) {
     MainFlow::startOrder = startOrder;
+}
+
+ThreadPool *MainFlow::getThreadPool() const {
+    return threadPool;
 }

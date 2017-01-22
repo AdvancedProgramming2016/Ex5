@@ -1,7 +1,7 @@
 //#include <boost/log/trivial.hpp>
 #include "TaxiCenter.h"
 #include "../sockets/Socket.h"
-#include "Serializer.h"
+#include "../serializers/Serializer.h"
 
 TaxiCenter::TaxiCenter(Point *taxiCenterLocation) :
         taxiCenterLocation(taxiCenterLocation) {
@@ -71,10 +71,10 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
             if (currTrip->getTripStartTime() == this->clock->getTime() &&
                 currTaxi->getCurrentPosition() == currTrip->getStartPoint()) {
 
-                pthread_t threadToWait = findTripThread(currTrip)->getThread();
+                //pthread_t threadToWait = findTripThread(currTrip)->getThread();
                 //BOOST_LOG_TRIVIAL(info) << "waiting for trip thread:"
                 //                        << threadToWait;
-                pthread_join(threadToWait, NULL);
+                //pthread_join(threadToWait, NULL);
                 //Update the current taxi with a trip
                 currTaxi->setTrip(currTrip);
 
