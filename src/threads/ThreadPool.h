@@ -34,7 +34,7 @@ public:
 
     bool isEmpty();
 
-    pthread_mutex_t &getTaskCounterMutex() const;
+    pthread_mutex_t &getTaskCounterMutex();
 
     void decreaseTaskCounter();
 

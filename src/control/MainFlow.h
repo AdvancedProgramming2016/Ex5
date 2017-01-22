@@ -45,8 +45,6 @@ private:
     unsigned int numOfDrivers;
     ThreadPool *threadPool;
     std::vector<Task*> tasks;
-public:
-    ThreadPool *getThreadPool() const;
 
 public:
 
@@ -60,12 +58,15 @@ public:
      */
     ~MainFlow();
 
-    void addClientId(int threadId);
-
     /*
      * Creates a map with obstacles.
      */
     void createMap(Grid *grid);
+
+    /*
+     * Returns the thread pool.
+     */
+    ThreadPool *getThreadPool() const;
 
     /*
      * Gets the next operation number
@@ -88,12 +89,6 @@ public:
      */
     std::vector<ClientThread *> getClientThreadVector();
 
-    // Gets a vacant port from the server
-    unsigned int getVacantPort();
-
-    // Increase the vacant port by one
-    void increaseVacantPort();
-
     /*
      * Performs task number 9 - assign trip and move one step
      */
@@ -113,11 +108,6 @@ public:
      * Send vehicle to socket.
      */
     void sendToSocketVehicle(unsigned int vehicleId, int descriptor);
-
-    /*
-     * Sends the client the new port the servers is listening to.
-     */
-    void sendClientNewPort(unsigned int newPort);
 
     /*
      * Creates a taxi center.
@@ -165,11 +155,6 @@ public:
     void exitSystem();
 
     /*
-     * Cleans the map for the next iteration.
-     */
-    void cleanGrid();
-
-    /*
      * Returns receiveDriverMutex
      */
     pthread_mutex_t &getMutexReceiveDriver() ;
@@ -185,7 +170,7 @@ public:
     pthread_mutex_t &getThreadMutex();
 
     /*
-     * Returns the starting order/
+     * Returns the starting order
      */
     int getStartOrder() const;
 

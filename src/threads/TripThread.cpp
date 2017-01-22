@@ -1,5 +1,5 @@
 
-//#include <boost/log/trivial.hpp>
+#include <boost/log/trivial.hpp>
 #include "TripThread.h"
 
 TripThread::TripThread(MainFlow *mainFlow, Trip *trip)
@@ -15,14 +15,13 @@ Trip *TripThread::getTrip() const {
 }
 
 void *TripThread::calculatePath() {
-
     pthread_mutex_lock(&this->mainFlow->bfsMutex);
 
     Bfs bfs(*this->mainFlow->map, trip->getStartPoint(), trip->getEndPoint());
 
     bfs.get_route();
 
-    //BOOST_LOG_TRIVIAL(trace) << "Finished calculating path.";
+    BOOST_LOG_TRIVIAL(trace) << "Finished calculating path.";
 
     //BOOST_LOG_TRIVIAL(trace) << "Finished cleaning path.";
 
@@ -34,8 +33,6 @@ void *TripThread::calculatePath() {
     pthread_mutex_lock(&this->getMainFlow()->getThreadPool()->getTaskCounterMutex());
     this->getMainFlow()->getThreadPool()->decreaseTaskCounter();
     pthread_mutex_unlock(&this->getMainFlow()->getThreadPool()->getTaskCounterMutex());
-
-    pthread_exit(NULL);
 }
 
 void *TripThread::callCalculatePath(void *param) {
