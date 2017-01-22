@@ -2,15 +2,15 @@
 #define EX2_TAXICENTER_H
 
 #include <vector>
-#include "Driver.h"
-#include "Vehicle.h"
-#include "Taxi.h"
-#include "ISubject.h"
-#include "StringParser.h"
+#include "../taxi/Driver.h"
+#include "../taxi/Vehicle.h"
+#include "../taxi/Taxi.h"
+#include "../observers/ISubject.h"
+#include "../parsers/StringParser.h"
 #include "../sockets/Socket.h"
-#include "Serializer.h"
+#include "../serializers/Serializer.h"
 #include "Clock.h"
-#include "TripThread.h"
+#include "../threads/TripThread.h"
 
 class Driver;
 

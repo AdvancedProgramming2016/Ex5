@@ -3,7 +3,7 @@
 #define EX2_PASSENGER_H
 
 
-#include "Point.h"
+#include "../graphs/Point.h"
 
 /**
  * The class represents a passenger, which takes a ride in a taxi.

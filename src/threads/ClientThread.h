@@ -4,7 +4,7 @@
 #define EX4_CLIENTTHREAD_H
 
 #include <queue>
-#include "MainFlow.h"
+#include "../control/MainFlow.h"
 class MainFlow;
 
 class ClientThread {

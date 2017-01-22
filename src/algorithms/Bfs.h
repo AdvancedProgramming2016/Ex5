@@ -2,8 +2,8 @@
 #ifndef EX1_TASK2_BFS_H
 #define EX1_TASK2_BFS_H
 
-#include "Graph.h"
-#include "Grid.h"
+#include "../graphs/Graph.h"
+#include "../graphs/Grid.h"
 
 /**
  * The class represents the BFS algorithm.

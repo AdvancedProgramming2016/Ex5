@@ -2,13 +2,15 @@
 #ifndef EX2_MAINFLOW_H
 #define EX2_MAINFLOW_H
 
+#define THREAD_POOL_SIZE 5
 
 #include "TaxiCenter.h"
-#include "Grid.h"
-#include "VehicleFactory.h"
-#include "StringParser.h"
+#include "../graphs/Grid.h"
+#include "../taxi/VehicleFactory.h"
+#include "../parsers/StringParser.h"
 #include "Clock.h"
-#include "ClientThread.h"
+#include "../threads/ClientThread.h"
+#include "../threads/ThreadPool.h"
 
 class ClientThread;
 
@@ -41,6 +43,10 @@ private:
     int order;
     int startOrder;
     unsigned int numOfDrivers;
+    ThreadPool *threadPool;
+    std::vector<Task*> tasks;
+public:
+    ThreadPool *getThreadPool() const;
 
 public:
 

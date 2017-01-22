@@ -7,15 +7,15 @@ find_package(Boost 1.58.0 COMPONENTS serialization system log)
 include_directories(${Boost_INCLUDE_DIR})
 ADD_DEFINITIONS(-DBOOST_LOG_DYN_LINK)
 
-set(SOURCE_FILES src/VehicleFactory.cpp src/VehicleFactory.h src/Point.cpp src/Point.h src/Vertex.cpp src/Vertex.h
-        src/Graph.cpp src/Graph.h src/Grid.cpp src/Grid.h src/Bfs.cpp src/Bfs.h src/Driver.cpp
-        src/Driver.h src/Vehicle.cpp src/Vehicle.h src/LuxuryVehicle.cpp src/LuxuryVehicle.h
-        src/StandardVehicle.cpp src/StandardVehicle.h src/IObserver.h src/ISubject.h src/MainFlow.cpp
-        src/MainFlow.h src/Passenger.cpp src/Passenger.h src/Clock.cpp src/Clock.h
-        src/Taxi.cpp src/Taxi.h src/TaxiCenter.cpp src/TaxiCenter.h src/Trip.cpp src/Trip.h src/Menu.cpp src/Menu.h
-        src/TripThread.cpp src/TripThread.h src/BaseParser.h src/StringParser.cpp src/StringParser.h sockets/Socket.cpp
-        sockets/Socket.h sockets/Udp.cpp sockets/Udp.h src/Serializer.cpp src/Serializer.h sockets/Tcp.cpp sockets/Tcp.h
-        src/ClientThread.cpp src/ClientThread.h)
+set(SOURCE_FILES src/taxi/VehicleFactory.cpp src/taxi/VehicleFactory.h src/graphs/Point.cpp src/graphs/Point.h src/graphs/Vertex.cpp src/graphs/Vertex.h
+        src/graphs/Graph.cpp src/graphs/Graph.h src/graphs/Grid.cpp src/graphs/Grid.h src/algorithms/Bfs.cpp src/algorithms/Bfs.h src/taxi/Driver.cpp
+        src/taxi/Driver.h src/taxi/Vehicle.cpp src/taxi/Vehicle.h src/taxi/LuxuryVehicle.cpp src/taxi/LuxuryVehicle.h
+        src/taxi/StandardVehicle.cpp src/taxi/StandardVehicle.h src/observers/IObserver.h src/observers/ISubject.h src/control/MainFlow.cpp
+        src/control/MainFlow.h src/taxi/Passenger.cpp src/taxi/Passenger.h src/control/Clock.cpp src/control/Clock.h
+        src/taxi/Taxi.cpp src/taxi/Taxi.h src/control/TaxiCenter.cpp src/control/TaxiCenter.h src/taxi/Trip.cpp src/taxi/Trip.h src/control/Menu.cpp src/control/Menu.h
+        src/threads/TripThread.cpp src/threads/TripThread.h src/parsers/BaseParser.h src/parsers/StringParser.cpp src/parsers/StringParser.h src/sockets/Socket.cpp
+        src/sockets/Socket.h src/sockets/Udp.cpp src/sockets/Udp.h src/serializers/Serializer.cpp src/serializers/Serializer.h src/sockets/Tcp.cpp src/sockets/Tcp.h
+        src/threads/ClientThread.cpp src/threads/ClientThread.h src/threads/Task.cpp src/threads/Task.h src/threads/ThreadPool.cpp src/threads/ThreadPool.h)
 
 add_executable(client Client.cpp ${SOURCE_FILES})
 add_executable(server Server.cpp ${SOURCE_FILES})
