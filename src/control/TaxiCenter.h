@@ -47,7 +47,15 @@ private:
      */
     void addTaxi(Taxi *taxi);
 
+    /*
+     * Find the TripThread with the given Trip instance.
+     */
     TripThread *findTripThread(Trip *trip);
+
+    /*
+     * Wait for the TripThread's task to be finished.
+     */
+    void waitForCalcToFinish(TripThread *threadTrip);
 
 public:
 

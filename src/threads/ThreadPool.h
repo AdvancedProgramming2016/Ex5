@@ -38,7 +38,7 @@ public:
 
     void decreaseTaskCounter();
 
-    void waitForThreads();
+   // void waitForThreads();
 
     virtual ~ThreadPool();
 };

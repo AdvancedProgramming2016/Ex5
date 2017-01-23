@@ -8,40 +8,37 @@
 #include "../control/MainFlow.h"
 class MainFlow;
 
+class Task;
+
 class TripThread {
 
 private:
 
     Trip *trip;
     MainFlow *mainFlow;
-    pthread_t thread;
+    Task *task;
 
 public:
 
     /*
-     * Gets mainflow object.
-     */
-    MainFlow *getMainFlow() const;
-
-    /*
-     * Ctor
-     */
+    * Ctor
+    */
     TripThread(MainFlow *mainFlow, Trip *trip);
 
     /*
-     * Add thread.
+     * Destructor.
      */
-    void setThread(pthread_t thread);
+    virtual ~TripThread();
+
+    /*
+     * Gets mainFlow object.
+     */
+    MainFlow *getMainFlow() const;
 
     /*
      * Get trip object.
      */
     Trip *getTrip() const;
-
-    /*
-     * Get thread object.
-     */
-    pthread_t getThread() const;
 
     /*
      * Function calculates shortest path to dest.
@@ -52,6 +49,16 @@ public:
      * Calls calculate path.
      */
     static void *callCalculatePath(void *param);
+
+    /*
+     * Returns tha task object.
+     */
+    Task *getTask();
+
+    /*
+     * Sets the task.
+     */
+    void setTask(Task *task);
 };
 
 

@@ -66,6 +66,7 @@ void MainFlow::createVehicle(Vehicle *vehicle) {
 void MainFlow::createTrip(Trip *trip) {
 
     TripThread *tripThread = new TripThread(this, trip);
+    Task *task;
 
 //    retVal = pthread_create(&pthread, NULL, &TripThread::callCalculatePath,
 //                            tripThread);
@@ -75,7 +76,9 @@ void MainFlow::createTrip(Trip *trip) {
 //        //BOOST_LOG_TRIVIAL(error) << "Failed to create trip thread.";
 //    }
 
-    this->tasks.push_back(new Task(&TripThread::callCalculatePath, tripThread));
+    task = new Task(&TripThread::callCalculatePath, tripThread);
+    tripThread->setTask(task);
+    this->tasks.push_back(task);
     this->threadPool->addTask(this->tasks[this->tasks.size() - 1]);
 
     //BOOST_LOG_TRIVIAL(info) << "Created trip thread.";
@@ -145,7 +148,6 @@ void MainFlow::selectDrivers(int numOfDrivers) {
 
 void MainFlow::performTask9(Driver *driver, int descriptor) {
 
-    this->getThreadPool()->waitForThreads();
     // Check that all the trips that need to start are attached
     // to a driver
     //BOOST_LOG_TRIVIAL(debug) << "Assigning driver: "
