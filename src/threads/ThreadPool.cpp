@@ -4,7 +4,7 @@
 #include <iostream>
 #include <boost/log/trivial.hpp>
 
-static void *starTasks(void *arg) {
+static void *startTasks(void *arg) {
 
     ThreadPool *pool = (ThreadPool *) arg;
     pool->executeTasks();
@@ -22,7 +22,7 @@ ThreadPool::ThreadPool(int threads_num) : threads_num(threads_num),
 
     for (int i = 0; i < threads_num; i++) {
 
-        pthread_create(threads + i, NULL, starTasks, this);
+        pthread_create(threads + i, NULL, startTasks, this);
     }
 }
 
@@ -46,6 +46,8 @@ void ThreadPool::executeTasks() {
             pthread_mutex_unlock(&lock);
             BOOST_LOG_TRIVIAL(trace) << "Executing task";
             task->execute();
+            task->setFinished();
+            BOOST_LOG_TRIVIAL(trace) << "Set as finished";
 
         } else {
 
@@ -80,15 +82,17 @@ void ThreadPool::decreaseTaskCounter() {
     this->taskCounter--;
 }
 
+/*
 void ThreadPool::waitForThreads() {
 
     BOOST_LOG_TRIVIAL(info) << "Waiting for trips to finish calculating";
-    bool isFinished = false;
+    bool finished = false;
 
-    while(!isFinished){
+    while(!finished){
 
         if(this->taskCounter == 0){
-            isFinished = true;
+            finished = true;
         }
     }
 }
+ */

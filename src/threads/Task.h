@@ -13,13 +13,29 @@ private:
 
     void *(*func)(void *arg);
 
+    bool finished;
+
 public:
 
+    /*
+     * Constructor.
+     */
     Task(void *(*func)(void *arg), void *arg);
 
+    /*
+     * Executes the function Task holds.
+     */
     void execute();
 
-    virtual ~Task();
+    /*
+     * Returns if the task was finished.
+     */
+    bool isFinished();
+
+    /*
+     * Sets the task as finished.
+     */
+    void setFinished();
 
 };
 
