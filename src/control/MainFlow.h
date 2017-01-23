@@ -11,6 +11,7 @@
 #include "Clock.h"
 #include "../threads/ClientThread.h"
 #include "../threads/ThreadPool.h"
+#include "../validation/ErrorHandler.h"
 
 class ClientThread;
 
@@ -28,23 +29,24 @@ class MainFlow {
 
 private:
 
-    TaxiCenter *taxiCenter;
-    Grid       *map;
+    TaxiCenter                  *taxiCenter;
+    Grid                        *map;
     std::vector<ClientThread *> clientThreadVector;
-    Socket       *socket;
-    std::queue<int> *threadIdQueue;
-    Serializer   serializer;
-    int *operationNumber;
-    unsigned int vacantPort;
-    pthread_mutex_t receiveDriverMutex;
-    pthread_mutex_t sendCommandMutex;
-    pthread_mutex_t threadMutex;
-    pthread_mutex_t bfsMutex;
-    int order;
-    int startOrder;
-    unsigned int numOfDrivers;
-    ThreadPool *threadPool;
-    std::vector<Task*> tasks;
+    Socket                      *socket;
+    std::queue<int>             *threadIdQueue;
+    Serializer                  serializer;
+    int                         *operationNumber;
+    unsigned int                vacantPort;
+    pthread_mutex_t             receiveDriverMutex;
+    pthread_mutex_t             sendCommandMutex;
+    pthread_mutex_t             threadMutex;
+    pthread_mutex_t             bfsMutex;
+    int                         order;
+    int                         startOrder;
+    unsigned int                numOfDrivers;
+    ThreadPool                  *threadPool;
+    std::vector<Task *>         tasks;
+    ErrorHandler                errorHandler;
 
 public:
 
@@ -157,7 +159,7 @@ public:
     /*
      * Returns receiveDriverMutex
      */
-    pthread_mutex_t &getMutexReceiveDriver() ;
+    pthread_mutex_t &getMutexReceiveDriver();
 
     /*
      * Gets send command mutex
@@ -188,6 +190,8 @@ public:
      * Sets the order.
      */
     void setOrder(int order);
+
+    ErrorHandler &getErrorHandler();
 
 };
 

@@ -66,7 +66,7 @@ void MainFlow::createVehicle(Vehicle *vehicle) {
 void MainFlow::createTrip(Trip *trip) {
 
     TripThread *tripThread = new TripThread(this, trip);
-    Task *task;
+    Task       *task;
 
 //    retVal = pthread_create(&pthread, NULL, &TripThread::callCalculatePath,
 //                            tripThread);
@@ -234,4 +234,8 @@ void MainFlow::setStartOrder(int startOrder) {
 
 ThreadPool *MainFlow::getThreadPool() const {
     return threadPool;
+}
+
+ErrorHandler &MainFlow::getErrorHandler() {
+    return errorHandler;
 }

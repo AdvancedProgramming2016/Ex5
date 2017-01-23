@@ -76,24 +76,29 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
                 TripThread *tripThread = findTripThread(currTrip);
                 //Wait for that calculation to end.
                 waitForCalcToFinish(tripThread);
-                BOOST_LOG_TRIVIAL(info) << "Sending trip";
 
-                //pthread_t threadToWait = findTripThread(currTrip)->getThread();
-                //BOOST_LOG_TRIVIAL(info) << "waiting for trip thread:"
-                //                        << threadToWait;
-                //pthread_join(threadToWait, NULL);
-                //Update the current taxi with a trip
+                //Make sure that the trip is valid after the calculation
+                if(tripThread->isValidTrip()){
 
-                currTaxi->setTrip(currTrip);
+                    BOOST_LOG_TRIVIAL(info) << "Sending trip";
 
-                // Send trip to client
-                std::string serialTrip;
-                serialTrip = serializer.serialize(currTrip);
-                socket.sendData(serialTrip, descriptor);
-                //BOOST_LOG_TRIVIAL(debug)
-                //    << "TaxiCenter sends a trip to client:" << descriptor;
+                    //pthread_t threadToWait = findTripThread(currTrip)->getThread();
+                    //BOOST_LOG_TRIVIAL(info) << "waiting for trip thread:"
+                    //                        << threadToWait;
+                    //pthread_join(threadToWait, NULL);
+                    //Update the current taxi with a trip
 
-                //Remove the trip from the trips vector;
+                    currTaxi->setTrip(currTrip);
+
+                    // Send trip to client
+                    std::string serialTrip;
+                    serialTrip = serializer.serialize(currTrip);
+                    socket.sendData(serialTrip, descriptor);
+                    //BOOST_LOG_TRIVIAL(debug)
+                    //    << "TaxiCenter sends a trip to client:" << descriptor;
+
+                    //Remove the trip from the trips vector;
+                }
                 tripVec.erase(tripVec.begin() + i);
 
                 break;

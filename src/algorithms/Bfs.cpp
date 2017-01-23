@@ -18,7 +18,7 @@ std::vector<Point> &Bfs::getShortestPath() {
 
 }
 
-void Bfs::get_route() {
+int Bfs::get_route() {
 
     std::queue<Vertex *> queue;
     std::vector<Vertex>  path;
@@ -39,6 +39,7 @@ void Bfs::get_route() {
         if (v->getM_point() == m_dest) {
 
             shortest_path = search_fathers(path);
+            return 1;
         }
 
         Vertex *temp;
@@ -55,6 +56,8 @@ void Bfs::get_route() {
             }
         }
     }
+
+    return 0;
 }
 
 std::vector<Point> Bfs::search_fathers(std::vector<Vertex> vector) {

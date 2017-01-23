@@ -17,6 +17,7 @@ private:
     Trip *trip;
     MainFlow *mainFlow;
     Task *task;
+    bool validTrip;
 
 public:
 
@@ -59,6 +60,16 @@ public:
      * Sets the task.
      */
     void setTask(Task *task);
+
+    /*
+     * Return is the trip valid.
+     */
+    bool isValidTrip() const;
+
+    /*
+     * Set is the trip valid.
+     */
+    void setValidTrip(bool isValidTrip);
 };
 
 

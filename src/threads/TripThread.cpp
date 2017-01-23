@@ -3,7 +3,7 @@
 #include "TripThread.h"
 
 TripThread::TripThread(MainFlow *mainFlow, Trip *trip)
-        : mainFlow(mainFlow), trip(trip) {
+        : mainFlow(mainFlow), trip(trip), validTrip(true) {
 }
 
 Trip *TripThread::getTrip() const {
@@ -12,15 +12,28 @@ Trip *TripThread::getTrip() const {
 
 void *TripThread::calculatePath() {
 
+    int isValidTrip = 0;
     pthread_mutex_lock(&this->mainFlow->bfsMutex);
 
     Bfs bfs(*this->mainFlow->map, trip->getStartPoint(), trip->getEndPoint());
 
-    bfs.get_route();
+    isValidTrip = bfs.get_route();
 
-    trip->setTripRoute(bfs.getShortestPath());
+    //validTrip = this->getMainFlow()->getErrorHandler().ValidatePath(bfs);
 
-    BOOST_LOG_TRIVIAL(trace) << "Finished calculating path.";
+    if (isValidTrip) {
+
+        trip->setTripRoute(bfs.getShortestPath());
+
+        BOOST_LOG_TRIVIAL(trace) << "Finished calculating path.";
+
+    }
+    else{
+
+        this->setValidTrip(false);
+        BOOST_LOG_TRIVIAL(trace) << "Path is invalid";
+
+    }
 
     pthread_mutex_unlock(&this->mainFlow->bfsMutex);
 
@@ -51,4 +64,12 @@ void TripThread::setTask(Task *task) {
 TripThread::~TripThread() {
 
     delete this->task;
+}
+
+bool TripThread::isValidTrip() const {
+    return validTrip;
+}
+
+void TripThread::setValidTrip(bool isValidTrip) {
+    TripThread::validTrip = isValidTrip;
 }
