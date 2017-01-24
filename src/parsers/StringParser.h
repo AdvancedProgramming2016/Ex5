@@ -2,6 +2,7 @@
 #ifndef EX2_CHECK_STRINGPARSER_H
 #define EX2_CHECK_STRINGPARSER_H
 
+#include "../validation/ErrorHandler.h"
 #include "BaseParser.h"
 #include "../taxi/VehicleFactory.h"
 #include <string>
@@ -17,7 +18,7 @@ class StringParser : BaseParser {
 private:
 
     VehicleFactory vehicleFactory;
-
+    ErrorHandler errorHandler;
 
 public:
 

@@ -18,6 +18,12 @@ public:
     bool ValidatePath(Bfs &bfs);
 
 
+    bool validateDriver(std::string *input);
+
+    bool isNumber(std::string input);
+
+    bool isAStatus(char status);
+
 };
 
 

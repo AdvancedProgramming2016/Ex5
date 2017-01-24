@@ -9,25 +9,37 @@
 
 Driver *StringParser::parseDriverInput() {
 
-    int numOfParams = 5;
-    int id          = 0;
-    int age         = 1;
-    int status      = 2;
-    int experience  = 3;
-    int vehicleId   = 4;
+    int  numOfParams  = 5;
+    int  id           = 0;
+    int  age          = 1;
+    int  status       = 2;
+    int  experience   = 3;
+    int  vehicleId    = 4;
+    bool isValidInput = false;
 
     std::string inputArr[numOfParams];
     std::string userInput;
 
     std::cin >> userInput;
 
+    //TODO make sure it's in the right format first
+    //check()
+
     this->splitByComma(inputArr, numOfParams, userInput);
 
-    return new Driver(atoi(inputArr[id].c_str()),
-                      atoi(inputArr[age].c_str()),
-                      inputArr[status][0],
-                      atoi(inputArr[experience].c_str()),
-                      atoi(inputArr[vehicleId].c_str()));
+    isValidInput = this->errorHandler.validateDriver(inputArr);
+
+    if (isValidInput) {
+
+        return new Driver(atoi(inputArr[id].c_str()),
+                          atoi(inputArr[age].c_str()),
+                          inputArr[status][0],
+                          atoi(inputArr[experience].c_str()),
+                          atoi(inputArr[vehicleId].c_str()));
+    }
+
+    return 0;
+
 
 }
 
@@ -85,7 +97,8 @@ Trip *StringParser::parseTripInput() {
 
     return new Trip(atoi(inputArr[id].c_str()), sPoint, ePoint,
                     atoi(inputArr[numOfPassengers].c_str()),
-                    atof(inputArr[tariff].c_str()), atoi(inputArr[time].c_str()));
+                    atof(inputArr[tariff].c_str()),
+                    atoi(inputArr[time].c_str()));
 
 }
 

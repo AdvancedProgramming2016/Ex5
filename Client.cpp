@@ -61,7 +61,17 @@ int main(int argc, char *argv[]) {
     socket->initialize();
 
     //Creates a driver from a given user input.
-    driver = stringParser.parseDriverInput();
+    // Tries until succeeds.
+    while(!driver){
+
+        driver = stringParser.parseDriverInput();
+
+        //If the driver input is invalid, notify the user.
+        if(!driver){
+
+            std::cout << "-1" << std::endl;
+        }
+    }
 
     //Serializes the driver into a string.
     std::string serialDriver = serializer.serialize(driver);
