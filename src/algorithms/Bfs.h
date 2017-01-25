@@ -33,7 +33,7 @@ public:
     /*
      * The method calculates the shortest path between two points.
      */
-    void get_route();
+    int get_route();
 
     /*
      * Returns the shortest path from source to dest path.
