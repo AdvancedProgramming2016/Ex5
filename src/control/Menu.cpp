@@ -45,6 +45,7 @@ int Menu::validateNumOfDrivers() {
 
     if (numOfDrivers < 0 || std::cin.fail()) {
         std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return 1;
     }
     return numOfDrivers;
@@ -59,6 +60,7 @@ int Menu::validateUserOption() {
 
     if (userOption < 0 || std::cin.fail()) {
         std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return -1;
     }
     return userOption;

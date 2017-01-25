@@ -86,12 +86,14 @@ int StringParser::validateInputSize(std::string *inputArr, int numOfParams) {
 int StringParser::checkIntValidity(bool canBeZero) {
     int num;
     std::cin >> num;
-    if (std::cin.fail() || canBeZero || num < 0) {
+    if (canBeZero && (std::cin.fail() || num < 0)) {
         std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return -1;
     }
-    else if(std::cin.fail() || num <= 0) {
+    else if(!canBeZero && (std::cin.fail() || num <= 0)) {
         std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return -1;
     }
     return 0;
@@ -297,6 +299,7 @@ unsigned int StringParser::parseDriverLocation() {
         std::cin >> driverId;
         if (std::cin.fail() || driverId < 0) {
             std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             return NULL;
         }
         return driverId;
