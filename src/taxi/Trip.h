@@ -4,7 +4,7 @@
 
 
 #include "Taxi.h"
-#include "Bfs.h"
+#include "../algorithms/Bfs.h"
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/vector.hpp>
 

@@ -4,12 +4,11 @@
 #define EX2_CHECK_MENU_H
 
 
-#include "Driver.h"
-#include "StringParser.h"
-#include "../sockets/Udp.h"
+#include "../taxi/Driver.h"
+#include "../parsers/StringParser.h"
 #include "MainFlow.h"
 #include "TaxiCenter.h"
-#include "Serializer.h"
+#include "../serializers/Serializer.h"
 
 class Menu {
 
@@ -34,11 +33,6 @@ public:
     void wakeUpThreads(int operationNumber);
 
     /*
-     * Returns serializer
-     */
-    Serializer getSerializer();
-
-    /*
      * Gets the socket object
      */
     //Socket *getSocket();
@@ -58,7 +52,6 @@ public:
      */
     MainFlow *getMainFlow();
 
-    Vehicle* getDriverVehicle(unsigned int vehicleId);
 
     int validateUserOption();
 

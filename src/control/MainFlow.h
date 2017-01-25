@@ -2,13 +2,15 @@
 #ifndef EX2_MAINFLOW_H
 #define EX2_MAINFLOW_H
 
+#define THREAD_POOL_SIZE 5
 
 #include "TaxiCenter.h"
-#include "Grid.h"
-#include "VehicleFactory.h"
-#include "StringParser.h"
+#include "../graphs/Grid.h"
+#include "../taxi/VehicleFactory.h"
+#include "../parsers/StringParser.h"
 #include "Clock.h"
-#include "ClientThread.h"
+#include "../threads/ClientThread.h"
+#include "../threads/ThreadPool.h"
 
 class ClientThread;
 
@@ -29,8 +31,6 @@ private:
     TaxiCenter *taxiCenter;
     Grid       *map;
     std::vector<ClientThread *> clientThreadVector;
-
-private:
     Socket       *socket;
     std::queue<int> *threadIdQueue;
     Serializer   serializer;
@@ -38,7 +38,13 @@ private:
     unsigned int vacantPort;
     pthread_mutex_t receiveDriverMutex;
     pthread_mutex_t sendCommandMutex;
+    pthread_mutex_t threadMutex;
     pthread_mutex_t bfsMutex;
+    int order;
+    int startOrder;
+    unsigned int numOfDrivers;
+    ThreadPool *threadPool;
+    std::vector<Task*> tasks;
 
 public:
 
@@ -52,14 +58,15 @@ public:
      */
     ~MainFlow();
 
-    std::queue<int> *getThreadIdQueue();
-
-    void addClientId(int threadId);
-
     /*
      * Creates a map with obstacles.
      */
     void createMap(Grid *grid);
+
+    /*
+     * Returns the thread pool.
+     */
+    ThreadPool *getThreadPool() const;
 
     /*
      * Gets the next operation number
@@ -77,13 +84,10 @@ public:
      */
     void clockSleep();
 
+    /*
+     * Returns the client thread vector.
+     */
     std::vector<ClientThread *> getClientThreadVector();
-
-    // Gets a vacant port from the server
-    unsigned int getVacantPort();
-
-    // Increase the vacant port by one
-    void increaseVacantPort();
 
     /*
      * Performs task number 9 - assign trip and move one step
@@ -104,11 +108,6 @@ public:
      * Send vehicle to socket.
      */
     void sendToSocketVehicle(unsigned int vehicleId, int descriptor);
-
-    /*
-     * Sends the client the new port the servers is listening to.
-     */
-    void sendClientNewPort(unsigned int newPort);
 
     /*
      * Creates a taxi center.
@@ -156,11 +155,6 @@ public:
     void exitSystem();
 
     /*
-     * Cleans the map for the next iteration.
-     */
-    void cleanGrid();
-
-    /*
      * Returns receiveDriverMutex
      */
     pthread_mutex_t &getMutexReceiveDriver() ;
@@ -169,6 +163,31 @@ public:
      * Gets send command mutex
      */
     pthread_mutex_t &getSendCommandMutex();
+
+    /*
+     * Returns the thread mutex.
+     */
+    pthread_mutex_t &getThreadMutex();
+
+    /*
+     * Returns the starting order
+     */
+    int getStartOrder() const;
+
+    /*
+     * Sets the starting order.
+     */
+    void setStartOrder(int startOrder);
+
+    /*
+     * Returns the order.
+     */
+    int getOrder() const;
+
+    /*
+     * Sets the order.
+     */
+    void setOrder(int order);
 
 };
 

@@ -1,7 +1,7 @@
-//#include <boost/log/trivial.hpp>
+#include <boost/log/trivial.hpp>
 #include "TaxiCenter.h"
 #include "../sockets/Socket.h"
-#include "Serializer.h"
+#include "../serializers/Serializer.h"
 
 TaxiCenter::TaxiCenter(Point *taxiCenterLocation) :
         taxiCenterLocation(taxiCenterLocation) {
@@ -46,10 +46,10 @@ void
 TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
                        int descriptor) {
 
-    unsigned int i = 0;
-    std::vector<Trip *> &tripVec = this->getTrips();
-    std::vector<Taxi *> &taxiVec = this->getTaxis();
-    Taxi *currTaxi = 0;
+    unsigned int        i         = 0;
+    std::vector<Trip *> &tripVec  = this->getTrips();
+    std::vector<Taxi *> &taxiVec  = this->getTaxis();
+    Taxi                *currTaxi = 0;
 
     int j = 0;
     for (j = 0; j < taxiVec.size(); j++) {
@@ -64,11 +64,6 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
 
         for (i = 0; i < this->getTrips().size(); i++) {
 
-            // If trip vector is empty and there are not more trips
-            if (tripVec.empty()) {
-                return;
-            }
-
             // Get current trip
             Trip *currTrip = tripVec.at(i);
 
@@ -76,11 +71,19 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
             if (currTrip->getTripStartTime() == this->clock->getTime() &&
                 currTaxi->getCurrentPosition() == currTrip->getStartPoint()) {
 
-                pthread_t threadToWait = findTripThread(currTrip)->getThread();
+                //Find the TripThread which contains the wanted trip
+                // calculation.
+                TripThread *tripThread = findTripThread(currTrip);
+                //Wait for that calculation to end.
+                waitForCalcToFinish(tripThread);
+                BOOST_LOG_TRIVIAL(info) << "Sending trip";
+
+                //pthread_t threadToWait = findTripThread(currTrip)->getThread();
                 //BOOST_LOG_TRIVIAL(info) << "waiting for trip thread:"
                 //                        << threadToWait;
-                pthread_join(threadToWait, NULL);
+                //pthread_join(threadToWait, NULL);
                 //Update the current taxi with a trip
+
                 currTaxi->setTrip(currTrip);
 
                 // Send trip to client
@@ -92,6 +95,8 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
 
                 //Remove the trip from the trips vector;
                 tripVec.erase(tripVec.begin() + i);
+
+                break;
             }
         }
     }
@@ -102,8 +107,8 @@ TaxiCenter::moveOneStep(Driver *driver, Socket &socket, Serializer serializer,
                         int descriptor) {
 
     std::vector<Taxi *> &taxiVec = this->getTaxis();
-    int i = 0;
-    Taxi *currTaxi;
+    int                 i        = 0;
+    Taxi                *currTaxi;
 
     // Check which driver has trip
     for (i = 0; i < taxiVec.size(); i++) {
@@ -122,13 +127,13 @@ TaxiCenter::moveOneStep(Driver *driver, Socket &socket, Serializer serializer,
     if (currTaxi != 0 && currTaxi->getTrip() != 0) {
 
         // Tell driver to advance one step
-        std::string go = "go";
+        std::string go   = "go";
         socket.sendData(go, descriptor);
         //BOOST_LOG_TRIVIAL(debug)
         //    << "TaxiCenter sends move command to client:" << descriptor;
 
         // Wait for drivers answer
-        char buffer[1024];
+        char  buffer[1024];
         Point *currPoint = 0;
         socket.receiveData(buffer, 1024, descriptor);
         serializer.deserialize(buffer, sizeof(buffer), currPoint);
@@ -241,5 +246,19 @@ vector<TripThread *> &TaxiCenter::getTripThreads() {
 
 Clock *TaxiCenter::getClock() const {
     return clock;
+}
+
+void TaxiCenter::waitForCalcToFinish(TripThread *threadTrip) {
+
+    bool isFinished = false;
+
+    while (!isFinished) {
+
+        if (threadTrip->getTask()->isFinished()) {
+
+            isFinished = true;
+        }
+    }
+
 }
 

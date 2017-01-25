@@ -5,11 +5,11 @@
 #include <vector>
 #include "Vehicle.h"
 #include "Driver.h"
-#include "Point.h"
+#include "../graphs/Point.h"
 #include "Passenger.h"
 #include "Trip.h"
-#include "IObserver.h"
-#include "ISubject.h"
+#include "../observers/IObserver.h"
+#include "../observers/ISubject.h"
 
 class Driver;
 class Trip;

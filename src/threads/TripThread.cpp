@@ -1,13 +1,9 @@
 
-//#include <boost/log/trivial.hpp>
+#include <boost/log/trivial.hpp>
 #include "TripThread.h"
 
 TripThread::TripThread(MainFlow *mainFlow, Trip *trip)
         : mainFlow(mainFlow), trip(trip) {
-}
-
-pthread_t TripThread::getThread() const {
-    return thread;
 }
 
 Trip *TripThread::getTrip() const {
@@ -18,21 +14,21 @@ void *TripThread::calculatePath() {
 
     pthread_mutex_lock(&this->mainFlow->bfsMutex);
 
-    Bfs bfs(*this->mainFlow->map, trip->getStartPoint(), trip->getEndPoint()); //TODO not generic because it takes Grid, and bot Graph
+    Bfs bfs(*this->mainFlow->map, trip->getStartPoint(), trip->getEndPoint());
 
     bfs.get_route();
 
-    //BOOST_LOG_TRIVIAL(trace) << "Finished calculating path.";
-
-    //BOOST_LOG_TRIVIAL(trace) << "Finished cleaning path.";
-
     trip->setTripRoute(bfs.getShortestPath());
+
+    BOOST_LOG_TRIVIAL(trace) << "Finished calculating path.";
 
     pthread_mutex_unlock(&this->mainFlow->bfsMutex);
 
     //BOOST_LOG_TRIVIAL(trace) << "Exiting trip thread.";
 
-    pthread_exit(NULL);
+    //pthread_mutex_lock(&this->getMainFlow()->getThreadPool()->getTaskCounterMutex());
+    //this->getMainFlow()->getThreadPool()->decreaseTaskCounter();
+    //pthread_mutex_unlock(&this->getMainFlow()->getThreadPool()->getTaskCounterMutex());
 }
 
 void *TripThread::callCalculatePath(void *param) {
@@ -44,6 +40,15 @@ MainFlow *TripThread::getMainFlow() const {
     return mainFlow;
 }
 
-void TripThread::setThread(pthread_t thread) {
-    TripThread::thread = thread;
+Task *TripThread::getTask() {
+    return task;
+}
+
+void TripThread::setTask(Task *task) {
+    TripThread::task = task;
+}
+
+TripThread::~TripThread() {
+
+    delete this->task;
 }

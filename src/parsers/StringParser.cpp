@@ -5,7 +5,7 @@
 #include <sstream>
 #include "StringParser.h"
 
-#include "MainFlow.h"
+#include "../control/MainFlow.h"
 
 Driver *StringParser::parseDriverInput() {
 
