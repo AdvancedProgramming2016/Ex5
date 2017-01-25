@@ -96,7 +96,7 @@ int StringParser::checkIntValidity(bool canBeZero) {
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return -1;
     }
-    return 0;
+    return num;
 }
 
 Grid *StringParser::parseGridInput() {
@@ -112,17 +112,17 @@ Grid *StringParser::parseGridInput() {
 
         height = this->checkIntValidity(false);
         if(height == -1) {
-            return NULL;
+            return 0;
         }
 
         width = this->checkIntValidity(false);
         if(width == -1) {
-            return NULL;
+            return 0;
         }
 
         numOfObstacles = this->checkIntValidity(true);
         if(numOfObstacles == -1) {
-            return NULL;
+            return 0;
         }
 
         std::vector<Point> obstacles;
@@ -133,12 +133,12 @@ Grid *StringParser::parseGridInput() {
 
             std::cin >> userInput;
             if (this->splitByComma(inputArr, numOfParams, userInput)) {
-                return NULL;
+                return 0;
             }
 
             // If input is invalid
             if (this->validateBasicInput(inputArr, numOfParams)) {
-                return NULL;
+                return 0;
             }
 
             obstacles.push_back(
@@ -148,7 +148,7 @@ Grid *StringParser::parseGridInput() {
 
         return new Grid(height, width, obstacles);
     } catch(exception &e) {
-        return NULL;
+        return 0;
     }
 
 }
@@ -196,12 +196,12 @@ Trip *StringParser::parseTripInput() {
         std::cin >> userInput;
 
         if (this->splitByComma(inputArr, numOfParams, userInput)) {
-            return NULL;
+            return 0;
         }
 
         if (this->validateInputSize(inputArr, numOfParams) ||
                 this->validateBasicInput(inputArr, numOfParams)) {
-            return NULL;
+            return 0;
         }
 
         Point sPoint(atoi(inputArr[startX].c_str()),
@@ -209,12 +209,16 @@ Trip *StringParser::parseTripInput() {
         Point ePoint(atoi(inputArr[endX].c_str()),
                      atoi(inputArr[endY].c_str()));
 
+        if (sPoint == ePoint) {
+            return 0;
+        }
+
         return new Trip(atoi(inputArr[id].c_str()), sPoint, ePoint,
                         atoi(inputArr[numOfPassengers].c_str()),
                         atof(inputArr[tariff].c_str()),
                         atoi(inputArr[time].c_str()));
     } catch (exception &e) {
-        return NULL;
+        return 0;
     }
 }
 
@@ -273,12 +277,12 @@ Vehicle *StringParser::parseVehicleInput() {
 
         // Splits the user input by commas and returns array of inputs
         if (this->splitByComma(inputArr, numOfInputs, userInput)) {
-            return NULL;
+            return 0;
         }
 
         if (this->validateInputSize(inputArr, numOfInputs) ||
             this->validateVehicleInput(inputArr, numOfInputs)) {
-            return NULL;
+            return 0;
         }
 
         return this->vehicleFactory.makeVehicle(atoi(inputArr[id].c_str()),
@@ -286,13 +290,14 @@ Vehicle *StringParser::parseVehicleInput() {
                                                 inputArr[manufacturer][0],
                                                 inputArr[color][0]);
     } catch (exception &e) {
-        return NULL;
+        return 0;
     }
 }
 
-unsigned int StringParser::parseDriverLocation() {
+unsigned int StringParser::parseDriverLocation(std::vector<Driver *> &driverVec) {
 
-    int driverId;
+    int driverId, i, driverVecSize;
+    bool isDriverInVec = false;
 
     try {
 
@@ -300,11 +305,22 @@ unsigned int StringParser::parseDriverLocation() {
         if (std::cin.fail() || driverId < 0) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            return NULL;
+            return -1;
         }
-        return driverId;
+        driverVecSize = driverVec.size();
+        for (i = 0; i < driverVecSize; i++) {
+            if (driverVec[i]->getDriverId() == driverId) {
+                isDriverInVec = true;
+            }
+        }
+        if (isDriverInVec) {
+            return driverId;
+        } else {
+            return -1;
+        }
+
     } catch (exception &e) {
-        return NULL;
+        return -1;
     }
 
 }
@@ -316,7 +332,7 @@ int StringParser::splitByComma(std::string *inputArr, int size,
 
     int i = 0;
 
-    if (!userInput.find(',')) {
+    if (!userInput.find(',') || userInput.at(userInput.length() - 1) == ',') {
         return 1;
     }
 

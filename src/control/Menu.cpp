@@ -24,7 +24,7 @@ int Menu::initializeGame() {
 
     Point location(0, 0);
     Grid *grid = NULL;
-    
+
     while (grid == NULL) {
         grid = this->stringParser.parseGridInput();
         if (grid == NULL) {
@@ -46,7 +46,7 @@ int Menu::validateNumOfDrivers() {
     if (numOfDrivers < 0 || std::cin.fail()) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        return 1;
+        return -1;
     }
     return numOfDrivers;
 
@@ -58,7 +58,8 @@ int Menu::validateUserOption() {
 
     std::cin >> userOption;
 
-    if (userOption < 0 || std::cin.fail()) {
+    if (userOption < 0 || userOption == 5 || userOption == 6 ||
+        userOption == 8 || userOption > 9 || std::cin.fail()) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return -1;
@@ -86,7 +87,7 @@ int Menu::runMenu() {
                 int numOfDrivers = 0;
                 numOfDrivers = this->validateNumOfDrivers();
 
-                if (numOfDrivers == 1) {
+                if (numOfDrivers == -1) {
                     std::cout << "-1" << std::endl;
                     continue;
                 }
@@ -97,7 +98,7 @@ int Menu::runMenu() {
                 // Create trip
             case 2: {
                 Trip *tempTrip = this->stringParser.parseTripInput();
-                if (tempTrip == NULL) {
+                if (tempTrip == 0) {
                     std::cout << "-1" << std::endl;
                     continue;
                 }
@@ -108,7 +109,7 @@ int Menu::runMenu() {
             case 3: {
                 Vehicle *tempVehicle;
                 tempVehicle = this->stringParser.parseVehicleInput();
-                if (tempVehicle == NULL) {
+                if (tempVehicle == 0) {
                     std::cout << "-1" << std::endl;
                     continue;
                 }
@@ -120,8 +121,9 @@ int Menu::runMenu() {
             case 4: {
 
                 unsigned int driverLocation;
-                driverLocation = this->stringParser.parseDriverLocation();
-                if (driverLocation == NULL) {
+                driverLocation = this->stringParser.parseDriverLocation(
+                        this->getMainFlow()->getTaxiCenter()->getDrivers());
+                if (driverLocation == -1) {
                     std::cout << "-1" << std::endl;
                     continue;
                 }
@@ -138,7 +140,8 @@ int Menu::runMenu() {
                 //Exit system
             case 7: {
 
-                std::vector<ClientThread *> clientThreadVec = this->getMainFlow()->getClientThreadVector();
+                std::vector<ClientThread *>
+                        clientThreadVec = this->getMainFlow()->getClientThreadVector();
                 // Send each driver exit command
                 this->wakeUpThreads(7);
                 for (int i = 0; i < clientThreadVec.size(); i++) {

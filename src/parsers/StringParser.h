@@ -58,7 +58,7 @@ public:
     /*
      * Parses the driver input from the console.
      */
-    virtual unsigned int parseDriverLocation();
+    virtual unsigned int parseDriverLocation(std::vector<Driver *> &driverVec);
 
     int validateVehicleInput(std::string *inputArr, int numOfParams);
 
