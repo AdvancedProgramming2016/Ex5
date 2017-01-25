@@ -21,10 +21,18 @@ private:
 
 public:
 
+    int validateInputSize(std::string inputArr[], int numOfParams);
+
+    int validateBasicInput(std::string *inputArr, int numOfParams);
+
+    int validateDriverInput(std::string inputArr[], int numOfParams);
+
     /*
      * Splits the string by commas.
      */
-    void splitByComma(std::string *inputArr, int size, std::string userInput);
+    int splitByComma(std::string *inputArr, int size, std::string userInput);
+
+    int validatePoint(std::string inputArr[], int numOfParams);
 
     /*
      * Parses the grid input from the console.
@@ -51,6 +59,9 @@ public:
      */
     virtual unsigned int parseDriverLocation();
 
+    int validateVehicleInput(std::string *inputArr, int numOfParams);
+
+    int checkIntValidity(bool canBeZero);
 };
 
 #endif //EX2_CHECK_STRINGPARSER_H

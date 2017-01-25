@@ -23,11 +23,45 @@ MainFlow *Menu::getMainFlow() {
 int Menu::initializeGame() {
 
     Point location(0, 0);
-
+    Grid *grid = NULL;
+    
+    while (grid == NULL) {
+        grid = this->stringParser.parseGridInput();
+        if (grid == NULL) {
+            std::cout << "-1" << std::endl;
+        }
+    }
     //Create Grid with obstacles.
-    this->getMainFlow()->createMap(
-            this->stringParser.parseGridInput());
+    this->getMainFlow()->createMap(grid);
     this->getMainFlow()->createTaxiCenter(&location);
+}
+
+int Menu::validateNumOfDrivers() {
+
+    int numOfDrivers = 0;
+
+    // Receive from user num of drivers to create
+    std::cin >> numOfDrivers;
+
+    if (numOfDrivers < 0 || std::cin.fail()) {
+        std::cin.clear();
+        return 1;
+    }
+    return numOfDrivers;
+
+}
+
+int Menu::validateUserOption() {
+
+    int userOption = 0;
+
+    std::cin >> userOption;
+
+    if (userOption < 0 || std::cin.fail()) {
+        std::cin.clear();
+        return -1;
+    }
+    return userOption;
 }
 
 int Menu::runMenu() {
@@ -36,39 +70,63 @@ int Menu::runMenu() {
 
     while (userOption <= 9) {
 
-        std::cin >> userOption;
+        userOption = this->validateUserOption();
+
+        if (userOption == -1) {
+            std::cout << "-1" << std::endl;
+            continue;
+        }
 
         switch (userOption) {
 
             // Create driver
             case 1: {
                 int numOfDrivers = 0;
+                numOfDrivers = this->validateNumOfDrivers();
 
-                // Receive from user num of drivers to create
-                std::cin >> numOfDrivers;
+                if (numOfDrivers == 1) {
+                    std::cout << "-1" << std::endl;
+                    continue;
+                }
 
                 this->getMainFlow()->selectDrivers(numOfDrivers);
                 break;
             }
                 // Create trip
-            case 2:
-                this->getMainFlow()->createTrip(
-                        this->stringParser.parseTripInput());
+            case 2: {
+                Trip *tempTrip = this->stringParser.parseTripInput();
+                if (tempTrip == NULL) {
+                    std::cout << "-1" << std::endl;
+                    continue;
+                }
+                this->getMainFlow()->createTrip(tempTrip);
                 break;
-
+            }
                 // Create vehicle
-            case 3:
-                this->getMainFlow()->createVehicle(
-                        this->stringParser.parseVehicleInput());
+            case 3: {
+                Vehicle *tempVehicle;
+                tempVehicle = this->stringParser.parseVehicleInput();
+                if (tempVehicle == NULL) {
+                    std::cout << "-1" << std::endl;
+                    continue;
+                }
+                this->getMainFlow()->createVehicle(tempVehicle);
                 break;
+            }
 
                 // Request driver location
-            case 4:
+            case 4: {
 
+                unsigned int driverLocation;
+                driverLocation = this->stringParser.parseDriverLocation();
+                if (driverLocation == NULL) {
+                    std::cout << "-1" << std::endl;
+                    continue;
+                }
                 this->getMainFlow()->getTaxiCenter()->requestDriverLocation(
-                        this->stringParser.parseDriverLocation());
+                        driverLocation);
                 break;
-
+            }
                 /*
                 // Start Driving
             case 6:

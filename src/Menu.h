@@ -60,6 +60,9 @@ public:
 
     Vehicle* getDriverVehicle(unsigned int vehicleId);
 
+    int validateUserOption();
+
+    int validateNumOfDrivers();
 };
 
 
