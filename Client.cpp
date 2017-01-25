@@ -46,32 +46,30 @@ int main(int argc, char *argv[]) {
     //boost::log::trivial::severity >= boost::log::trivial::warning);
 
     //The socket connecting between the client and the server.
-    Socket *socket = new Tcp(0, argv[1], atoi(argv[2]));
-
+    Socket *socket;
     //Serializer used for serializing and deserializing objects.
-    Serializer serializer;
+    Serializer   serializer;
     //Will handle parsing the user input.
     StringParser stringParser;
-    Driver *driver = 0;
-    Vehicle *vehicle = 0;
-    Taxi *taxi = 0;
-    Trip *trip = 0;
-    bool exitCalled = false;
+    Driver       *driver    = 0;
+    Vehicle      *vehicle   = 0;
+    Taxi         *taxi      = 0;
+    Trip         *trip      = 0;
+    bool         exitCalled = false;
 
-    socket->initialize();
+    //Validate driver input.
+    driver = stringParser.parseDriverInput();
 
-    //Creates a driver from a given user input.
-    // Tries until succeeds.
-    while(!driver){
+    //If the driver input is invalid, exit the program.
+    if (!driver) {
 
-        driver = stringParser.parseDriverInput();
-
-        //If the driver input is invalid, notify the user.
-        if(!driver){
-
-            std::cout << "-1" << std::endl;
-        }
+        std::cout << "-1" << std::endl;
+        exit(1);
     }
+
+    //Connect to server.
+    socket = new Tcp(0, argv[1], atoi(argv[2]));
+    socket->initialize();
 
     //Serializes the driver into a string.
     std::string serialDriver = serializer.serialize(driver);
@@ -91,7 +89,7 @@ int main(int argc, char *argv[]) {
     //BOOST_LOG_TRIVIAL(info) << "Desirialized vehicle, vehicle id:"
     //                        << vehicle->getVehicleId();
 
-    taxi = new Taxi(driver, vehicle, Point(0, 0));
+    taxi         = new Taxi(driver, vehicle, Point(0, 0));
     serialDriver = "";
     //BOOST_LOG_TRIVIAL(info) << "Waiting for command.";
 

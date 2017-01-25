@@ -9,39 +9,39 @@
 
 Driver *StringParser::parseDriverInput() {
 
-    int numOfParams = 5;
-    int id = 0;
-    int age = 1;
-    int status = 2;
-    int experience = 3;
-    int vehicleId = 4;
+    int  numOfParams  = 5;
+    int  id           = 0;
+    int  age          = 1;
+    int  status       = 2;
+    int  experience   = 3;
+    int  vehicleId    = 4;
+    bool isValidInput = false;
 
     std::string inputArr[numOfParams];
     std::string userInput;
 
-    try {
+    std::cin >> userInput;
 
-        std::cin >> userInput;
+    this->splitByComma(inputArr, numOfParams, userInput);
 
-        if (this->splitByComma(inputArr, numOfParams, userInput)) {
-            return NULL;
-        }
+    //Check that the user input has the proper format.
+    this->validateInputSize(inputArr, numOfParams);
 
-        // If invalid input was given
-        if (this->validateInputSize(inputArr, numOfParams) ||
-            this->validateDriverInput(inputArr, numOfParams)) {
-            return NULL;
-        }
+    //Validate user input.
+    isValidInput = this->errorHandler.validateDriver(inputArr);
+
+    //If the user input was valid, return a driver instance.
+    if (isValidInput) {
 
         return new Driver(atoi(inputArr[id].c_str()),
                           atoi(inputArr[age].c_str()),
                           inputArr[status][0],
                           atoi(inputArr[experience].c_str()),
                           atoi(inputArr[vehicleId].c_str()));
-
-    } catch (exception &e) {
-        return NULL;
     }
+
+    return 0;
+
 
 }
 
