@@ -79,7 +79,7 @@ void MainFlow::createTrip(Trip *trip) {
     task = new Task(&TripThread::callCalculatePath, tripThread);
     tripThread->setTask(task);
     this->tasks.push_back(task);
-    this->threadPool->addTask(this->tasks[this->tasks.size() - 1]);
+    this->threadPool->addTask(task);
 
     //BOOST_LOG_TRIVIAL(info) << "Created trip thread.";
 

@@ -42,6 +42,9 @@ void *TripThread::calculatePath() {
     //pthread_mutex_lock(&this->getMainFlow()->getThreadPool()->getTaskCounterMutex());
     //this->getMainFlow()->getThreadPool()->decreaseTaskCounter();
     //pthread_mutex_unlock(&this->getMainFlow()->getThreadPool()->getTaskCounterMutex());
+    this->getTask()->setFinished();
+    BOOST_LOG_TRIVIAL(trace) << "Set as finished";
+
 }
 
 void *TripThread::callCalculatePath(void *param) {
@@ -58,7 +61,7 @@ Task *TripThread::getTask() {
 }
 
 void TripThread::setTask(Task *task) {
-    TripThread::task = task;
+    this->task = task;
 }
 
 TripThread::~TripThread() {

@@ -46,8 +46,6 @@ void ThreadPool::executeTasks() {
             pthread_mutex_unlock(&lock);
             BOOST_LOG_TRIVIAL(trace) << "Executing task";
             task->execute();
-            task->setFinished();
-            BOOST_LOG_TRIVIAL(trace) << "Set as finished";
 
         } else {
 

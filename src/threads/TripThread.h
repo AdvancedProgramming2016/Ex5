@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include "../taxi/Trip.h"
 #include "../control/MainFlow.h"
+
 class MainFlow;
 
 class Task;
@@ -14,10 +15,10 @@ class TripThread {
 
 private:
 
-    Trip *trip;
+    Trip     *trip;
     MainFlow *mainFlow;
-    Task *task;
-    bool validTrip;
+    Task     *task;
+    bool     validTrip;
 
 public:
 

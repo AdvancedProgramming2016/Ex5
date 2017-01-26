@@ -101,6 +101,8 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
                 }
                 tripVec.erase(tripVec.begin() + i);
 
+                delete tripThread;
+
                 break;
             }
         }
@@ -196,6 +198,7 @@ TripThread *TaxiCenter::findTripThread(Trip *trip) {
 
         if (tripThreads[i]->getTrip()->getRideId() == trip->getRideId()) {
 
+            tripThreads.erase(tripThreads.begin() + i);
             return tripThreads[i];
         }
     }
