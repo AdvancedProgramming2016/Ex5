@@ -1,20 +1,7 @@
 
 #include <boost/log/trivial.hpp>
+#include <sstream>
 #include "ErrorHandler.h"
-
-bool ErrorHandler::ValidatePath(Bfs &bfs) {
-
-    try {
-
-        bfs.getShortestPath().size();
-    }
-    catch (std::exception &e) {
-
-        return false;
-    }
-
-    return true;
-}
 
 bool ErrorHandler::validateDriver(std::string *input) {
 
@@ -93,4 +80,141 @@ bool ErrorHandler::isAStatus(char status) {
     }
 
     return retVal;
+}
+
+int ErrorHandler::validateDriverInput(std::string inputArr[], int numOfParams) {
+
+    int i = 0;
+
+    for (i = 0; i < numOfParams; i++) {
+
+        // Checks that all relevant input is positive and of type int
+        if (i != 2) {
+            if (atoi(inputArr[i].c_str()) < 0) {
+                return 1;
+            }
+        } else {
+
+            // If driver status not S, W, M or D return 1
+            if (!(inputArr[i] == "S" || inputArr[i] == "M" ||
+                  inputArr[i] == "W" || inputArr[i] == "D")) {
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+
+}
+
+int ErrorHandler::validateInputSize(std::string *inputArr, int numOfParams) {
+
+    int i = 0;
+    for (i = 0; i < numOfParams; i++) {
+
+        // Checks if not all expected params were given
+        if (inputArr[i].empty()) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int ErrorHandler::checkIntValidity(bool canBeZero) {
+    int num;
+    std::cin >> num;
+    if (canBeZero && (std::cin.fail() || num < 0)) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        return -1;
+    } else if (!canBeZero && (std::cin.fail() || num <= 0)) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        return -1;
+    }
+    return num;
+}
+
+int ErrorHandler::validateBasicInput(std::string *inputArr, int numOfParams) {
+
+    int i = 0;
+    bool isNotZeroFlag = false;
+
+    // Check that all input is positive int
+    for (i = 0; i < numOfParams; i++) {
+        isNotZeroFlag = false;
+        if (inputArr[i] != "0") {
+            isNotZeroFlag = true;
+        }
+        // If negative number was given
+        if (isNotZeroFlag && atoi(inputArr[i].c_str()) <= 0) {
+            return 1;
+        } else if (!isNotZeroFlag && atoi(inputArr[i].c_str()) < 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+
+}
+
+int
+ErrorHandler::validateVehicleInput(std::string inputArr[], int numOfParams) {
+
+    int i = 0;
+    bool isNotZeroFlag = false;
+
+    for (i = 0; i < numOfParams; i++) {
+        if (i > 1) {
+
+            // Check if manufacturer input is valid
+            if (i == 2 &&
+                !(inputArr[i] == "H" || inputArr[i] == "S" ||
+                  inputArr[i] == "F" || inputArr[i] == "T")) {
+                return 1;
+            }
+                // Check if Color input is valid
+            else if (i == 3 && !(inputArr[i] == "R" ||
+                                 inputArr[i] == "P" ||
+                                 inputArr[i] == "B" ||
+                                 inputArr[i] == "G" ||
+                                 inputArr[i] == "W")) {
+                return 1;
+            }
+        } else {
+
+            if (inputArr[i] != "0") {
+                isNotZeroFlag = true;
+            }
+            // If negative number was given
+            if (isNotZeroFlag && atoi(inputArr[i].c_str()) <= 0) {
+                return 1;
+            } else if (!isNotZeroFlag && atoi(inputArr[i].c_str()) < 0) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int ErrorHandler::splitByComma(std::string *inputArr, int size,
+                               std::string userInput) {
+
+    std::stringstream ss(userInput);
+
+    int i = 0;
+
+    // Checks if the string ends with a ',' or not ',' given
+    if (!userInput.find(',') || userInput.at(userInput.length() - 1) == ',' ||
+        std::count(userInput.begin(), userInput.end(), ',') >= size) {
+        return 1;
+    }
+
+    // Split the input by commas
+    for (i = 0; i < size; i++) {
+        std::getline(ss, inputArr[i], ',');
+    }
+
+    return 0;
+
 }

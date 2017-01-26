@@ -13,16 +13,26 @@ class ErrorHandler {
 public:
 
     /*
-     * Check that the path is reaching the destination.
-     */
-    bool ValidatePath(Bfs &bfs);
-
+    * Splits the string by commas.
+    */
+    int splitByComma(std::string *inputArr, int size, std::string userInput);
 
     bool validateDriver(std::string *input);
 
     bool isNumber(std::string input);
 
     bool isAStatus(char status);
+
+    int validateInputSize(std::string inputArr[], int numOfParams);
+
+    int validateBasicInput(std::string *inputArr, int numOfParams);
+
+    int validateDriverInput(std::string inputArr[], int numOfParams);
+
+    int validateVehicleInput(std::string *inputArr, int numOfParams);
+
+    int checkIntValidity(bool canBeZero);
+
 
 };
 
