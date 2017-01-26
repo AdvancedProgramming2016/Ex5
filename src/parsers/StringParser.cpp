@@ -9,12 +9,12 @@
 
 Driver *StringParser::parseDriverInput() {
 
-    int  numOfParams  = 5;
-    int  id           = 0;
-    int  age          = 1;
-    int  status       = 2;
-    int  experience   = 3;
-    int  vehicleId    = 4;
+    int numOfParams = 5;
+    int id = 0;
+    int age = 1;
+    int status = 2;
+    int experience = 3;
+    int vehicleId = 4;
     bool isValidInput = false;
 
     std::string inputArr[numOfParams];
@@ -90,8 +90,7 @@ int StringParser::checkIntValidity(bool canBeZero) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return -1;
-    }
-    else if(!canBeZero && (std::cin.fail() || num <= 0)) {
+    } else if (!canBeZero && (std::cin.fail() || num <= 0)) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return -1;
@@ -111,17 +110,17 @@ Grid *StringParser::parseGridInput() {
     try {
 
         height = this->checkIntValidity(false);
-        if(height == -1) {
+        if (height == -1) {
             return 0;
         }
 
         width = this->checkIntValidity(false);
-        if(width == -1) {
+        if (width == -1) {
             return 0;
         }
 
         numOfObstacles = this->checkIntValidity(true);
-        if(numOfObstacles == -1) {
+        if (numOfObstacles == -1) {
             return 0;
         }
 
@@ -147,7 +146,7 @@ Grid *StringParser::parseGridInput() {
         }
 
         return new Grid(height, width, obstacles);
-    } catch(exception &e) {
+    } catch (exception &e) {
         return 0;
     }
 
@@ -167,8 +166,7 @@ int StringParser::validateBasicInput(string *inputArr, int numOfParams) {
         // If negative number was given
         if (isNotZeroFlag && atoi(inputArr[i].c_str()) <= 0) {
             return 1;
-        }
-        else if(!isNotZeroFlag && atoi(inputArr[i].c_str()) < 0) {
+        } else if (!isNotZeroFlag && atoi(inputArr[i].c_str()) < 0) {
             return 1;
         }
     }
@@ -200,7 +198,7 @@ Trip *StringParser::parseTripInput() {
         }
 
         if (this->validateInputSize(inputArr, numOfParams) ||
-                this->validateBasicInput(inputArr, numOfParams)) {
+            this->validateBasicInput(inputArr, numOfParams)) {
             return 0;
         }
 
@@ -238,11 +236,11 @@ StringParser::validateVehicleInput(std::string inputArr[], int numOfParams) {
                 return 1;
             }
                 // Check if Color input is valid
-            else if (i == 3 && !(inputArr[i]  == "R" ||
-                       inputArr[i] == "P" ||
-                       inputArr[i] == "B" ||
-                       inputArr[i] == "G" ||
-                       inputArr[i] == "W")) {
+            else if (i == 3 && !(inputArr[i] == "R" ||
+                                 inputArr[i] == "P" ||
+                                 inputArr[i] == "B" ||
+                                 inputArr[i] == "G" ||
+                                 inputArr[i] == "W")) {
                 return 1;
             }
         } else {
@@ -253,8 +251,7 @@ StringParser::validateVehicleInput(std::string inputArr[], int numOfParams) {
             // If negative number was given
             if (isNotZeroFlag && atoi(inputArr[i].c_str()) <= 0) {
                 return 1;
-            }
-            else if(!isNotZeroFlag && atoi(inputArr[i].c_str()) < 0) {
+            } else if (!isNotZeroFlag && atoi(inputArr[i].c_str()) < 0) {
                 return 1;
             }
         }
@@ -294,7 +291,8 @@ Vehicle *StringParser::parseVehicleInput() {
     }
 }
 
-unsigned int StringParser::parseDriverLocation(std::vector<Driver *> &driverVec) {
+unsigned int
+StringParser::parseDriverLocation(std::vector<Driver *> &driverVec) {
 
     int driverId, i, driverVecSize;
     bool isDriverInVec = false;
@@ -326,13 +324,15 @@ unsigned int StringParser::parseDriverLocation(std::vector<Driver *> &driverVec)
 }
 
 int StringParser::splitByComma(std::string *inputArr, int size,
-                                std::string userInput) {
+                               std::string userInput) {
 
     std::stringstream ss(userInput);
 
     int i = 0;
 
-    if (!userInput.find(',') || userInput.at(userInput.length() - 1) == ',') {
+    // Checks if the string ends with a ',' or not ',' given
+    if (!userInput.find(',') || userInput.at(userInput.length() - 1) == ',' ||
+        std::count(userInput.begin(), userInput.end(), ',') >= size) {
         return 1;
     }
 
@@ -340,6 +340,7 @@ int StringParser::splitByComma(std::string *inputArr, int size,
     for (i = 0; i < size; i++) {
         std::getline(ss, inputArr[i], ',');
     }
+
     return 0;
 
 }

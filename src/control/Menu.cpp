@@ -58,7 +58,7 @@ int Menu::validateUserOption() {
 
     std::cin >> userOption;
 
-    if (userOption < 0 || userOption == 5 || userOption == 6 ||
+    if (userOption <= 0 || userOption == 5 || userOption == 6 ||
         userOption == 8 || userOption > 9 || std::cin.fail()) {
         std::cin.clear();
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
