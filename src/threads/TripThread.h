@@ -11,6 +11,10 @@ class MainFlow;
 
 class Task;
 
+/**
+ * The class takes care of the trip thread calculation.
+ * Performs the bfs algorithm.
+ */
 class TripThread {
 
 private:

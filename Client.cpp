@@ -29,7 +29,7 @@
 //#include <boost/log/trivial.hpp>
 //#include <boost/log/expressions.hpp>
 
-//#include <boost/log/trivial.hpp>
+#include <boost/log/trivial.hpp>
 
 BOOST_CLASS_EXPORT_GUID(StandardVehicle, "StandardVehicle")
 BOOST_CLASS_EXPORT_GUID(LuxuryVehicle, "LuxuryVehicle")
@@ -63,7 +63,6 @@ int main(int argc, char *argv[]) {
     //If the driver input is invalid, exit the program.
     if (!driver) {
 
-        std::cout << "-1" << std::endl;
         exit(1);
     }
 
@@ -115,9 +114,9 @@ int main(int argc, char *argv[]) {
             std::string serial = serializer.serialize(
                     &taxi->getCurrentPosition());
             socket->sendData(serial, socket->getSocketDescriptor());
-            //BOOST_LOG_TRIVIAL(info) << "Driver " << driver->getDriverId()
-            //                        << " moved to "
-            //                        << taxi->getCurrentPosition();
+            BOOST_LOG_TRIVIAL(info) << "Driver " << driver->getDriverId()
+                                   << " moved to "
+                                   << taxi->getCurrentPosition();
         } else {
 
             if (trip != 0) {
@@ -129,8 +128,9 @@ int main(int argc, char *argv[]) {
             serializer.deserialize(communicationBuffer,
                                    sizeof(communicationBuffer), trip);
             taxi->setTrip(trip);
-            //BOOST_LOG_TRIVIAL(info) << "Received the trip, trip id:"
-            //                        << trip->getRideId();
+            BOOST_LOG_TRIVIAL(info) << "Received the trip, trip id:"
+                                    << trip->getRideId();
+
         }
     }
 

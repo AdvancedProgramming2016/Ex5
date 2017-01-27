@@ -19,27 +19,32 @@ private:
     pthread_t          *threads;
     bool               stop;
     pthread_mutex_t    lock;
-    unsigned int       taskCounter;
-    pthread_mutex_t    taskCounterMutex;
 
 public:
 
+    /*
+     * Constructor.
+     */
     ThreadPool(int threads_num);
 
+    /*
+     * Executes the tasks.
+     */
     void executeTasks();
 
+    /*
+     * Adds a new task to the queue.
+     */
     void addTask(Task *job);
 
+    /*
+     * Stops the thread pool.
+     */
     void terminate();
 
-    bool isEmpty();
-
-    pthread_mutex_t &getTaskCounterMutex();
-
-    void decreaseTaskCounter();
-
-   // void waitForThreads();
-
+    /*
+     * Destructor.
+     */
     virtual ~ThreadPool();
 };
 

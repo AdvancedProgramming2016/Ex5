@@ -3,7 +3,7 @@
 #include "TripThread.h"
 
 TripThread::TripThread(MainFlow *mainFlow, Trip *trip)
-        : mainFlow(mainFlow), trip(trip), validTrip(true) {
+        : mainFlow(mainFlow), trip(trip), validTrip(false) {
 }
 
 Trip *TripThread::getTrip() const {
@@ -24,7 +24,7 @@ void *TripThread::calculatePath() {
     if (isValidTrip) {
 
         trip->setTripRoute(bfs.getShortestPath());
-
+        this->setValidTrip(true);
         BOOST_LOG_TRIVIAL(trace) << "Finished calculating path.";
 
     }
@@ -35,6 +35,8 @@ void *TripThread::calculatePath() {
 
     }
 
+    this->getTask()->setFinished();
+    BOOST_LOG_TRIVIAL(trace) << "Set as finished";
     pthread_mutex_unlock(&this->mainFlow->bfsMutex);
 
     //BOOST_LOG_TRIVIAL(trace) << "Exiting trip thread.";
@@ -42,8 +44,6 @@ void *TripThread::calculatePath() {
     //pthread_mutex_lock(&this->getMainFlow()->getThreadPool()->getTaskCounterMutex());
     //this->getMainFlow()->getThreadPool()->decreaseTaskCounter();
     //pthread_mutex_unlock(&this->getMainFlow()->getThreadPool()->getTaskCounterMutex());
-    this->getTask()->setFinished();
-    BOOST_LOG_TRIVIAL(trace) << "Set as finished";
 
 }
 
