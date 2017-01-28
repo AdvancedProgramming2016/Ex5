@@ -1,9 +1,9 @@
 
-#include <boost/log/trivial.hpp>
+//#include <boost/log/trivial.hpp>
 #include "TripThread.h"
 
 TripThread::TripThread(MainFlow *mainFlow, Trip *trip)
-        : mainFlow(mainFlow), trip(trip), validTrip(false) {
+        : mainFlow(mainFlow), trip(trip), validTrip(false), finished(false) {
 }
 
 Trip *TripThread::getTrip() const {
@@ -21,22 +21,21 @@ void *TripThread::calculatePath() {
 
     //validTrip = this->getMainFlow()->getErrorHandler().ValidatePath(bfs);
 
-    if (isValidTrip) {
+    if (isValidTrip == 1) {
 
         trip->setTripRoute(bfs.getShortestPath());
         this->setValidTrip(true);
-        BOOST_LOG_TRIVIAL(trace) << "Finished calculating path.";
+       // BOOST_LOG_TRIVIAL(trace) << "Finished calculating path.";
 
-    }
-    else{
+    } else {
 
         this->setValidTrip(false);
-        BOOST_LOG_TRIVIAL(trace) << "Path is invalid";
+       // BOOST_LOG_TRIVIAL(trace) << "Path is invalid";
 
     }
 
-    this->getTask()->setFinished();
-    BOOST_LOG_TRIVIAL(trace) << "Set as finished";
+    this->setFinished();
+   // BOOST_LOG_TRIVIAL(trace) << "Set as finished";
     pthread_mutex_unlock(&this->mainFlow->bfsMutex);
 
     //BOOST_LOG_TRIVIAL(trace) << "Exiting trip thread.";
@@ -75,4 +74,14 @@ bool TripThread::isValidTrip() const {
 
 void TripThread::setValidTrip(bool isValidTrip) {
     TripThread::validTrip = isValidTrip;
+}
+
+bool TripThread::isFinished() {
+
+    return this->finished;
+}
+
+void TripThread::setFinished() {
+
+    this->finished = true;
 }

@@ -13,8 +13,6 @@ private:
 
     void *(*func)(void *arg);
 
-    bool finished;
-
 public:
 
     /*
@@ -26,16 +24,6 @@ public:
      * Executes the function Task holds.
      */
     void execute();
-
-    /*
-     * Returns if the task was finished.
-     */
-    bool isFinished();
-
-    /*
-     * Sets the task as finished.
-     */
-    void setFinished();
 
 };
 

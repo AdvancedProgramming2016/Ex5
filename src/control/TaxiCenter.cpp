@@ -1,4 +1,4 @@
-#include <boost/log/trivial.hpp>
+//#include <boost/log/trivial.hpp>
 #include "TaxiCenter.h"
 #include "../sockets/Socket.h"
 #include "../serializers/Serializer.h"
@@ -42,14 +42,47 @@ TaxiCenter::~TaxiCenter() {
 
 }
 
+TripThread *TaxiCenter::findTripThread(Trip *trip) {
+
+    TripThread *tripThread = 0;
+
+    for (int i = 0; i < tripThreads.size(); ++i) {
+
+        tripThread = tripThreads[i];
+
+        if (tripThread->getTrip()->getRideId() == trip->getRideId()) {
+
+            tripThreads.erase(tripThreads.begin() + i);
+            return tripThread;
+        }
+    }
+}
+
+void TaxiCenter::waitForCalcToFinish(TripThread *tripThread) {
+
+    bool isFinished = false;
+
+//    BOOST_LOG_TRIVIAL(info) << "Waiting for trip"
+//                            << tripThread->getTrip()->getRideId();
+
+    while (!isFinished) {
+
+        if (tripThread->isFinished()) {
+
+            isFinished = true;
+        }
+    }
+
+}
+
 void
 TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
                        int descriptor) {
 
-    unsigned int        i         = 0;
     std::vector<Trip *> &tripVec  = this->getTrips();
     std::vector<Taxi *> &taxiVec  = this->getTaxis();
     Taxi                *currTaxi = 0;
+    bool                isValid   = false;
 
     int j = 0;
     for (j = 0; j < taxiVec.size(); j++) {
@@ -62,7 +95,9 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
 
     if (currTaxi != 0 && currTaxi->getTrip() == 0) {
 
-        for (i = 0; i < this->getTrips().size(); i++) {
+        int i = 0;
+
+        while (i < this->getTrips().size()) {
 
             // Get current trip
             Trip *currTrip = tripVec.at(i);
@@ -74,13 +109,16 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
                 //Find the TripThread which contains the wanted trip
                 // calculation.
                 TripThread *tripThread = findTripThread(currTrip);
+
                 //Wait for that calculation to end.
                 waitForCalcToFinish(tripThread);
 
                 //Make sure that the trip is valid after the calculation
-                if(tripThread->isValidTrip()){
+                if (tripThread->isValidTrip()) {
 
-                    BOOST_LOG_TRIVIAL(info) << "Sending trip";
+                    isValid = true;
+//                    BOOST_LOG_TRIVIAL(info) << "Sending trip"
+//                                            << tripThread->getTrip()->getRideId();
 
                     //pthread_t threadToWait = findTripThread(currTrip)->getThread();
                     //BOOST_LOG_TRIVIAL(info) << "waiting for trip thread:"
@@ -99,11 +137,21 @@ TaxiCenter::assignTrip(Driver *driver, Socket &socket, Serializer serializer,
 
                     //Remove the trip from the trips vector;
                 }
+
                 tripVec.erase(tripVec.begin() + i);
 
                 delete tripThread;
 
-                break;
+                i = 0;
+
+                if (isValid) {
+
+                    break;
+                }
+
+            } else {
+
+                i++;
             }
         }
     }
@@ -192,18 +240,6 @@ void TaxiCenter::addVehicle(Vehicle *vehicle) {
     vehicles.push_back(vehicle);
 }
 
-TripThread *TaxiCenter::findTripThread(Trip *trip) {
-
-    for (int i = 0; i < tripThreads.size(); ++i) {
-
-        if (tripThreads[i]->getTrip()->getRideId() == trip->getRideId()) {
-
-            tripThreads.erase(tripThreads.begin() + i);
-            return tripThreads[i];
-        }
-    }
-}
-
 void TaxiCenter::createTaxi(Driver *driver) {
 
     for (int i = 0; i < vehicles.size(); ++i) {
@@ -254,19 +290,5 @@ vector<TripThread *> &TaxiCenter::getTripThreads() {
 
 Clock *TaxiCenter::getClock() const {
     return clock;
-}
-
-void TaxiCenter::waitForCalcToFinish(TripThread *threadTrip) {
-
-    bool isFinished = false;
-
-    while (!isFinished) {
-
-        if (threadTrip->getTask()->isFinished()) {
-
-            isFinished = true;
-        }
-    }
-
 }
 

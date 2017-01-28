@@ -23,6 +23,7 @@ private:
     MainFlow *mainFlow;
     Task     *task;
     bool     validTrip;
+    bool     finished;
 
 public:
 
@@ -75,6 +76,16 @@ public:
      * Set is the trip valid.
      */
     void setValidTrip(bool isValidTrip);
+
+    /*
+    * Returns if the task was finished.
+    */
+    bool isFinished();
+
+    /*
+     * Sets the task as finished.
+     */
+    void setFinished();
 };
 
 

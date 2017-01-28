@@ -2,7 +2,7 @@
 #include "ThreadPool.h"
 #include <unistd.h>
 #include <iostream>
-#include <boost/log/trivial.hpp>
+//#include <boost/log/trivial.hpp>
 
 static void *startTasks(void *arg) {
 
@@ -42,7 +42,7 @@ void ThreadPool::executeTasks() {
             Task *task = tasksQueue.front();
             tasksQueue.pop();
             pthread_mutex_unlock(&lock);
-            BOOST_LOG_TRIVIAL(trace) << "Executing task";
+           // BOOST_LOG_TRIVIAL(trace) << "Executing task";
             task->execute();
 
         } else {

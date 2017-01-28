@@ -55,7 +55,7 @@ private:
     /*
      * Wait for the TripThread's task to be finished.
      */
-    void waitForCalcToFinish(TripThread *threadTrip);
+    void waitForCalcToFinish(TripThread *tripThread);
 
 public:
 

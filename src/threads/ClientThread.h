@@ -7,6 +7,10 @@
 #include "../control/MainFlow.h"
 class MainFlow;
 
+/**
+ * The class handles an individual client which connects to the server.
+ * Runs its own thread.
+ */
 class ClientThread {
 
 private:

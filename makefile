@@ -1,12 +1,12 @@
 all: server.out client.out 
 
-server.out: Server.o VehicleFactory.o Point.o Vertex.o Graph.o Grid.o Bfs.o Driver.o Vehicle.o LuxuryVehicle.o StandardVehicle.o MainFlow.o Passenger.o Clock.o Taxi.o TaxiCenter.o Trip.o Menu.o StringParser.o Socket.o Tcp.o Serializer.o TripThread.o ClientThread.o ThreadPool.o Task.o
+server.out: Server.o VehicleFactory.o Point.o Vertex.o Graph.o Grid.o Bfs.o Driver.o Vehicle.o LuxuryVehicle.o StandardVehicle.o MainFlow.o Passenger.o Clock.o Taxi.o TaxiCenter.o Trip.o Menu.o ErrorHandler.o StringParser.o Socket.o Tcp.o Serializer.o TripThread.o ClientThread.o ThreadPool.o Task.o
 
-	 g++ -o server.out Server.o VehicleFactory.o Point.o Vertex.o Graph.o Grid.o Bfs.o Driver.o Vehicle.o LuxuryVehicle.o StandardVehicle.o MainFlow.o Passenger.o Clock.o Taxi.o TaxiCenter.o Trip.o Menu.o StringParser.o Socket.o Tcp.o Serializer.o TripThread.o ClientThread.o ThreadPool.o Task.o -lboost_serialization -lpthread
+	 g++ -o server.out Server.o VehicleFactory.o Point.o Vertex.o Graph.o Grid.o Bfs.o Driver.o Vehicle.o LuxuryVehicle.o StandardVehicle.o MainFlow.o Passenger.o Clock.o Taxi.o TaxiCenter.o Trip.o Menu.o ErrorHandler.o StringParser.o Socket.o Tcp.o Serializer.o TripThread.o ClientThread.o ThreadPool.o Task.o -lboost_serialization -lpthread
 
-client.out: Client.o VehicleFactory.o Point.o Vertex.o Graph.o Grid.o Bfs.o Driver.o Vehicle.o LuxuryVehicle.o StandardVehicle.o MainFlow.o Passenger.o Clock.o Taxi.o TaxiCenter.o Trip.o Menu.o StringParser.o Socket.o Tcp.o Serializer.o TripThread.o ClientThread.o ThreadPool.o Task.o
+client.out: Client.o VehicleFactory.o Point.o Vertex.o Graph.o Grid.o Bfs.o Driver.o Vehicle.o LuxuryVehicle.o StandardVehicle.o MainFlow.o Passenger.o Clock.o Taxi.o TaxiCenter.o Trip.o Menu.o ErrorHandler.o StringParser.o Socket.o Tcp.o Serializer.o TripThread.o ClientThread.o ThreadPool.o Task.o
 
-	 g++ -o client.out Client.o VehicleFactory.o Point.o Vertex.o Graph.o Grid.o Bfs.o Driver.o Vehicle.o LuxuryVehicle.o StandardVehicle.o MainFlow.o Passenger.o Clock.o Taxi.o TaxiCenter.o Trip.o Menu.o StringParser.o Socket.o Tcp.o Serializer.o TripThread.o ClientThread.o ThreadPool.o Task.o -lboost_serialization -lpthread
+	 g++ -o client.out Client.o VehicleFactory.o Point.o Vertex.o Graph.o Grid.o Bfs.o Driver.o Vehicle.o LuxuryVehicle.o StandardVehicle.o MainFlow.o Passenger.o Clock.o Taxi.o TaxiCenter.o Trip.o Menu.o ErrorHandler.o StringParser.o Socket.o Tcp.o Serializer.o TripThread.o ClientThread.o ThreadPool.o Task.o -lboost_serialization -lpthread
 
 Server.o: Server.cpp
 	g++ -c Server.cpp
@@ -33,7 +33,7 @@ MainFlow.o: src/control/MainFlow.cpp src/control/MainFlow.h
 	g++ -c -std=c++0x src/control/MainFlow.cpp
 
 Point.o: src/graphs/Point.cpp src/graphs/Point.h
-	g++ -c -std=c++0x ssrc/graphs/Point.cpp
+	g++ -c -std=c++0x src/graphs/Point.cpp
 
 VehicleFactory.o: src/taxi/VehicleFactory.cpp src/taxi/VehicleFactory.h
 	g++ -c -std=c++0x src/taxi/VehicleFactory.cpp
@@ -89,7 +89,7 @@ Serializer.o: src/serializers/Serializer.cpp src/serializers/Serializer.h
 Socket.o: src/sockets/Socket.h src/sockets/Socket.cpp
 	g++ -c src/sockets/Socket.cpp
 
-Tcp.o: src/sockets/Tcp.h sockets/Tcp.cpp src/sockets/Socket.h src/sockets/Socket.cpp
+Tcp.o: src/sockets/Tcp.h src/sockets/Tcp.cpp
 	g++ -c src/sockets/Tcp.cpp
 
 clean:

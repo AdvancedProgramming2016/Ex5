@@ -37,6 +37,7 @@ MainFlow::~MainFlow() {
 
     //BOOST_LOG_TRIVIAL(info) << "Deleting all the open sockets.";
     delete this->socket;
+    delete this->threadPool;
 
 }
 
