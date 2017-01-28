@@ -1,6 +1,8 @@
 
-#include <boost/log/trivial.hpp>
+//#include <boost/log/trivial.hpp>
 #include <sstream>
+#include <limits>
+#include <algorithm>
 #include "ErrorHandler.h"
 
 bool ErrorHandler::validateDriver(std::string *input) {
