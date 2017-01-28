@@ -3,6 +3,8 @@
 #define EX4_ERRORHANDLER_H
 
 #include "../algorithms/Bfs.h"
+#include "../taxi/Vehicle.h"
+#include "../taxi/Trip.h"
 
 /**
  * The class handles error in the program.
@@ -52,7 +54,15 @@ public:
      */
     int checkIntValidity(bool canBeZero);
 
+    /*
+     * Checks if the car id exists.
+     */
+    bool isUniqueVehicle(int id, std::vector<Vehicle *> &vehicleVec);
 
+    /*
+     * Checks if the trip exists.
+     */
+    bool isUniqueTrip(int id, std::vector<Trip *> &objVec);
 };
 
 

@@ -97,7 +97,8 @@ int Menu::runMenu() {
             }
                 // Create trip
             case 2: {
-                Trip *tempTrip = this->stringParser.parseTripInput();
+                Trip *tempTrip = this->stringParser.parseTripInput(
+                        this->getMainFlow()->getTaxiCenter()->getTrips());
                 if (tempTrip == 0) {
                     std::cout << "-1" << std::endl;
                     continue;
@@ -108,7 +109,8 @@ int Menu::runMenu() {
                 // Create vehicle
             case 3: {
                 Vehicle *tempVehicle;
-                tempVehicle = this->stringParser.parseVehicleInput();
+                tempVehicle = this->stringParser.parseVehicleInput(
+                        this->getMainFlow()->getTaxiCenter()->getVehicles());
                 if (tempVehicle == 0) {
                     std::cout << "-1" << std::endl;
                     continue;

@@ -30,6 +30,7 @@ public:
      * Receives the user input for the
      */
     virtual Vehicle *parseVehicleInput() = 0;
+    
 };
 
 #endif //EX2_CHECK_BASEPARSER_H

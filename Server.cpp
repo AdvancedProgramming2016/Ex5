@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
     //boost::log::trivial::severity >= boost::log::trivial::warning);
     //Create the socket.
     Socket *socket = new Tcp(true, atoi(argv[1]));
-    Menu   menu(socket);
+    Menu menu(socket);
 
     //Initializes and runs the menu.
     menu.initializeGame();

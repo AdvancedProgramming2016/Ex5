@@ -46,7 +46,6 @@ Driver *StringParser::parseDriverInput() {
 }
 
 
-
 Grid *StringParser::parseGridInput() {
 
     int width = 0;
@@ -80,7 +79,8 @@ Grid *StringParser::parseGridInput() {
         for (int i = 0; i < numOfObstacles; ++i) {
 
             std::cin >> userInput;
-            if (this->errorHandler.splitByComma(inputArr, numOfParams, userInput)) {
+            if (this->errorHandler.splitByComma(inputArr, numOfParams,
+                                                userInput)) {
                 return 0;
             }
 
@@ -101,7 +101,7 @@ Grid *StringParser::parseGridInput() {
 
 }
 
-Trip *StringParser::parseTripInput() {
+Trip *StringParser::parseTripInput(std::vector<Trip *> &tripVec) {
 
     int numOfParams = 8;
     int id = 0;
@@ -124,7 +124,8 @@ Trip *StringParser::parseTripInput() {
         }
 
         if (this->errorHandler.validateInputSize(inputArr, numOfParams) ||
-            this->errorHandler.validateBasicInput(inputArr, numOfParams)) {
+            this->errorHandler.validateBasicInput(inputArr, numOfParams) ||
+            !this->errorHandler.isUniqueTrip(atoi(inputArr[id].c_str()), tripVec)) {
             return 0;
         }
 
@@ -147,8 +148,7 @@ Trip *StringParser::parseTripInput() {
 }
 
 
-
-Vehicle *StringParser::parseVehicleInput() {
+Vehicle *StringParser::parseVehicleInput(std::vector<Vehicle *> &vehicleVec) {
 
     int numOfInputs = 4;
     int id = 0;
@@ -167,7 +167,9 @@ Vehicle *StringParser::parseVehicleInput() {
         }
 
         if (this->errorHandler.validateInputSize(inputArr, numOfInputs) ||
-            this->errorHandler.validateVehicleInput(inputArr, numOfInputs)) {
+            this->errorHandler.validateVehicleInput(inputArr, numOfInputs) ||
+            !this->errorHandler.isUniqueVehicle(
+                    atoi(inputArr[id].c_str()), vehicleVec)) {
             return 0;
         }
 

@@ -4,6 +4,7 @@
 #include <limits>
 #include <algorithm>
 #include "ErrorHandler.h"
+#include "../taxi/Trip.h"
 
 bool ErrorHandler::validateDriver(std::string *input) {
 
@@ -35,6 +36,28 @@ bool ErrorHandler::validateDriver(std::string *input) {
 
     return true;
 
+}
+
+bool ErrorHandler::isUniqueTrip(int id, std::vector<Trip *> &tripVec) {
+
+    int i = 0;
+    for (i = 0; i < tripVec.size(); i++) {
+        if(tripVec[i]->getRideId() == id) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool ErrorHandler::isUniqueVehicle(int id, std::vector<Vehicle *> &vehicleVec) {
+
+    int i = 0;
+    for (i = 0; i < vehicleVec.size(); i++) {
+        if(vehicleVec[i]->getVehicleId() == id) {
+            return false;
+        }
+    }
+    return true;
 }
 
 bool ErrorHandler::isNumber(std::string input) {
@@ -196,3 +219,4 @@ int ErrorHandler::splitByComma(std::string *inputArr, int size,
     return 0;
 
 }
+

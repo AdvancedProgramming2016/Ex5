@@ -35,12 +35,12 @@ public:
     /*
      * Parses the trip input from the console.
      */
-    virtual Trip *parseTripInput();
+    virtual Trip *parseTripInput(std::vector<Trip *> &tripVec);
 
     /*
      * Parses the vehicle input from the console.
      */
-    virtual Vehicle *parseVehicleInput();
+    virtual Vehicle *parseVehicleInput(std::vector<Vehicle *> &vehicleVec);
 
     /*
      * Parses the driver input from the console.
