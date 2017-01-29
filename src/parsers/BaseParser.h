@@ -24,12 +24,12 @@ public:
     /*
      * Receives the user input for the trip.
      */
-    virtual Trip *parseTripInput() = 0;
+    virtual Trip *parseTripInput(std::vector<Trip *> &tripVec) = 0;
 
     /*
      * Receives the user input for the
      */
-    virtual Vehicle *parseVehicleInput() = 0;
+    virtual Vehicle *parseVehicleInput(std::vector<Vehicle *> &vehicleVec) = 0;
     
 };
 

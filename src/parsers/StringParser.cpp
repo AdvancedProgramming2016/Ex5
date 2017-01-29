@@ -76,11 +76,17 @@ Grid *StringParser::parseGridInput() {
         std::string inputArr[numOfParams];
         std::string userInput;
 
+        // Gets obstacles location
         for (int i = 0; i < numOfObstacles; ++i) {
 
             std::cin >> userInput;
             if (this->errorHandler.splitByComma(inputArr, numOfParams,
                                                 userInput)) {
+                return 0;
+            }
+
+            if (atoi(inputArr[x].c_str()) >= height ||
+                atoi(inputArr[y].c_str()) >= width) {
                 return 0;
             }
 
@@ -125,7 +131,8 @@ Trip *StringParser::parseTripInput(std::vector<Trip *> &tripVec) {
 
         if (this->errorHandler.validateInputSize(inputArr, numOfParams) ||
             this->errorHandler.validateBasicInput(inputArr, numOfParams) ||
-            !this->errorHandler.isUniqueTrip(atoi(inputArr[id].c_str()), tripVec)) {
+            !this->errorHandler.isUniqueTrip(atoi(inputArr[id].c_str()),
+                                             tripVec)) {
             return 0;
         }
 
@@ -133,10 +140,6 @@ Trip *StringParser::parseTripInput(std::vector<Trip *> &tripVec) {
                      atoi(inputArr[startY].c_str()));
         Point ePoint(atoi(inputArr[endX].c_str()),
                      atoi(inputArr[endY].c_str()));
-
-        if (sPoint == ePoint) {
-            return 0;
-        }
 
         return new Trip(atoi(inputArr[id].c_str()), sPoint, ePoint,
                         atoi(inputArr[numOfPassengers].c_str()),

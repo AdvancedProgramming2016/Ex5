@@ -103,10 +103,13 @@ int Menu::runMenu() {
                     std::cout << "-1" << std::endl;
                     continue;
                 }
+                if (tempTrip->getStartPoint() == tempTrip->getEndPoint()) {
+                    continue;
+                }
                 this->getMainFlow()->createTrip(tempTrip);
                 break;
             }
-                // Create vehicle
+            // Create vehicle
             case 3: {
                 Vehicle *tempVehicle;
                 tempVehicle = this->stringParser.parseVehicleInput(
