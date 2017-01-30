@@ -9,12 +9,12 @@
 
 Driver *StringParser::parseDriverInput() {
 
-    int numOfParams = 5;
-    int id = 0;
-    int age = 1;
-    int status = 2;
-    int experience = 3;
-    int vehicleId = 4;
+    int  numOfParams  = 5;
+    int  id           = 0;
+    int  age          = 1;
+    int  status       = 2;
+    int  experience   = 3;
+    int  vehicleId    = 4;
     bool isValidInput = false;
 
     std::string inputArr[numOfParams];
@@ -48,12 +48,12 @@ Driver *StringParser::parseDriverInput() {
 
 Grid *StringParser::parseGridInput() {
 
-    int width = 0;
-    int height = 0;
+    int width          = 0;
+    int height         = 0;
     int numOfObstacles = 0;
-    int numOfParams = 2;
-    int x = 0;
-    int y = 1;
+    int numOfParams    = 2;
+    int x              = 0;
+    int y              = 1;
 
     try {
 
@@ -73,8 +73,8 @@ Grid *StringParser::parseGridInput() {
         }
 
         std::vector<Point> obstacles;
-        std::string inputArr[numOfParams];
-        std::string userInput;
+        std::string        inputArr[numOfParams];
+        std::string        userInput;
 
         // Gets obstacles location
         for (int i = 0; i < numOfObstacles; ++i) {
@@ -109,15 +109,15 @@ Grid *StringParser::parseGridInput() {
 
 Trip *StringParser::parseTripInput(std::vector<Trip *> &tripVec) {
 
-    int numOfParams = 8;
-    int id = 0;
-    int startX = 1;
-    int startY = 2;
-    int endX = 3;
-    int endY = 4;
-    int numOfPassengers = 5;
-    int tariff = 6;
-    int time = 7;
+    int         numOfParams     = 8;
+    int         id              = 0;
+    int         startX          = 1;
+    int         startY          = 2;
+    int         endX            = 3;
+    int         endY            = 4;
+    int         numOfPassengers = 5;
+    int         tariff          = 6;
+    int         time            = 7;
     std::string userInput;
     std::string inputArr[numOfParams];
 
@@ -141,6 +141,11 @@ Trip *StringParser::parseTripInput(std::vector<Trip *> &tripVec) {
         Point ePoint(atoi(inputArr[endX].c_str()),
                      atoi(inputArr[endY].c_str()));
 
+        if (atoi(inputArr[numOfPassengers].c_str()) < 1 ||
+            atoi(inputArr[time].c_str()) < 1) {
+            return 0;
+        }
+
         return new Trip(atoi(inputArr[id].c_str()), sPoint, ePoint,
                         atoi(inputArr[numOfPassengers].c_str()),
                         atof(inputArr[tariff].c_str()),
@@ -153,11 +158,11 @@ Trip *StringParser::parseTripInput(std::vector<Trip *> &tripVec) {
 
 Vehicle *StringParser::parseVehicleInput(std::vector<Vehicle *> &vehicleVec) {
 
-    int numOfInputs = 4;
-    int id = 0;
-    int taxiType = 1;
-    int manufacturer = 2;
-    int color = 3;
+    int         numOfInputs  = 4;
+    int         id           = 0;
+    int         taxiType     = 1;
+    int         manufacturer = 2;
+    int         color        = 3;
     std::string inputArr[numOfInputs];
     std::string userInput;
 
@@ -188,7 +193,7 @@ Vehicle *StringParser::parseVehicleInput(std::vector<Vehicle *> &vehicleVec) {
 unsigned int
 StringParser::parseDriverLocation(std::vector<Driver *> &driverVec) {
 
-    int driverId, i, driverVecSize;
+    int  driverId, i, driverVecSize;
     bool isDriverInVec = false;
 
     try {
@@ -200,7 +205,7 @@ StringParser::parseDriverLocation(std::vector<Driver *> &driverVec) {
             return -1;
         }
         driverVecSize = driverVec.size();
-        for (i = 0; i < driverVecSize; i++) {
+        for (i        = 0; i < driverVecSize; i++) {
             if (driverVec[i]->getDriverId() == driverId) {
                 isDriverInVec = true;
             }
