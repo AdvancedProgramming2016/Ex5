@@ -117,7 +117,7 @@ Vehicle *MainFlow::getDriverVehicle(unsigned int vehicleId) {
     }
 }
 
-void MainFlow::selectDrivers(int numOfDrivers) {
+void MainFlow::selectDrivers(int numOfDrivers, int guiDescriptor) {
 
     // Receive driver objects from client
     for (unsigned int i = 0; i < numOfDrivers; i++) {
@@ -125,6 +125,8 @@ void MainFlow::selectDrivers(int numOfDrivers) {
         pthread_t currThread;
 
         ClientThread *clientThread = new ClientThread(this, this->numOfDrivers);
+        this->getSocket()->sendData(boost::lexical_cast<std::string>(this->numOfDrivers), guiDescriptor);
+        
         this->numOfDrivers += 1;
 
         // Init thread for driver
@@ -137,8 +139,6 @@ void MainFlow::selectDrivers(int numOfDrivers) {
 
         // Add client ID to queue
         //this->addClientId(i);
-
-
 
         //BOOST_LOG_TRIVIAL(info) << "New thread created with thread id: "
         //                       << clientThread->getThreadId();

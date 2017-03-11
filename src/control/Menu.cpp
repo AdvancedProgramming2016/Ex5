@@ -122,7 +122,7 @@ int Menu::runMenu() {
                     continue;
                 }
 
-                this->getMainFlow()->selectDrivers(numOfDrivers);
+                this->getMainFlow()->selectDrivers(numOfDrivers, this->GUIDescriptor);
                 break;
             }
                 // Create trip
