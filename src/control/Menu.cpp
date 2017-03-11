@@ -31,40 +31,68 @@ int Menu::initializeGame() {
             std::cout << "-1" << std::endl;
         }
     }
+
     //Create Grid with obstacles.
     this->getMainFlow()->createMap(grid);
     this->getMainFlow()->createTaxiCenter(&location);
+    this->GUIDescriptor = this->initializeGUI(grid->getWidth(),
+                                              grid->getLength());
 }
 
 int Menu::validateNumOfDrivers() {
 
-    int numOfDrivers = 0;
+    int *numOfDrivers;
+    char buffer[1024];
 
-    // Receive from user num of drivers to create
-    std::cin >> numOfDrivers;
+    // Wait for gui to send num of drivers
+    this->getMainFlow()->getSocket()->receiveData(buffer, 1024,
+                                                  this->GUIDescriptor);
 
-    if (numOfDrivers < 0 || std::cin.fail()) {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    this->getMainFlow()->getSerializer().deserialize(buffer, sizeof(buffer),
+                                                     numOfDrivers);
+
+    if (numOfDrivers < 0) {
         return -1;
     }
-    return numOfDrivers;
+
+    return *numOfDrivers;
 
 }
 
 int Menu::validateUserOption() {
 
-    int userOption = 0;
+    int *userOption;
+    char buffer[1024];
 
-    std::cin >> userOption;
+    // Wait for gui to send next step
+    this->getMainFlow()->getSocket()->receiveData(buffer, 1024,
+                                                  this->GUIDescriptor);
 
-    if (userOption <= 0 || userOption == 5 || userOption == 6 ||
-        userOption == 8 || userOption > 9 || std::cin.fail()) {
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    this->getMainFlow()->getSerializer().deserialize(buffer, sizeof(buffer),
+                                                     userOption);
+
+    if (*userOption <= 0 || *userOption == 5 || *userOption == 6 ||
+        *userOption == 8 || *userOption > 9) {
         return -1;
     }
-    return userOption;
+
+    return *userOption;
+}
+
+int Menu::initializeGUI(int gridWidth, int gridLength) {
+
+    std::string gridSize = boost::lexical_cast<std::string>(gridWidth)
+                           + ' ' + boost::lexical_cast<std::string>(gridLength);
+
+    Socket *skt = this->getMainFlow()->getSocket();
+
+    // Wait for the GUI to connect to the server.
+    int guiDescriptor = skt->callAccept();
+
+    // Send GUIClient the grid size.
+    skt->sendData(gridSize, guiDescriptor);
+
+    return guiDescriptor;
 }
 
 int Menu::runMenu() {
@@ -76,7 +104,8 @@ int Menu::runMenu() {
         userOption = this->validateUserOption();
 
         if (userOption == -1) {
-            std::cout << "-1" << std::endl;
+            this->getMainFlow()->getSocket()->sendData("Error",
+                                                       this->GUIDescriptor);
             continue;
         }
 
@@ -88,7 +117,8 @@ int Menu::runMenu() {
                 numOfDrivers = this->validateNumOfDrivers();
 
                 if (numOfDrivers == -1) {
-                    std::cout << "-1" << std::endl;
+                    this->getMainFlow()->getSocket()->sendData("Error",
+                                                               this->GUIDescriptor);
                     continue;
                 }
 
@@ -98,9 +128,12 @@ int Menu::runMenu() {
                 // Create trip
             case 2: {
                 Trip *tempTrip = this->stringParser.parseTripInput(
-                        this->getMainFlow()->getTaxiCenter()->getTrips());
+                        this->getMainFlow()->getTaxiCenter()->getTrips(),
+                        this->getMainFlow()->getSocket(), this->GUIDescriptor);
+
                 if (tempTrip == 0) {
-                    std::cout << "-1" << std::endl;
+                    this->getMainFlow()->getSocket()->sendData("Error",
+                                                               this->GUIDescriptor);
                     continue;
                 }
                 if (tempTrip->getStartPoint() == tempTrip->getEndPoint()) {
@@ -109,13 +142,16 @@ int Menu::runMenu() {
                 this->getMainFlow()->createTrip(tempTrip);
                 break;
             }
-            // Create vehicle
+                // Create vehicle
             case 3: {
                 Vehicle *tempVehicle;
                 tempVehicle = this->stringParser.parseVehicleInput(
-                        this->getMainFlow()->getTaxiCenter()->getVehicles());
+                        this->getMainFlow()->getTaxiCenter()->getVehicles(),
+                        this->getMainFlow()->getSocket(), this->GUIDescriptor);
+
                 if (tempVehicle == 0) {
-                    std::cout << "-1" << std::endl;
+                    this->getMainFlow()->getSocket()->sendData("Error",
+                                                               this->GUIDescriptor);
                     continue;
                 }
                 this->getMainFlow()->createVehicle(tempVehicle);
@@ -127,11 +163,15 @@ int Menu::runMenu() {
 
                 unsigned int driverLocation;
                 driverLocation = this->stringParser.parseDriverLocation(
-                        this->getMainFlow()->getTaxiCenter()->getDrivers());
+                        this->getMainFlow()->getTaxiCenter()->getDrivers(),
+                        this->getMainFlow()->getSocket(), this->GUIDescriptor);
+
                 if (driverLocation == -1) {
-                    std::cout << "-1" << std::endl;
+                    this->getMainFlow()->getSocket()->sendData("Error",
+                                                               this->GUIDescriptor);
                     continue;
                 }
+
                 this->getMainFlow()->getTaxiCenter()->requestDriverLocation(
                         driverLocation);
                 break;
@@ -152,6 +192,11 @@ int Menu::runMenu() {
                 for (int i = 0; i < clientThreadVec.size(); i++) {
                     pthread_join(clientThreadVec.at(i)->getThread(), NULL);
                 }
+
+                // Signal the GUI to exit.
+                this->getMainFlow()->getSocket()->sendData("exit",
+                                                           this->GUIDescriptor);
+
                 this->getMainFlow()->exitSystem();
             }
 
@@ -163,11 +208,30 @@ int Menu::runMenu() {
                 this->wakeUpThreads(9);
                 this->getMainFlow()->clockSleep();
                 this->mainFlow->getTaxiCenter()->getClock()->increaseTime();
+                std::vector<Taxi *> taxiVec = this->getMainFlow()->getTaxiCenter()->getTaxis();
+                int numOfTaxis = taxiVec.size();
+                std::string taxiLocations = "";
+
+                // TODO: find why the casting doesn't work
+                // Create string with all the locations of the taxis.
+                for (int i = 0; i < numOfTaxis; i++) {
+
+                    taxiLocations + boost::lexical_cast<std::string>(
+                            const_cast<Point>(taxiVec[i]->getCurrentPosition()).getXCoordinate()) +
+                    ',' +
+                    boost::lexical_cast<std::string>(
+                            const_cast<Point>(taxiVec[i]->getCurrentPosition()).getYCoordinate()) +
+                    ' ';
+                }
+
+                // Send the locations of the taxis to the GUI.
+                this->getMainFlow()->getSocket()->sendData(taxiLocations,
+                                                           this->GUIDescriptor);
+
                 break;
         }
     }
 }
-
 
 void Menu::wakeUpThreads(int operationNumber) {
     std::vector<ClientThread *> clientThreadVec = this->getMainFlow()->getClientThreadVector();

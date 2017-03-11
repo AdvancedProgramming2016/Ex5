@@ -122,7 +122,6 @@ void MainFlow::selectDrivers(int numOfDrivers) {
     // Receive driver objects from client
     for (unsigned int i = 0; i < numOfDrivers; i++) {
 
-
         pthread_t currThread;
 
         ClientThread *clientThread = new ClientThread(this, this->numOfDrivers);

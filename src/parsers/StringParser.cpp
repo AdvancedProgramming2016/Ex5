@@ -9,12 +9,12 @@
 
 Driver *StringParser::parseDriverInput() {
 
-    int  numOfParams  = 5;
-    int  id           = 0;
-    int  age          = 1;
-    int  status       = 2;
-    int  experience   = 3;
-    int  vehicleId    = 4;
+    int numOfParams = 5;
+    int id = 0;
+    int age = 1;
+    int status = 2;
+    int experience = 3;
+    int vehicleId = 4;
     bool isValidInput = false;
 
     std::string inputArr[numOfParams];
@@ -48,12 +48,12 @@ Driver *StringParser::parseDriverInput() {
 
 Grid *StringParser::parseGridInput() {
 
-    int width          = 0;
-    int height         = 0;
+    int width = 0;
+    int height = 0;
     int numOfObstacles = 0;
-    int numOfParams    = 2;
-    int x              = 0;
-    int y              = 1;
+    int numOfParams = 2;
+    int x = 0;
+    int y = 1;
 
     try {
 
@@ -73,8 +73,8 @@ Grid *StringParser::parseGridInput() {
         }
 
         std::vector<Point> obstacles;
-        std::string        inputArr[numOfParams];
-        std::string        userInput;
+        std::string inputArr[numOfParams];
+        std::string userInput;
 
         // Gets obstacles location
         for (int i = 0; i < numOfObstacles; ++i) {
@@ -107,25 +107,30 @@ Grid *StringParser::parseGridInput() {
 
 }
 
-Trip *StringParser::parseTripInput(std::vector<Trip *> &tripVec) {
+Trip *StringParser::parseTripInput(std::vector<Trip *> &tripVec, Socket *skt,
+                                   int guiDescriptor) {
 
-    int         numOfParams     = 8;
-    int         id              = 0;
-    int         startX          = 1;
-    int         startY          = 2;
-    int         endX            = 3;
-    int         endY            = 4;
-    int         numOfPassengers = 5;
-    int         tariff          = 6;
-    int         time            = 7;
-    std::string userInput;
+    int numOfParams = 8;
+    int id = 0;
+    int startX = 1;
+    int startY = 2;
+    int endX = 3;
+    int endY = 4;
+    int numOfPassengers = 5;
+    int tariff = 6;
+    int time = 7;
+    std::string *userInput;
     std::string inputArr[numOfParams];
+    char buffer[1024];
 
     try {
 
-        std::cin >> userInput;
+        // Receive input from GUI.
+        skt->receiveData(buffer, 1024, guiDescriptor);
+        this->serializer.deserialize(buffer, 1024, userInput);
 
-        if (this->errorHandler.splitByComma(inputArr, numOfParams, userInput)) {
+        if (this->errorHandler.splitByComma(inputArr, numOfParams,
+                                            *userInput)) {
             return 0;
         }
 
@@ -156,21 +161,29 @@ Trip *StringParser::parseTripInput(std::vector<Trip *> &tripVec) {
 }
 
 
-Vehicle *StringParser::parseVehicleInput(std::vector<Vehicle *> &vehicleVec) {
+Vehicle *
+StringParser::parseVehicleInput(std::vector<Vehicle *> &vehicleVec, Socket *skt,
+                                int guiDescriptor) {
 
-    int         numOfInputs  = 4;
-    int         id           = 0;
-    int         taxiType     = 1;
-    int         manufacturer = 2;
-    int         color        = 3;
+    int numOfInputs = 4;
+    int id = 0;
+    int taxiType = 1;
+    int manufacturer = 2;
+    int color = 3;
     std::string inputArr[numOfInputs];
-    std::string userInput;
+    std::string *userInput;
+    char buffer[1024];
 
     try {
-        std::cin >> userInput;
+
+        // Receive input from GUI.
+        skt->receiveData(buffer, 1024, guiDescriptor);
+        this->serializer.deserialize(buffer, 1024, userInput);
+
 
         // Splits the user input by commas and returns array of inputs
-        if (this->errorHandler.splitByComma(inputArr, numOfInputs, userInput)) {
+        if (this->errorHandler.splitByComma(inputArr, numOfInputs,
+                                            *userInput)) {
             return 0;
         }
 
@@ -191,27 +204,31 @@ Vehicle *StringParser::parseVehicleInput(std::vector<Vehicle *> &vehicleVec) {
 }
 
 unsigned int
-StringParser::parseDriverLocation(std::vector<Driver *> &driverVec) {
+StringParser::parseDriverLocation(std::vector<Driver *> &driverVec, Socket *skt,
+                                  int guiDescriptor) {
 
-    int  driverId, i, driverVecSize;
+    int i, driverVecSize;
+    int *driverId;
     bool isDriverInVec = false;
+    char buffer[1024];
 
     try {
 
-        std::cin >> driverId;
-        if (std::cin.fail() || driverId < 0) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        skt->receiveData(buffer, 1024, guiDescriptor);
+        this->serializer.deserialize(buffer, 1024, driverId);
+
+        if (driverId < 0) {
             return -1;
         }
+
         driverVecSize = driverVec.size();
-        for (i        = 0; i < driverVecSize; i++) {
-            if (driverVec[i]->getDriverId() == driverId) {
+        for (i = 0; i < driverVecSize; i++) {
+            if (driverVec[i]->getDriverId() == *driverId) {
                 isDriverInVec = true;
             }
         }
         if (isDriverInVec) {
-            return driverId;
+            return *driverId;
         } else {
             return -1;
         }

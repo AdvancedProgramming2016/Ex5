@@ -28,6 +28,10 @@ public:
     Grid(unsigned int length, unsigned int width,
          std::vector<Point> &obstacles);
 
+    int getLength();
+
+    int getWidth();
+
     virtual Vertex *get_vertex(Point point);
 
     /*

@@ -84,6 +84,13 @@ bool Grid::isObstacle(const Point &point) {
     return false;
 }
 
+int Grid::getWidth() {
+    return this->m_width;
+}
+
+int Grid::getLength() {
+    return this->m_length;
+}
 
 Vertex *Grid::get_vertex(Point point) {
 

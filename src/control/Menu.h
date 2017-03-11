@@ -15,6 +15,7 @@ class Menu {
 private:
     StringParser stringParser;
     MainFlow     *mainFlow;
+    int GUIDescriptor;
 
 public:
 
@@ -29,6 +30,8 @@ public:
      * Destructor
      */
     virtual ~Menu();
+
+    int initializeGUI(int gridWidth, int gridLength);
 
     void wakeUpThreads(int operationNumber);
 
