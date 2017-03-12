@@ -7,11 +7,11 @@ std::ostream &operator<<(std::ostream &os, const Point &point) {
     return os << '(' << point.m_x << "," << point.m_y << ')';
 }
 
-int Point::getXCoordinate() {
+int Point::getXCoordinate()const {
     return this->m_x;
 }
 
-int Point::getYCoordinate() {
+int Point::getYCoordinate()const {
     return this->m_y;
 }
 

@@ -41,42 +41,40 @@ int Menu::initializeGame() {
 
 int Menu::validateNumOfDrivers() {
 
-    int *numOfDrivers;
+    int numOfDrivers;
     char buffer[1024];
 
     // Wait for gui to send num of drivers
     this->getMainFlow()->getSocket()->receiveData(buffer, 1024,
                                                   this->GUIDescriptor);
 
-    this->getMainFlow()->getSerializer().deserialize(buffer, sizeof(buffer),
-                                                     numOfDrivers);
+    numOfDrivers = stoi(buffer);
 
     if (numOfDrivers < 0) {
         return -1;
     }
 
-    return *numOfDrivers;
+    return numOfDrivers;
 
 }
 
 int Menu::validateUserOption() {
 
-    int *userOption;
+    int userOption;
     char buffer[1024];
 
     // Wait for gui to send next step
     this->getMainFlow()->getSocket()->receiveData(buffer, 1024,
                                                   this->GUIDescriptor);
 
-    this->getMainFlow()->getSerializer().deserialize(buffer, sizeof(buffer),
-                                                     userOption);
+    userOption = stoi(buffer);
 
-    if (*userOption <= 0 || *userOption == 5 || *userOption == 6 ||
-        *userOption == 8 || *userOption > 9) {
+    if (userOption <= 0 || userOption == 5 || userOption == 6 ||
+        userOption == 8 || userOption > 9) {
         return -1;
     }
 
-    return *userOption;
+    return userOption;
 }
 
 int Menu::initializeGUI(int gridWidth, int gridLength) {
@@ -122,7 +120,8 @@ int Menu::runMenu() {
                     continue;
                 }
 
-                this->getMainFlow()->selectDrivers(numOfDrivers, this->GUIDescriptor);
+                this->getMainFlow()->selectDrivers(numOfDrivers,
+                                                   this->GUIDescriptor);
                 break;
             }
                 // Create trip
@@ -208,19 +207,20 @@ int Menu::runMenu() {
                 this->wakeUpThreads(9);
                 this->getMainFlow()->clockSleep();
                 this->mainFlow->getTaxiCenter()->getClock()->increaseTime();
-                std::vector<Taxi *> taxiVec = this->getMainFlow()->getTaxiCenter()->getTaxis();
-                int numOfTaxis = taxiVec.size();
                 std::string taxiLocations = "";
 
                 // TODO: find why the casting doesn't work
                 // Create string with all the locations of the taxis.
-                for (int i = 0; i < numOfTaxis; i++) {
+                for (int i = 0; i <
+                                getMainFlow()->getTaxiCenter()->getTaxis().size(); i++) {
 
                     taxiLocations + boost::lexical_cast<std::string>(
-                            const_cast<Point>(taxiVec[i]->getCurrentPosition()).getXCoordinate()) +
-                    ',' +
-                    boost::lexical_cast<std::string>(
-                            const_cast<Point>(taxiVec[i]->getCurrentPosition()).getYCoordinate()) +
+                            getMainFlow()->getTaxiCenter()->getTaxis().at(
+                                    i)->getCurrentPosition().getXCoordinate())
+                    +
+                            ',' + boost::lexical_cast<std::string>(
+                            getMainFlow()->getTaxiCenter()->getTaxis().at(
+                                    i)->getCurrentPosition().getYCoordinate()) +
                     ' ';
                 }
 

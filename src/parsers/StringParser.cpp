@@ -119,7 +119,7 @@ Trip *StringParser::parseTripInput(std::vector<Trip *> &tripVec, Socket *skt,
     int numOfPassengers = 5;
     int tariff = 6;
     int time = 7;
-    std::string *userInput;
+    std::string userInput;
     std::string inputArr[numOfParams];
     char buffer[1024];
 
@@ -127,10 +127,10 @@ Trip *StringParser::parseTripInput(std::vector<Trip *> &tripVec, Socket *skt,
 
         // Receive input from GUI.
         skt->receiveData(buffer, 1024, guiDescriptor);
-        this->serializer.deserialize(buffer, 1024, userInput);
+        userInput = stoi(buffer);
 
         if (this->errorHandler.splitByComma(inputArr, numOfParams,
-                                            *userInput)) {
+                                            userInput)) {
             return 0;
         }
 
@@ -171,19 +171,18 @@ StringParser::parseVehicleInput(std::vector<Vehicle *> &vehicleVec, Socket *skt,
     int manufacturer = 2;
     int color = 3;
     std::string inputArr[numOfInputs];
-    std::string *userInput;
+    std::string userInput;
     char buffer[1024];
 
     try {
 
         // Receive input from GUI.
         skt->receiveData(buffer, 1024, guiDescriptor);
-        this->serializer.deserialize(buffer, 1024, userInput);
-
+        userInput = stoi(buffer);
 
         // Splits the user input by commas and returns array of inputs
         if (this->errorHandler.splitByComma(inputArr, numOfInputs,
-                                            *userInput)) {
+                                            userInput)) {
             return 0;
         }
 
@@ -208,14 +207,14 @@ StringParser::parseDriverLocation(std::vector<Driver *> &driverVec, Socket *skt,
                                   int guiDescriptor) {
 
     int i, driverVecSize;
-    int *driverId;
+    int driverId;
     bool isDriverInVec = false;
     char buffer[1024];
 
     try {
 
         skt->receiveData(buffer, 1024, guiDescriptor);
-        this->serializer.deserialize(buffer, 1024, driverId);
+        driverId = stoi(buffer);
 
         if (driverId < 0) {
             return -1;
@@ -223,12 +222,12 @@ StringParser::parseDriverLocation(std::vector<Driver *> &driverVec, Socket *skt,
 
         driverVecSize = driverVec.size();
         for (i = 0; i < driverVecSize; i++) {
-            if (driverVec[i]->getDriverId() == *driverId) {
+            if (driverVec[i]->getDriverId() == driverId) {
                 isDriverInVec = true;
             }
         }
         if (isDriverInVec) {
-            return *driverId;
+            return driverId;
         } else {
             return -1;
         }

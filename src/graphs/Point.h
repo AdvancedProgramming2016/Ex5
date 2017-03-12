@@ -52,9 +52,9 @@ public:
      */
     friend std::ostream &operator<<(std::ostream &os, const Point &point);
 
-    int getXCoordinate();
+    int getXCoordinate()const;
 
-    int getYCoordinate();
+    int getYCoordinate()const;
 
 };
 
