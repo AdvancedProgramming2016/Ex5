@@ -80,7 +80,8 @@ int Menu::validateUserOption() {
 int Menu::initializeGUI(int gridWidth, int gridLength) {
 
     std::string gridSize = boost::lexical_cast<std::string>(gridWidth)
-                           + ' ' + boost::lexical_cast<std::string>(gridLength);
+                           + ' ' + boost::lexical_cast<std::string>(gridLength)
+                           + "\n";
 
     Socket *skt = this->getMainFlow()->getSocket();
 
@@ -102,7 +103,7 @@ int Menu::runMenu() {
         userOption = this->validateUserOption();
 
         if (userOption == -1) {
-            this->getMainFlow()->getSocket()->sendData("Error",
+            this->getMainFlow()->getSocket()->sendData("error\n",
                                                        this->GUIDescriptor);
             continue;
         }
@@ -115,7 +116,7 @@ int Menu::runMenu() {
                 numOfDrivers = this->validateNumOfDrivers();
 
                 if (numOfDrivers == -1) {
-                    this->getMainFlow()->getSocket()->sendData("Error",
+                    this->getMainFlow()->getSocket()->sendData("error\n",
                                                                this->GUIDescriptor);
                     continue;
                 }
@@ -131,7 +132,7 @@ int Menu::runMenu() {
                         this->getMainFlow()->getSocket(), this->GUIDescriptor);
 
                 if (tempTrip == 0) {
-                    this->getMainFlow()->getSocket()->sendData("Error",
+                    this->getMainFlow()->getSocket()->sendData("error\n",
                                                                this->GUIDescriptor);
                     continue;
                 }
@@ -149,7 +150,7 @@ int Menu::runMenu() {
                         this->getMainFlow()->getSocket(), this->GUIDescriptor);
 
                 if (tempVehicle == 0) {
-                    this->getMainFlow()->getSocket()->sendData("Error",
+                    this->getMainFlow()->getSocket()->sendData("error\n",
                                                                this->GUIDescriptor);
                     continue;
                 }
@@ -166,7 +167,7 @@ int Menu::runMenu() {
                         this->getMainFlow()->getSocket(), this->GUIDescriptor);
 
                 if (driverLocation == -1) {
-                    this->getMainFlow()->getSocket()->sendData("Error",
+                    this->getMainFlow()->getSocket()->sendData("error\n",
                                                                this->GUIDescriptor);
                     continue;
                 }
@@ -193,7 +194,7 @@ int Menu::runMenu() {
                 }
 
                 // Signal the GUI to exit.
-                this->getMainFlow()->getSocket()->sendData("exit",
+                this->getMainFlow()->getSocket()->sendData("close\n",
                                                            this->GUIDescriptor);
 
                 this->getMainFlow()->exitSystem();
