@@ -79,6 +79,7 @@ int Menu::validateUserOption() {
 
 int Menu::initializeGUI(int gridWidth, int gridLength) {
 
+    // Prepare the grid size.
     std::string gridSize = boost::lexical_cast<std::string>(gridWidth)
                            + ' ' + boost::lexical_cast<std::string>(gridLength)
                            + "\n";
@@ -102,6 +103,7 @@ int Menu::runMenu() {
 
         userOption = this->validateUserOption();
 
+        // If user input is invalid.
         if (userOption == -1) {
             this->getMainFlow()->getSocket()->sendData("error\n",
                                                        this->GUIDescriptor);
@@ -115,6 +117,7 @@ int Menu::runMenu() {
                 int numOfDrivers = 0;
                 numOfDrivers = this->validateNumOfDrivers();
 
+                // If user input is invalid.
                 if (numOfDrivers == -1) {
                     this->getMainFlow()->getSocket()->sendData("error\n",
                                                                this->GUIDescriptor);
@@ -125,20 +128,24 @@ int Menu::runMenu() {
                                                    this->GUIDescriptor);
                 break;
             }
-                // Create trip
+
+            // Create trip
             case 2: {
                 Trip *tempTrip = this->stringParser.parseTripInput(
                         this->getMainFlow()->getTaxiCenter()->getTrips(),
                         this->getMainFlow()->getSocket(), this->GUIDescriptor);
 
+                // If user input is invalid.
                 if (tempTrip == 0) {
                     this->getMainFlow()->getSocket()->sendData("error\n",
                                                                this->GUIDescriptor);
                     continue;
                 }
+
                 if (tempTrip->getStartPoint() == tempTrip->getEndPoint()) {
                     continue;
                 }
+
                 this->getMainFlow()->createTrip(tempTrip);
                 break;
             }
@@ -149,6 +156,7 @@ int Menu::runMenu() {
                         this->getMainFlow()->getTaxiCenter()->getVehicles(),
                         this->getMainFlow()->getSocket(), this->GUIDescriptor);
 
+                // If user input is invalid.
                 if (tempVehicle == 0) {
                     this->getMainFlow()->getSocket()->sendData("error\n",
                                                                this->GUIDescriptor);
@@ -166,6 +174,7 @@ int Menu::runMenu() {
                         this->getMainFlow()->getTaxiCenter()->getDrivers(),
                         this->getMainFlow()->getSocket(), this->GUIDescriptor);
 
+                // If user input is invalid.
                 if (driverLocation == -1) {
                     this->getMainFlow()->getSocket()->sendData("error\n",
                                                                this->GUIDescriptor);
@@ -210,11 +219,11 @@ int Menu::runMenu() {
                 this->mainFlow->getTaxiCenter()->getClock()->increaseTime();
                 std::string taxiLocations = "";
 
-                // TODO: find why the casting doesn't work
                 // Create string with all the locations of the taxis.
                 for (int i = 0; i <
                                 getMainFlow()->getTaxiCenter()->getTaxis().size(); i++) {
 
+                    // Concat the locations of all the taxis
                     taxiLocations + boost::lexical_cast<std::string>(
                             getMainFlow()->getTaxiCenter()->getTaxis().at(
                                     i)->getCurrentPosition().getXCoordinate())

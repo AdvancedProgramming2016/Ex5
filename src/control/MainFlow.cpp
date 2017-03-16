@@ -14,7 +14,7 @@ MainFlow::MainFlow(Socket *socket, int operationNumber) : order(0),
     //BOOST_LOG_TRIVIAL(info) << "Opening main socket.";
     this->socket->initialize();
     this->operationNumber = &operationNumber;
-    this->threadIdQueue   = new queue<int>();
+    this->threadIdQueue = new queue<int>();
 
     pthread_mutex_init(&this->receiveDriverMutex, NULL);
     pthread_mutex_init(&this->sendCommandMutex, NULL);
@@ -67,7 +67,7 @@ void MainFlow::createVehicle(Vehicle *vehicle) {
 void MainFlow::createTrip(Trip *trip) {
 
     TripThread *tripThread = new TripThread(this, trip);
-    Task       *task;
+    Task *task;
 
 //    retVal = pthread_create(&pthread, NULL, &TripThread::callCalculatePath,
 //                            tripThread);
@@ -96,7 +96,7 @@ TaxiCenter *MainFlow::getTaxiCenter() const {
 void MainFlow::sendToSocketVehicle(unsigned int vehicleId,
                                    int descriptor) {
 
-    Vehicle     *vehicle = this->getDriverVehicle(vehicleId);
+    Vehicle *vehicle = this->getDriverVehicle(vehicleId);
     std::string serialVehicle;
     serialVehicle = this->serializer.serialize(vehicle);
 
@@ -125,7 +125,11 @@ void MainFlow::selectDrivers(int numOfDrivers, int guiDescriptor) {
         pthread_t currThread;
 
         ClientThread *clientThread = new ClientThread(this, this->numOfDrivers);
-        this->getSocket()->sendData(boost::lexical_cast<std::string>(this->numOfDrivers), guiDescriptor);
+
+        // Send the GUI driver ID.
+        this->getSocket()->sendData(
+                boost::lexical_cast<std::string>(this->numOfDrivers),
+                guiDescriptor);
 
         this->numOfDrivers += 1;
 
