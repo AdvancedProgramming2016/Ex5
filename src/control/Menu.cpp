@@ -23,7 +23,7 @@ MainFlow *Menu::getMainFlow() {
 int Menu::initializeGame() {
 
     Point location(0, 0);
-    Grid *grid = NULL;
+    Grid  *grid = NULL;
 
     while (grid == NULL) {
         grid = this->stringParser.parseGridInput();
@@ -41,7 +41,7 @@ int Menu::initializeGame() {
 
 int Menu::validateNumOfDrivers() {
 
-    int numOfDrivers;
+    int  numOfDrivers;
     char buffer[1024];
 
     // Wait for gui to send num of drivers
@@ -60,7 +60,7 @@ int Menu::validateNumOfDrivers() {
 
 int Menu::validateUserOption() {
 
-    int userOption;
+    int  userOption;
     char buffer[1024];
 
     // Wait for gui to send next step
@@ -219,14 +219,14 @@ int Menu::runMenu() {
                             getMainFlow()->getTaxiCenter()->getTaxis().at(
                                     i)->getCurrentPosition().getXCoordinate())
                     +
-                            ',' + boost::lexical_cast<std::string>(
+                    ',' + boost::lexical_cast<std::string>(
                             getMainFlow()->getTaxiCenter()->getTaxis().at(
                                     i)->getCurrentPosition().getYCoordinate()) +
                     ' ';
                 }
 
                 // Send the locations of the taxis to the GUI.
-                this->getMainFlow()->getSocket()->sendData(taxiLocations,
+                this->getMainFlow()->getSocket()->sendData(taxiLocations + "\n",
                                                            this->GUIDescriptor);
 
                 break;
@@ -236,8 +236,8 @@ int Menu::runMenu() {
 
 void Menu::wakeUpThreads(int operationNumber) {
     std::vector<ClientThread *> clientThreadVec = this->getMainFlow()->getClientThreadVector();
-    int numberOfThreads = clientThreadVec.size();
-    for (int i = 0; i < numberOfThreads; i++) {
+    int                         numberOfThreads = clientThreadVec.size();
+    for (int                    i               = 0; i < numberOfThreads; i++) {
         clientThreadVec.at(i)->setThreadCommand(operationNumber);
         //pthread_join(clientThreadVec.at(i)->getThread(), NULL);
     }

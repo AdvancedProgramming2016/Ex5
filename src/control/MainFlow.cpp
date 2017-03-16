@@ -125,7 +125,9 @@ void MainFlow::selectDrivers(int numOfDrivers, int guiDescriptor) {
         pthread_t currThread;
 
         ClientThread *clientThread = new ClientThread(this, this->numOfDrivers);
-        this->getSocket()->sendData(boost::lexical_cast<std::string>(this->numOfDrivers), guiDescriptor);
+        this->getSocket()->sendData(
+                boost::lexical_cast<std::string>(this->numOfDrivers) + "\n",
+                guiDescriptor);
 
         this->numOfDrivers += 1;
 

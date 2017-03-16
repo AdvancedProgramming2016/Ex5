@@ -127,7 +127,7 @@ Trip *StringParser::parseTripInput(std::vector<Trip *> &tripVec, Socket *skt,
 
         // Receive input from GUI.
         skt->receiveData(buffer, 1024, guiDescriptor);
-        userInput = stoi(buffer);
+        userInput = buffer;
 
         if (this->errorHandler.splitByComma(inputArr, numOfParams,
                                             userInput)) {
@@ -178,7 +178,7 @@ StringParser::parseVehicleInput(std::vector<Vehicle *> &vehicleVec, Socket *skt,
 
         // Receive input from GUI.
         skt->receiveData(buffer, 1024, guiDescriptor);
-        userInput = stoi(buffer);
+        userInput = buffer;
 
         // Splits the user input by commas and returns array of inputs
         if (this->errorHandler.splitByComma(inputArr, numOfInputs,
