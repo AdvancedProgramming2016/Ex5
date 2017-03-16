@@ -35,8 +35,7 @@ int Menu::initializeGame() {
     //Create Grid with obstacles.
     this->getMainFlow()->createMap(grid);
     this->getMainFlow()->createTaxiCenter(&location);
-    this->GUIDescriptor = this->initializeGUI(grid->getWidth(),
-                                              grid->getLength());
+    this->GUIDescriptor = this->initializeGUI(*grid);
 }
 
 int Menu::validateNumOfDrivers() {
@@ -77,11 +76,12 @@ int Menu::validateUserOption() {
     return userOption;
 }
 
-int Menu::initializeGUI(int gridWidth, int gridLength) {
+int Menu::initializeGUI(Grid &grid) {
 
     // Prepare the grid size.
-    std::string gridSize = boost::lexical_cast<std::string>(gridWidth)
-                           + ' ' + boost::lexical_cast<std::string>(gridLength)
+    std::string gridSize = boost::lexical_cast<std::string>(grid.getWidth())
+                           + ' ' +
+                           boost::lexical_cast<std::string>(grid.getLength())
                            + "\n";
 
     Socket *skt = this->getMainFlow()->getSocket();
@@ -91,6 +91,21 @@ int Menu::initializeGUI(int gridWidth, int gridLength) {
 
     // Send GUIClient the grid size.
     skt->sendData(gridSize, guiDescriptor);
+
+    // Prepare obstacles.
+    std::string obstacles;
+    int obstacleNum = grid.getObstacles().size();
+
+    for (int i = 0; i < obstacleNum; i++) {
+
+        obstacles += boost::lexical_cast<std::string>(
+                grid.getObstacles().at(i).getXCoordinate()) + ',' +
+                     boost::lexical_cast<std::string>(
+                             grid.getObstacles().at(i).getYCoordinate()) + ' ';
+    }
+
+    // Send obstacles location to GUI.
+    skt->sendData(obstacles, guiDescriptor);
 
     return guiDescriptor;
 }
@@ -129,7 +144,7 @@ int Menu::runMenu() {
                 break;
             }
 
-            // Create trip
+                // Create trip
             case 2: {
                 Trip *tempTrip = this->stringParser.parseTripInput(
                         this->getMainFlow()->getTaxiCenter()->getTrips(),
@@ -228,7 +243,7 @@ int Menu::runMenu() {
                             getMainFlow()->getTaxiCenter()->getTaxis().at(
                                     i)->getCurrentPosition().getXCoordinate())
                     +
-                            ',' + boost::lexical_cast<std::string>(
+                    ',' + boost::lexical_cast<std::string>(
                             getMainFlow()->getTaxiCenter()->getTaxis().at(
                                     i)->getCurrentPosition().getYCoordinate()) +
                     ' ';

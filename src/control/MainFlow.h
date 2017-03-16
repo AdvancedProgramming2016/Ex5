@@ -104,7 +104,7 @@ public:
     /*
      * Select drivers option from menu
      */
-    void selectDrivers(int numOfDrivers, int guiDescriptor);
+    void selectDrivers(int numOfNewDrivers, int guiDescriptor);
 
     /*
      * Send vehicle to socket.

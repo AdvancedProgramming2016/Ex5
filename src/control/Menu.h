@@ -31,7 +31,7 @@ public:
      */
     virtual ~Menu();
 
-    int initializeGUI(int gridWidth, int gridLength);
+    int initializeGUI(Grid &grid);
 
     void wakeUpThreads(int operationNumber);
 

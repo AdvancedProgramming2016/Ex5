@@ -127,7 +127,7 @@ Trip *StringParser::parseTripInput(std::vector<Trip *> &tripVec, Socket *skt,
 
         // Receive input from GUI.
         skt->receiveData(buffer, 1024, guiDescriptor);
-        userInput = stoi(buffer);
+        userInput = buffer;
 
         if (this->errorHandler.splitByComma(inputArr, numOfParams,
                                             userInput)) {
@@ -201,7 +201,7 @@ StringParser::parseVehicleInput(std::vector<Vehicle *> &vehicleVec, Socket *skt,
         return 0;
     }
 }
-`
+
 unsigned int
 StringParser::parseDriverLocation(std::vector<Driver *> &driverVec, Socket *skt,
                                   int guiDescriptor) {

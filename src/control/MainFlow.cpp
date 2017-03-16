@@ -117,10 +117,11 @@ Vehicle *MainFlow::getDriverVehicle(unsigned int vehicleId) {
     }
 }
 
-void MainFlow::selectDrivers(int numOfDrivers, int guiDescriptor) {
+void MainFlow::selectDrivers(int numOfNewDrivers, int guiDescriptor) {
 
     // Receive driver objects from client
-    for (unsigned int i = 0; i < numOfDrivers; i++) {
+    for (unsigned int i = this->numOfDrivers;
+         i < numOfNewDrivers + this->numOfDrivers; i++) {
 
         pthread_t currThread;
 
