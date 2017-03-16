@@ -7,7 +7,7 @@
 
 #include "../control/MainFlow.h"
 
-Driver *StringParser::parseDriverInput() {
+Driver *StringParser::parseDriverInput(std::string userInput) {
 
     int numOfParams = 5;
     int id = 0;
@@ -18,9 +18,9 @@ Driver *StringParser::parseDriverInput() {
     bool isValidInput = false;
 
     std::string inputArr[numOfParams];
-    std::string userInput;
+    //std::string userInput;
 
-    std::cin >> userInput;
+    //std::cin >> userInput;
 
     this->errorHandler.splitByComma(inputArr, numOfParams, userInput);
 

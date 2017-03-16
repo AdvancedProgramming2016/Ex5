@@ -58,13 +58,13 @@ int main(int argc, char *argv[]) {
     bool         exitCalled = false;
 
     //Validate driver input.
-    driver = stringParser.parseDriverInput();
+    driver = stringParser.parseDriverInput(argv[3]);
 
     //If the driver input is invalid, exit the program.
-    if (!driver) {
-
-        exit(1);
-    }
+//    if (!driver) {
+//
+//        exit(1);
+//    }
 
     //Connect to server.
     socket = new Tcp(0, argv[1], atoi(argv[2]));
