@@ -7,7 +7,7 @@
 
 #include "../control/MainFlow.h"
 
-Driver *StringParser::parseDriverInput() {
+Driver *StringParser::parseDriverInput(std::string userInput) {
 
     int numOfParams = 5;
     int id = 0;
@@ -18,9 +18,9 @@ Driver *StringParser::parseDriverInput() {
     bool isValidInput = false;
 
     std::string inputArr[numOfParams];
-    std::string userInput;
+    //std::string userInput;
 
-    std::cin >> userInput;
+    //std::cin >> userInput;
 
     this->errorHandler.splitByComma(inputArr, numOfParams, userInput);
 
@@ -179,7 +179,7 @@ StringParser::parseVehicleInput(std::vector<Vehicle *> &vehicleVec, Socket *skt,
 
         // Receive input from GUI.
         skt->receiveData(buffer, 1024, guiDescriptor);
-        userInput = stoi(buffer);
+        userInput = buffer;
 
         // Splits the user input by commas and returns array of inputs
         if (this->errorHandler.splitByComma(inputArr, numOfInputs,

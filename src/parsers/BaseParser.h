@@ -24,7 +24,7 @@ public:
     /*
      * Receives the user input for the driver.
      */
-    virtual Driver *parseDriverInput() = 0;
+    virtual Driver *parseDriverInput(std::string userInput) = 0;
 
     /*
      * Receives the user input for the trip.

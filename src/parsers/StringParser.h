@@ -34,7 +34,7 @@ public:
     /*
      * Parses the driver input from the console.
      */
-    virtual Driver *parseDriverInput();
+    virtual Driver *parseDriverInput(std::string userInput);
 
     /*
      * Parses the trip input from the console.
