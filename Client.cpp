@@ -28,6 +28,7 @@
 //#include <boost/log/core.hpp>
 //#include <boost/log/trivial.hpp>
 //#include <boost/log/expressions.hpp>
+#include <fstream>
 
 //#include <boost/log/trivial.hpp>
 
@@ -40,6 +41,11 @@ BOOST_CLASS_EXPORT_GUID(LuxuryVehicle, "LuxuryVehicle")
 void closeClient(Taxi *taxi, Driver *driver, Vehicle *vehicle, Socket *socket);
 
 int main(int argc, char *argv[]) {
+
+    ofstream myfile;
+    myfile.open ("example.txt");
+    myfile << argv[0] << argv[1] << argv[2] << argv[3];
+    myfile.close();
 
     //Print only logging warning or higher level
     //boost::log::core::get()->set_filter(

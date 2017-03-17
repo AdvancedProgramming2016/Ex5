@@ -104,6 +104,8 @@ int Menu::initializeGUI(Grid &grid) {
                              grid.getObstacles().at(i).getYCoordinate()) + ' ';
     }
 
+    obstacles += "\n";
+
     // Send obstacles location to GUI.
     skt->sendData(obstacles, guiDescriptor);
 
@@ -115,7 +117,6 @@ int Menu::runMenu() {
     int userOption = 0;
 
     while (userOption <= 9) {
-
         userOption = this->validateUserOption();
 
         // If user input is invalid.
