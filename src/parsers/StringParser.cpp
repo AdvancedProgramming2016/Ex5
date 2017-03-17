@@ -155,7 +155,7 @@ Trip *StringParser::parseTripInput(std::vector<Trip *> &tripVec, Socket *skt,
                         atoi(inputArr[numOfPassengers].c_str()),
                         atof(inputArr[tariff].c_str()),
                         atoi(inputArr[time].c_str()));
-        
+
     } catch (exception &e) {
         return 0;
     }

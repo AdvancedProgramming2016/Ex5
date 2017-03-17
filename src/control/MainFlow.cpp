@@ -132,7 +132,7 @@ void MainFlow::selectDrivers(int numOfNewDrivers, int guiDescriptor) {
                 boost::lexical_cast<std::string>(this->numOfDrivers),
                 guiDescriptor);
 
-        this->numOfDrivers += 1;
+        this->numOfDrivers++;
 
         // Init thread for driver
         pthread_create(&currThread, NULL,
@@ -214,7 +214,6 @@ void MainFlow::clockSleep() {
             i++;
         }
     }
-
 }
 
 int MainFlow::getOrder() const {
