@@ -131,7 +131,7 @@ void MainFlow::selectDrivers(int numOfNewDrivers, int guiDescriptor) {
 
         // Send the GUI driver ID.
         this->getSocket()->sendData(
-                boost::lexical_cast<std::string>(this->numOfDrivers),
+                boost::lexical_cast<std::string>(this->numOfDrivers) + "\n",
                 guiDescriptor);
 
         this->numOfDrivers++;

@@ -42,11 +42,6 @@ void closeClient(Taxi *taxi, Driver *driver, Vehicle *vehicle, Socket *socket);
 
 int main(int argc, char *argv[]) {
 
-    ofstream myfile;
-    myfile.open ("example.txt");
-    myfile << argv[0] << argv[1] << argv[2] << argv[3];
-    myfile.close();
-
     //Print only logging warning or higher level
     //boost::log::core::get()->set_filter(
     //boost::log::trivial::severity >= boost::log::trivial::warning);
@@ -65,6 +60,11 @@ int main(int argc, char *argv[]) {
 
     //Validate driver input.
     driver = stringParser.parseDriverInput(argv[3]);
+
+    const char *path="/home/redperov/file.txt";
+    std::ofstream file(path); //open in constructor
+    file << argv[1] << argv[2] << argv[3] << "driver id " << driver->getDriverId() << std::endl;
+    file.close();
 
     //If the driver input is invalid, exit the program.
 //    if (!driver) {
