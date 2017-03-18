@@ -66,8 +66,8 @@ void *ClientThread::listenToSocketForDriver() {
 
     while (true) {
 
-        if (this->getThreadCommand() == 9 &&
-            this->mainFlow->getOrder() == this->getThreadId()) {
+        if (this->getThreadCommand() == 9) { //&&
+           // this->mainFlow->getOrder() == this->getThreadId()) {
 
             pthread_mutex_lock(&this->getMainFlow()->getSendCommandMutex());
 
