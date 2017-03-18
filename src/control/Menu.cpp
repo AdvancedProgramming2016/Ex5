@@ -66,14 +66,23 @@ int Menu::validateUserOption() {
     this->getMainFlow()->getSocket()->receiveData(buffer, 1024,
                                                   this->GUIDescriptor);
 
-    userOption = stoi(buffer);
+    try {
 
-    if (userOption <= 0 || userOption == 5 || userOption == 6 ||
-        userOption == 8 || userOption > 9) {
+        userOption = stoi(buffer);
+
+        if (userOption <= 0 || userOption == 5 || userOption == 6 ||
+            userOption == 8 || userOption > 9 || strlen(buffer) > 1) {
+            return -1;
+        }
+
+        return userOption;
+
+    } catch (std::exception &e) {
+
         return -1;
+
     }
 
-    return userOption;
 }
 
 int Menu::initializeGUI(Grid &grid) {
