@@ -240,7 +240,7 @@ int Menu::runMenu() {
                                 getMainFlow()->getTaxiCenter()->getTaxis().size(); i++) {
 
                     // Concat the locations of all the taxis
-                    taxiLocations + boost::lexical_cast<std::string>(
+                    taxiLocations += boost::lexical_cast<std::string>(
                             getMainFlow()->getTaxiCenter()->getTaxis().at(
                                     i)->getCurrentPosition().getXCoordinate())
                     +
@@ -249,6 +249,8 @@ int Menu::runMenu() {
                                     i)->getCurrentPosition().getYCoordinate()) +
                     ' ';
                 }
+
+                taxiLocations += "\n";
 
                 // Send the locations of the taxis to the GUI.
                 this->getMainFlow()->getSocket()->sendData(taxiLocations,
