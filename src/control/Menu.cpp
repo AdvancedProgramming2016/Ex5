@@ -22,6 +22,13 @@ MainFlow *Menu::getMainFlow() {
 
 }
 
+template <typename T>
+int StringToNumber ( T str )
+{
+    int x = boost::lexical_cast<int>(str);
+    return x;
+}
+
 int Menu::initializeGame() {
 
     Point location(0, 0);
@@ -49,7 +56,7 @@ int Menu::validateNumOfDrivers() {
     this->getMainFlow()->getSocket()->receiveData(buffer, 1024,
                                                   this->GUIDescriptor);
 
-    numOfDrivers = stoi(buffer);
+    numOfDrivers = StringToNumber(buffer);
 
     if (numOfDrivers < 0) {
         return -1;
@@ -70,7 +77,7 @@ int Menu::validateUserOption() {
 
     try {
 
-        userOption = stoi(buffer);
+        userOption = StringToNumber(buffer);
 
         if (userOption <= 0 || userOption == 5 || userOption == 6 ||
             userOption == 8 || userOption > 9 || strlen(buffer) > 1) {
