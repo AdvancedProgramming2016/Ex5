@@ -16,6 +16,8 @@ private:
     StringParser stringParser;
     MainFlow     *mainFlow;
     int GUIDescriptor;
+    int gridHeight;
+    int gridWidth;
 
 public:
 

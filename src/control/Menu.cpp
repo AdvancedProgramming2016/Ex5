@@ -5,6 +5,8 @@
 Menu::Menu(Socket *socket) {
 
     this->mainFlow = new MainFlow(socket, 0);
+    this->gridHeight = 0;
+    this->gridWidth = 0;
 
 }
 
@@ -93,6 +95,9 @@ int Menu::initializeGUI(Grid &grid) {
                            boost::lexical_cast<std::string>(grid.getLength())
                            + "\n";
 
+    this->gridWidth = grid.getWidth();
+    this->gridHeight = grid.getLength();
+
     Socket *skt = this->getMainFlow()->getSocket();
 
     // Wait for the GUI to connect to the server.
@@ -158,7 +163,8 @@ int Menu::runMenu() {
             case 2: {
                 Trip *tempTrip = this->stringParser.parseTripInput(
                         this->getMainFlow()->getTaxiCenter()->getTrips(),
-                        this->getMainFlow()->getSocket(), this->GUIDescriptor);
+                        this->getMainFlow()->getSocket(), this->GUIDescriptor,
+                        this->gridWidth, this->gridHeight);
 
                 // If user input is invalid.
                 if (tempTrip == 0) {
@@ -253,11 +259,11 @@ int Menu::runMenu() {
                     taxiLocations += boost::lexical_cast<std::string>(
                             getMainFlow()->getTaxiCenter()->getTaxis().at(
                                     i)->getCurrentPosition().getXCoordinate())
-                    +
-                    ',' + boost::lexical_cast<std::string>(
+                                     +
+                                     ',' + boost::lexical_cast<std::string>(
                             getMainFlow()->getTaxiCenter()->getTaxis().at(
                                     i)->getCurrentPosition().getYCoordinate()) +
-                    ' ';
+                                     ' ';
                 }
 
                 taxiLocations += "\n";

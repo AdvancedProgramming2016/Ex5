@@ -40,7 +40,7 @@ public:
      * Parses the trip input from the console.
      */
     virtual Trip *parseTripInput(std::vector<Trip *> &tripVec, Socket *skt,
-                                 int guiDescriptor);
+                                 int guiDescriptor, int height, int width);
 
     /*
      * Parses the vehicle input from the console.

@@ -30,7 +30,7 @@ public:
      * Receives the user input for the trip.
      */
     virtual Trip *parseTripInput(std::vector<Trip *> &tripVec, Socket *skt,
-                                 int guiDescriptor) = 0;
+                                 int guiDescriptor, int height, int width) = 0;
 
     /*
      * Receives the user input for the

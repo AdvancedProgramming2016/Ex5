@@ -108,7 +108,7 @@ Grid *StringParser::parseGridInput() {
 }
 
 Trip *StringParser::parseTripInput(std::vector<Trip *> &tripVec, Socket *skt,
-                                   int guiDescriptor) {
+                                   int guiDescriptor, int height, int width) {
 
     int numOfParams = 8;
     int id = 0;
@@ -138,6 +138,13 @@ Trip *StringParser::parseTripInput(std::vector<Trip *> &tripVec, Socket *skt,
             this->errorHandler.validateBasicInput(inputArr, numOfParams) ||
             !this->errorHandler.isUniqueTrip(atoi(inputArr[id].c_str()),
                                              tripVec)) {
+            return 0;
+        }
+
+        if (atoi(inputArr[startY].c_str()) >= height ||
+            atoi(inputArr[startX].c_str()) >= width ||
+            atoi(inputArr[endY].c_str()) >= height ||
+            atoi(inputArr[endX].c_str()) >= width) {
             return 0;
         }
 
