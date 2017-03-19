@@ -210,6 +210,13 @@ StringParser::parseVehicleInput(std::vector<Vehicle *> &vehicleVec, Socket *skt,
     }
 }
 
+template <typename T>
+int StringToNumber ( T str )
+{
+    int x = boost::lexical_cast<int>(str);
+    return x;
+}
+
 unsigned int
 StringParser::parseDriverLocation(std::vector<Driver *> &driverVec, Socket *skt,
                                   int guiDescriptor) {
@@ -222,7 +229,7 @@ StringParser::parseDriverLocation(std::vector<Driver *> &driverVec, Socket *skt,
     try {
 
         skt->receiveData(buffer, 1024, guiDescriptor);
-        driverId = stoi(buffer);
+        driverId = StringToNumber(buffer);
 
         if (driverId < 0) {
             return -1;
