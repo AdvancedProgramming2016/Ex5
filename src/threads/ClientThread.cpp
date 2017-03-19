@@ -20,13 +20,13 @@ void *ClientThread::sendToListenToSocketForDriver(void *clientThread) {
 
 void *ClientThread::listenToSocketForDriver() {
 
-    while (true) {
-        if (this->mainFlow->getStartOrder() != this->getThreadId()) {
-            continue;
-        }
-        this->mainFlow->setStartOrder(this->mainFlow->getStartOrder() + 1);
-        break;
-    }
+//    while (true) {
+//        if (this->mainFlow->getStartOrder() != this->getThreadId()) {
+//            continue;
+//        }
+//        this->mainFlow->setStartOrder(this->mainFlow->getStartOrder() + 1);
+//        break;
+//    }
     pthread_mutex_lock(&this->getMainFlow()->getMutexReceiveDriver());
 
     char buffer[1024];
@@ -81,12 +81,12 @@ void *ClientThread::listenToSocketForDriver() {
                                               this->getDescriptor());
 
             this->threadCommand = 0;
-            this->mainFlow->setOrder(this->mainFlow->getOrder() + 1);
+            //this->mainFlow->setOrder(this->mainFlow->getOrder() + 1);
 
-            if (this->mainFlow->getClientThreadVector().size() ==
-                this->mainFlow->getOrder()) {
-                this->mainFlow->setOrder(0);
-            }
+//            if (this->mainFlow->getClientThreadVector().size() ==
+//                this->mainFlow->getOrder()) {
+//                this->mainFlow->setOrder(0);
+//            }
 
             pthread_mutex_unlock(
                     &this->getMainFlow()->getSendCommandMutex());

@@ -61,11 +61,6 @@ int main(int argc, char *argv[]) {
     //Validate driver input.
     driver = stringParser.parseDriverInput(argv[3]);
 
-    const char *path="/home/redperov/file.txt";
-    std::ofstream file(path); //open in constructor
-    file << argv[1] << argv[2] << argv[3] << "driver id " << driver->getDriverId() << std::endl;
-    file.close();
-
     //If the driver input is invalid, exit the program.
 //    if (!driver) {
 //

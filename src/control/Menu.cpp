@@ -220,7 +220,8 @@ int Menu::runMenu() {
             case 7: {
 
                 std::vector<ClientThread *>
-                        clientThreadVec = this->getMainFlow()->getClientThreadVector();
+                        clientThreadVec = this->getMainFlow()->
+                        getClientThreadVector();
                 // Send each driver exit command
                 this->wakeUpThreads(7);
                 for (int i = 0; i < clientThreadVec.size(); i++) {
